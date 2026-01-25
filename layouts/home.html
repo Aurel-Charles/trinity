@@ -4,11 +4,13 @@
   {{/* Hero Section */}}
   <header class="text-center py-12 mb-12">
     <h1 class="text-5xl md:text-6xl font-bold text-primary mb-4">
-      <span class="text-reggae-green">Reggae</span> Songbook
+      <span class="text-reggae-green"> {{ .Title}} </span> Songbook
     </h1>
-    <p class="text-xl text-secondary max-w-2xl mx-auto mb-8">
-      Gérez vos chansons, créez vos setlists et jouez en live avec les paroles et accords.
-    </p>
+    {{ with .Content }}
+    <div class="text-xl text-secondary max-w-2xl mx-auto mb-8">
+      {{ . }}
+    </div>
+    {{ end }}
     <div class="flex flex-wrap justify-center gap-4">
       <a href="{{ "chansons" | relURL }}/" class="px-6 py-3 bg-reggae-green text-white font-semibold rounded-lg hover:bg-opacity-80 transition-colors">
         Voir les chansons

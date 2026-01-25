@@ -1,8 +1,8 @@
 +++
 date = '2025-01-24'
 draft = false
-title = 'Home'
+title = "Trinity's "
 description = 'Welcome to our website - your SEO description here'
 +++
 
-Welcome to your new Hugo site with built-in SEO optimization!
+Voici un endroit avec les morceaux du groupe 

@@ -1,0 +1,364 @@
+{{ define "main" }}
+<article class="max-w-4xl mx-auto px-4 py-8">
+  {{/* Header */}}
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-primary mb-4">{{ .Title }}</h1>
+
+    <div class="flex flex-wrap gap-6 text-secondary">
+      {{ with .Params.date }}
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span>{{ time.Format "2 January 2006" . }}</span>
+      </div>
+      {{ end }}
+
+      {{ with .Params.lieu }}
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span>{{ . }}</span>
+      </div>
+      {{ end }}
+
+      {{ with .Params.heure_debut }}
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>{{ . }}</span>
+      </div>
+      {{ end }}
+
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+        </svg>
+        <span id="total-songs">{{ len .Params.chansons }} chansons</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span id="total-duration">Calcul en cours...</span>
+      </div>
+    </div>
+
+    {{ with .Params.notes_generales }}
+    <div class="mt-4 p-4 bg-secondary rounded-lg text-secondary">
+      {{ . | markdownify }}
+    </div>
+    {{ end }}
+  </header>
+
+  {{/* Actions */}}
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button onclick="enterConcertMode()" class="px-4 py-2 bg-reggae-green text-white rounded-lg font-semibold hover:bg-opacity-80 transition-colors">
+      Mode Concert
+    </button>
+    <button onclick="saveOrder()" class="px-4 py-2 border border-primary rounded-lg text-secondary hover:border-reggae-green hover:text-reggae-green transition-colors">
+      Sauvegarder l'ordre
+    </button>
+    <button onclick="resetOrder()" class="px-4 py-2 border border-primary rounded-lg text-secondary hover:border-reggae-yellow hover:text-reggae-yellow transition-colors">
+      Réinitialiser
+    </button>
+  </div>
+
+  {{/* Liste des chansons (drag & drop) */}}
+  <div id="setlist" class="grid gap-3">
+    {{ range $index, $chanson := .Params.chansons }}
+      {{ $page := site.GetPage (printf "/chansons/%s" $chanson.slug) }}
+      {{ if $page }}
+      <div
+        class="setlist-item"
+        draggable="true"
+        data-slug="{{ $chanson.slug }}"
+        data-index="{{ $index }}"
+        data-duration="{{ $page.Params.duree }}"
+      >
+        {{/* Handle de drag */}}
+        <div class="drag-handle">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+          </svg>
+        </div>
+
+        {{/* Numéro */}}
+        <span class="text-2xl font-bold text-tertiary w-8 text-center song-number">{{ add $index 1 }}</span>
+
+        {{/* Infos chanson */}}
+        <div class="flex-1">
+          <a href="{{ $page.RelPermalink }}" class="text-lg font-semibold text-primary hover:text-reggae-green transition-colors">
+            {{ $page.Title }}
+          </a>
+          <div class="flex flex-wrap items-center gap-3 text-sm text-secondary mt-1">
+            {{ with $page.Params.artiste }}
+            <span>{{ . }}</span>
+            {{ end }}
+            {{ with $page.Params.tonalite }}
+            <span class="chord-box text-xs py-0.5 px-2">{{ . }}</span>
+            {{ end }}
+            {{ with $page.Params.tempo }}
+            <span>{{ . }} BPM</span>
+            {{ end }}
+          </div>
+          {{ with $chanson.notes }}
+          <div class="mt-2 text-sm text-reggae-yellow italic">📝 {{ . }}</div>
+          {{ end }}
+        </div>
+
+        {{/* Durée */}}
+        <div class="text-right">
+          <span class="text-lg font-mono text-secondary">{{ $page.Params.duree | default "—" }}</span>
+        </div>
+      </div>
+      {{ else }}
+      <div class="setlist-item opacity-50" data-slug="{{ $chanson.slug }}" data-index="{{ $index }}">
+        <div class="drag-handle">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+          </svg>
+        </div>
+        <span class="text-2xl font-bold text-tertiary w-8 text-center song-number">{{ add $index 1 }}</span>
+        <div class="flex-1">
+          <span class="text-lg text-error">⚠️ Chanson introuvable: {{ $chanson.slug }}</span>
+        </div>
+      </div>
+      {{ end }}
+    {{ end }}
+  </div>
+
+  {{/* Navigation */}}
+  <footer class="flex justify-between items-center pt-8 mt-8 border-t border-primary">
+    <a href="{{ "setlists" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors">
+      ← Retour aux setlists
+    </a>
+  </footer>
+</article>
+
+{{/* Mode Concert */}}
+<div id="concert-mode" class="concert-mode hidden">
+  <div class="fixed top-4 right-4 flex gap-4 z-50">
+    <span id="concert-song-counter" class="text-white text-xl"></span>
+    <button onclick="exitConcertMode()" class="text-white text-2xl hover:text-reggae-green">✕</button>
+  </div>
+
+  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-4 z-50">
+    <button onclick="prevSong()" class="px-6 py-3 bg-secondary rounded-lg text-white text-xl hover:bg-reggae-green transition-colors">
+      ← Précédent
+    </button>
+    <button onclick="nextSong()" class="px-6 py-3 bg-reggae-green rounded-lg text-white text-xl hover:bg-opacity-80 transition-colors">
+      Suivant →
+    </button>
+  </div>
+
+  <div id="concert-content" class="text-center pt-20 pb-32">
+    <h2 id="concert-title" class="text-5xl font-bold text-white mb-4"></h2>
+    <div id="concert-meta" class="text-2xl text-secondary mb-8"></div>
+    <div id="concert-chords" class="flex flex-wrap justify-center gap-4 mb-8"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// Calcul de la durée totale
+// ============================================================================
+function calculateTotalDuration() {
+  const items = document.querySelectorAll('.setlist-item[data-duration]');
+  let totalSeconds = 0;
+
+  items.forEach(item => {
+    const duration = item.dataset.duration;
+    if (duration && duration !== '—') {
+      const parts = duration.split(':');
+      if (parts.length === 2) {
+        totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      }
+    }
+  });
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  let durationStr = '';
+  if (hours > 0) {
+    durationStr = `${hours}h ${minutes}min`;
+  } else {
+    durationStr = `${minutes}min ${seconds}s`;
+  }
+
+  document.getElementById('total-duration').textContent = durationStr;
+}
+
+calculateTotalDuration();
+
+// ============================================================================
+// Drag & Drop
+// ============================================================================
+const setlist = document.getElementById('setlist');
+let draggedItem = null;
+
+setlist.addEventListener('dragstart', (e) => {
+  if (e.target.classList.contains('setlist-item')) {
+    draggedItem = e.target;
+    e.target.classList.add('dragging');
+  }
+});
+
+setlist.addEventListener('dragend', (e) => {
+  if (e.target.classList.contains('setlist-item')) {
+    e.target.classList.remove('dragging');
+    draggedItem = null;
+    updateNumbers();
+  }
+});
+
+setlist.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  const afterElement = getDragAfterElement(setlist, e.clientY);
+  if (afterElement == null) {
+    setlist.appendChild(draggedItem);
+  } else {
+    setlist.insertBefore(draggedItem, afterElement);
+  }
+});
+
+function getDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll('.setlist-item:not(.dragging)')];
+
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function updateNumbers() {
+  const items = setlist.querySelectorAll('.setlist-item');
+  items.forEach((item, index) => {
+    const numberEl = item.querySelector('.song-number');
+    if (numberEl) {
+      numberEl.textContent = index + 1;
+    }
+    item.dataset.index = index;
+  });
+}
+
+// ============================================================================
+// Sauvegarde de l'ordre (localStorage)
+// ============================================================================
+const setlistId = '{{ .File.BaseFileName }}';
+
+function saveOrder() {
+  const items = setlist.querySelectorAll('.setlist-item');
+  const order = Array.from(items).map(item => item.dataset.slug);
+  localStorage.setItem(`setlist-${setlistId}`, JSON.stringify(order));
+
+  // Feedback visuel
+  const btn = event.target;
+  const originalText = btn.textContent;
+  btn.textContent = '✓ Sauvegardé!';
+  btn.classList.add('border-reggae-green', 'text-reggae-green');
+  setTimeout(() => {
+    btn.textContent = originalText;
+    btn.classList.remove('border-reggae-green', 'text-reggae-green');
+  }, 2000);
+}
+
+function resetOrder() {
+  localStorage.removeItem(`setlist-${setlistId}`);
+  location.reload();
+}
+
+// Restaurer l'ordre sauvegardé au chargement
+function restoreOrder() {
+  const saved = localStorage.getItem(`setlist-${setlistId}`);
+  if (!saved) return;
+
+  try {
+    const order = JSON.parse(saved);
+    const items = Array.from(setlist.querySelectorAll('.setlist-item'));
+
+    order.forEach((slug, index) => {
+      const item = items.find(i => i.dataset.slug === slug);
+      if (item) {
+        setlist.appendChild(item);
+      }
+    });
+
+    updateNumbers();
+  } catch (e) {
+    console.error('Erreur lors de la restauration de l\'ordre:', e);
+  }
+}
+
+restoreOrder();
+
+// ============================================================================
+// Mode Concert
+// ============================================================================
+let concertSongs = [];
+let currentSongIndex = 0;
+
+function enterConcertMode() {
+  const items = setlist.querySelectorAll('.setlist-item[data-slug]');
+  concertSongs = Array.from(items).map(item => ({
+    slug: item.dataset.slug,
+    title: item.querySelector('a')?.textContent?.trim() || item.dataset.slug,
+    meta: item.querySelector('.text-sm.text-secondary')?.textContent?.trim() || ''
+  }));
+
+  if (concertSongs.length === 0) return;
+
+  currentSongIndex = 0;
+  document.getElementById('concert-mode').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  showCurrentSong();
+}
+
+function exitConcertMode() {
+  document.getElementById('concert-mode').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function showCurrentSong() {
+  const song = concertSongs[currentSongIndex];
+  document.getElementById('concert-title').textContent = song.title;
+  document.getElementById('concert-meta').textContent = song.meta;
+  document.getElementById('concert-song-counter').textContent =
+    `${currentSongIndex + 1} / ${concertSongs.length}`;
+}
+
+function nextSong() {
+  if (currentSongIndex < concertSongs.length - 1) {
+    currentSongIndex++;
+    showCurrentSong();
+  }
+}
+
+function prevSong() {
+  if (currentSongIndex > 0) {
+    currentSongIndex--;
+    showCurrentSong();
+  }
+}
+
+// Raccourcis clavier
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('concert-mode').classList.contains('hidden')) return;
+
+  if (e.key === 'Escape') exitConcertMode();
+  if (e.key === 'ArrowRight' || e.key === ' ') nextSong();
+  if (e.key === 'ArrowLeft') prevSong();
+});
+</script>
+{{ end }}

@@ -7,28 +7,46 @@
   weight = 10
 
 [[main]]
-  name = 'Podcasts'
-  pageRef = '/podcasts'
+  name = 'Chansons'
+  pageRef = '/chansons'
   weight = 20
 
-[[main]]
-  name = 'Contact'
-  pageRef = '/contact'
-  weight = 30
+  [[main]]
+    name = 'Validées'
+    pageRef = '/statuts/validee'
+    parent = 'Chansons'
+    weight = 1
+
+  [[main]]
+    name = 'Idées'
+    pageRef = '/statuts/idee'
+    parent = 'Chansons'
+    weight = 2
+
+  [[main]]
+    name = 'En cours'
+    pageRef = '/statuts/en_cours'
+    parent = 'Chansons'
+    weight = 3
 
 [[main]]
-  name = 'Derniers Travaux'
-  pageRef = '/work'
-  weight = 40
+  name = 'Setlists'
+  pageRef = '/setlists'
+  weight = 30
 
 # Footer Menu
 # ------------------------------------------------------------------------------
 [[footer]]
-  name = 'Politique de Confidentialité'
-  pageRef = '/privacy'
+  name = 'Toutes les chansons'
+  pageRef = '/chansons'
   weight = 10
 
 [[footer]]
-  name = "Conditions d'Utilisation"
-  pageRef = '/terms'
+  name = 'Par artiste'
+  pageRef = '/artistes'
   weight = 20
+
+[[footer]]
+  name = 'Par tonalité'
+  pageRef = '/tonalites'
+  weight = 30

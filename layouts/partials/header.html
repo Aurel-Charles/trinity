@@ -1,1 +1,73 @@
-{{ partial "nav.html" . }}
+<header class="sticky top-0 z-50 bg-primary border-b border-primary">
+  <div class="max-w-6xl mx-auto px-4">
+    <nav class="flex items-center justify-between h-16">
+      {{/* Logo */}}
+      <a href="{{ "/" | relURL }}" class="flex items-center gap-2 text-xl font-bold text-primary hover:text-reggae-green transition-colors">
+        <span class="text-reggae-green text-2xl">♪</span>
+        <span>Reggae<span class="text-reggae-green">Band</span></span>
+      </a>
+
+      {{/* Navigation principale */}}
+      <div class="hidden md:flex items-center gap-1">
+        {{ range .Site.Menus.main }}
+          {{ if .HasChildren }}
+          {{/* Menu avec sous-menu */}}
+          <div class="relative group">
+            <a href="{{ .URL }}" class="flex items-center gap-1 px-4 py-2 text-secondary hover:text-primary hover:bg-secondary rounded-lg transition-colors">
+              {{ .Name }}
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <div class="bg-secondary border border-primary rounded-lg shadow-lg py-2 min-w-[160px]">
+                {{ range .Children }}
+                <a href="{{ .URL }}" class="block px-4 py-2 text-secondary hover:text-reggae-green hover:bg-tertiary transition-colors">
+                  {{ .Name }}
+                </a>
+                {{ end }}
+              </div>
+            </div>
+          </div>
+          {{ else }}
+          {{/* Menu simple */}}
+          <a href="{{ .URL }}" class="px-4 py-2 text-secondary hover:text-primary hover:bg-secondary rounded-lg transition-colors">
+            {{ .Name }}
+          </a>
+          {{ end }}
+        {{ end }}
+      </div>
+
+      {{/* Menu mobile toggle */}}
+      <button id="mobile-menu-toggle" class="md:hidden p-2 text-secondary hover:text-primary hover:bg-secondary rounded-lg transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </nav>
+
+    {{/* Menu mobile */}}
+    <div id="mobile-menu" class="hidden md:hidden pb-4">
+      <div class="flex flex-col gap-1">
+        {{ range .Site.Menus.main }}
+        <a href="{{ .URL }}" class="px-4 py-3 text-secondary hover:text-reggae-green hover:bg-secondary rounded-lg transition-colors">
+          {{ .Name }}
+        </a>
+        {{ if .HasChildren }}
+          {{ range .Children }}
+          <a href="{{ .URL }}" class="px-4 py-2 pl-8 text-sm text-tertiary hover:text-reggae-green hover:bg-secondary rounded-lg transition-colors">
+            {{ .Name }}
+          </a>
+          {{ end }}
+        {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+document.getElementById('mobile-menu-toggle')?.addEventListener('click', function() {
+  document.getElementById('mobile-menu')?.classList.toggle('hidden');
+});
+</script>

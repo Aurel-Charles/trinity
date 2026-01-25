@@ -1,0 +1,76 @@
+{{ define "main" }}
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-primary mb-2">Setlists</h1>
+    <p class="text-secondary">{{ len .Pages }} setlists créées</p>
+  </header>
+
+  {{/* Liste des setlists */}}
+  <div class="grid gap-4">
+    {{ range .Pages.ByDate.Reverse }}
+    <article class="section-card hover:border-reggae-green transition-colors">
+      <a href="{{ .RelPermalink }}" class="block">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          {{/* Date et titre */}}
+          <div>
+            <h2 class="text-xl font-semibold text-primary hover:text-reggae-green transition-colors">
+              {{ .Title }}
+            </h2>
+            <div class="flex flex-wrap items-center gap-4 text-sm text-secondary mt-2">
+              {{ with .Params.date }}
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                {{ time.Format "2 January 2006" . }}
+              </span>
+              {{ end }}
+
+              {{ with .Params.lieu }}
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                </svg>
+                {{ . }}
+              </span>
+              {{ end }}
+
+              {{ with .Params.heure_debut }}
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ . }}
+              </span>
+              {{ end }}
+            </div>
+          </div>
+
+          {{/* Nombre de chansons */}}
+          <div class="flex items-center gap-3">
+            {{ with .Params.chansons }}
+            <span class="px-3 py-1 bg-tertiary rounded-full text-sm text-secondary">
+              {{ len . }} chansons
+            </span>
+            {{ end }}
+
+            <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+
+        {{ with .Params.notes_generales }}
+        <p class="mt-3 text-sm text-tertiary line-clamp-2">{{ . }}</p>
+        {{ end }}
+      </a>
+    </article>
+    {{ else }}
+    <div class="text-center py-12 text-secondary">
+      <p class="text-xl mb-2">Aucune setlist</p>
+      <p>Créez votre première setlist avec <code class="bg-tertiary px-2 py-1 rounded">hugo new setlists/ma-setlist.md</code></p>
+    </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

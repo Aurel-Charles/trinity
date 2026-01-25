@@ -1,0 +1,182 @@
+{{ define "main" }}
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-primary mb-2">Chansons</h1>
+    <p class="text-secondary">{{ len .Pages }} chansons dans le répertoire</p>
+  </header>
+
+  {{/* Filtres par statut */}}
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button class="filter-tab active" onclick="filterByStatus('all')">
+      Toutes ({{ len .Pages }})
+    </button>
+    {{ $validees := where .Pages ".Params.statut" "validee" }}
+    <button class="filter-tab" onclick="filterByStatus('validee')">
+      Validées ({{ len $validees }})
+    </button>
+    {{ $enCours := where .Pages ".Params.statut" "en_cours" }}
+    <button class="filter-tab" onclick="filterByStatus('en_cours')">
+      En cours ({{ len $enCours }})
+    </button>
+    {{ $idees := where .Pages ".Params.statut" "idee" }}
+    <button class="filter-tab" onclick="filterByStatus('idee')">
+      Idées ({{ len $idees }})
+    </button>
+  </div>
+
+  {{/* Recherche et tri */}}
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div class="relative flex-1 min-w-[200px]">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Rechercher par titre ou artiste..."
+        oninput="filterChansons()"
+      >
+    </div>
+
+    <select id="sort-select" class="px-4 py-3 bg-secondary border border-primary rounded-lg text-primary" onchange="sortChansons()">
+      <option value="title-asc">Titre A-Z</option>
+      <option value="title-desc">Titre Z-A</option>
+      <option value="artiste-asc">Artiste A-Z</option>
+      <option value="difficulty-asc">Difficulté ↑</option>
+      <option value="difficulty-desc">Difficulté ↓</option>
+    </select>
+  </div>
+
+  {{/* Liste des chansons */}}
+  <div id="chansons-list" class="grid gap-4">
+    {{ range .Pages }}
+    <article
+      class="chanson-item section-card hover:border-reggae-green transition-colors"
+      data-title="{{ .Title | lower }}"
+      data-artiste="{{ .Params.artiste | lower }}"
+      data-statut="{{ .Params.statut }}"
+      data-difficulty="{{ .Params.difficulte | default 0 }}"
+    >
+      <a href="{{ .RelPermalink }}" class="flex flex-wrap items-center gap-4">
+        {{/* Statut */}}
+        <span class="badge badge-{{ .Params.statut }}">{{ .Params.statut | default "idee" }}</span>
+
+        {{/* Titre et artiste */}}
+        <div class="flex-1 min-w-[200px]">
+          <h2 class="text-xl font-semibold text-primary hover:text-reggae-green transition-colors">
+            {{ .Title }}
+          </h2>
+          {{ with .Params.artiste }}
+          <p class="text-secondary">{{ . }}</p>
+          {{ end }}
+        </div>
+
+        {{/* Métadonnées */}}
+        <div class="flex flex-wrap items-center gap-4 text-sm text-secondary">
+          {{ with .Params.tonalite }}
+          <span class="chord-box text-xs">{{ . }}</span>
+          {{ end }}
+
+          {{ with .Params.tempo }}
+          <span>{{ . }} BPM</span>
+          {{ end }}
+
+          {{ with .Params.duree }}
+          <span>{{ . }}</span>
+          {{ end }}
+
+          {{ with .Params.difficulte }}
+          <span class="flex">
+            {{ range seq 1 5 }}
+              {{ if le . $.Params.difficulte }}
+              <span class="difficulty-star text-xs">★</span>
+              {{ else }}
+              <span class="difficulty-star-empty text-xs">★</span>
+              {{ end }}
+            {{ end }}
+          </span>
+          {{ end }}
+        </div>
+
+        {{/* Flèche */}}
+        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </article>
+    {{ end }}
+  </div>
+
+  {{/* Message si aucun résultat */}}
+  <div id="no-results" class="hidden text-center py-12 text-secondary">
+    <p class="text-xl mb-2">Aucune chanson trouvée</p>
+    <p>Essayez avec d'autres termes de recherche</p>
+  </div>
+</div>
+
+<script>
+let currentFilter = 'all';
+
+function filterByStatus(status) {
+  currentFilter = status;
+
+  // Mettre à jour les boutons
+  document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  filterChansons();
+}
+
+function filterChansons() {
+  const searchTerm = document.getElementById('search-input').value.toLowerCase();
+  const items = document.querySelectorAll('.chanson-item');
+  let visibleCount = 0;
+
+  items.forEach(item => {
+    const title = item.dataset.title;
+    const artiste = item.dataset.artiste;
+    const statut = item.dataset.statut;
+
+    const matchesSearch = title.includes(searchTerm) || artiste.includes(searchTerm);
+    const matchesFilter = currentFilter === 'all' || statut === currentFilter;
+
+    if (matchesSearch && matchesFilter) {
+      item.classList.remove('hidden');
+      visibleCount++;
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+
+  // Afficher/masquer le message "aucun résultat"
+  document.getElementById('no-results').classList.toggle('hidden', visibleCount > 0);
+}
+
+function sortChansons() {
+  const sortValue = document.getElementById('sort-select').value;
+  const list = document.getElementById('chansons-list');
+  const items = Array.from(list.querySelectorAll('.chanson-item'));
+
+  items.sort((a, b) => {
+    switch (sortValue) {
+      case 'title-asc':
+        return a.dataset.title.localeCompare(b.dataset.title);
+      case 'title-desc':
+        return b.dataset.title.localeCompare(a.dataset.title);
+      case 'artiste-asc':
+        return a.dataset.artiste.localeCompare(b.dataset.artiste);
+      case 'difficulty-asc':
+        return parseInt(a.dataset.difficulty) - parseInt(b.dataset.difficulty);
+      case 'difficulty-desc':
+        return parseInt(b.dataset.difficulty) - parseInt(a.dataset.difficulty);
+      default:
+        return 0;
+    }
+  });
+
+  // Réordonner les éléments dans le DOM
+  items.forEach(item => list.appendChild(item));
+}
+</script>
+{{ end }}

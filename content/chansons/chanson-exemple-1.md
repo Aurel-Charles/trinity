@@ -1,12 +1,12 @@
 +++
-title = 'Soleil Levant'
+title = 'Another Pray For us'
 date = 2025-01-25
 draft = false
 
 # Informations générales
-artiste = 'Bob Marley'
+artiste = 'Trinity'
 statut = 'validee'
-tonalite = 'Am'
+tonalite = 'D'
 tempo = 75
 capo = 0
 duree = '4:15'
@@ -14,37 +14,33 @@ difficulte = 2
 tags = ['roots', 'one drop', 'cover']
 
 # Structure du morceau (DOIT être avant les blocs [])
-structure = ['intro', 'couplet', 'refrain', 'couplet', 'refrain', 'pont', 'refrain', 'outro']
+structure = ['intro', 'couplet', 'refrain', 'couplet', 'refrain', 'refrain', 'outro']
 
 # Grilles d'accords
 [grilles.intro]
-accords = ['Am', 'F', 'C', 'G']
+accords = ['D', 'D', 'G', 'A']
 mesures = 4
 pattern = '↓ . ↓↑ . ↓↑ ↓↑'
-notes = 'Jouer doucement, laisser sonner'
+notes = ''
 
 [grilles.couplet]
-accords = ['Am', 'F', 'C', 'G']
+accords = ['D', 'D', 'G', 'A']
 mesures = 8
 pattern = '↓ . ↓↑ . ↓↑ ↓↑'
 notes = ''
 
 [grilles.refrain]
-accords = ['C', 'G', 'Am', 'F']
+accords = ['D', 'D', 'G', 'A']
 mesures = 8
 pattern = '↓ . ↓↑ . ↓↑ ↓↑'
 notes = 'Accentuer le refrain'
 
-[grilles.pont]
-accords = ['Dm', 'Am', 'G', 'G']
-mesures = 4
-pattern = '↓ . ↓↑ . ↓↑ ↓↑'
-notes = 'Ralentir légèrement'
+
 
 [grilles.outro]
-accords = ['Am', 'F', 'C', 'G']
+accords = ['D', 'D', 'G', 'A']
 mesures = 4
-pattern = 'Fade out'
+pattern = 'Fin sur le SOL'
 notes = ''
 
 # Paroles

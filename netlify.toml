@@ -11,6 +11,3 @@
   # Optionnel : force l'utilisation de Hugo Extended si vous utilisez SASS/SCSS
   HUGO_ENABLEGITINFO = "true"
 
-[[plugins]]
-  # Plugin optionnel pour optimiser les images et le cache sur Netlify
-  package = "@netlify/plugin-hugo-cache-handler"

@@ -1,7 +1,206 @@
 {{ define "main" }}
-  {{ .Title }}
-  {{ .Content }}
-  {{ range .Site.RegularPages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+  {{/* Hero Section */}}
+  <header class="text-center py-12 mb-12">
+    <h1 class="text-5xl md:text-6xl font-bold text-primary mb-4">
+      <span class="text-reggae-green">Reggae</span> Songbook
+    </h1>
+    <p class="text-xl text-secondary max-w-2xl mx-auto mb-8">
+      Gérez vos chansons, créez vos setlists et jouez en live avec les paroles et accords.
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="{{ "chansons" | relURL }}/" class="px-6 py-3 bg-reggae-green text-white font-semibold rounded-lg hover:bg-opacity-80 transition-colors">
+        Voir les chansons
+      </a>
+      <a href="{{ "setlists" | relURL }}/" class="px-6 py-3 border border-reggae-green text-reggae-green font-semibold rounded-lg hover:bg-reggae-green hover:text-white transition-colors">
+        Mes setlists
+      </a>
+    </div>
+  </header>
+
+  {{/* Stats rapides */}}
+  {{ $chansons := where .Site.RegularPages "Section" "chansons" }}
+  {{ $setlists := where .Site.RegularPages "Section" "setlists" }}
+  {{ $validees := where $chansons ".Params.statut" "validee" }}
+  {{ $enCours := where $chansons ".Params.statut" "en_cours" }}
+  {{ $idees := where $chansons ".Params.statut" "idee" }}
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+    <div class="section-card text-center">
+      <div class="text-3xl font-bold text-reggae-green">{{ len $chansons }}</div>
+      <div class="text-secondary">Chansons</div>
+    </div>
+    <div class="section-card text-center">
+      <div class="text-3xl font-bold text-reggae-green">{{ len $validees }}</div>
+      <div class="text-secondary">Validées</div>
+    </div>
+    <div class="section-card text-center">
+      <div class="text-3xl font-bold text-reggae-yellow">{{ len $enCours }}</div>
+      <div class="text-secondary">En cours</div>
+    </div>
+    <div class="section-card text-center">
+      <div class="text-3xl font-bold text-reggae-red">{{ len $idees }}</div>
+      <div class="text-secondary">Idées</div>
+    </div>
+  </div>
+
+  {{/* Sections principales */}}
+  <div class="grid md:grid-cols-2 gap-8 mb-12">
+
+    {{/* Chansons validées */}}
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+          <span class="w-3 h-3 bg-reggae-green rounded-full"></span>
+          Chansons validées
+        </h2>
+        <a href="{{ "statuts/validee" | relURL }}/" class="text-sm text-reggae-green hover:underline">
+          Voir tout →
+        </a>
+      </div>
+      <div class="grid gap-3">
+        {{ range first 5 $validees }}
+        <a href="{{ .RelPermalink }}" class="section-card flex items-center gap-4 hover:border-reggae-green transition-colors">
+          <div class="flex-1">
+            <div class="font-semibold text-primary">{{ .Title }}</div>
+            <div class="text-sm text-secondary">{{ .Params.artiste }}</div>
+          </div>
+          <div class="flex items-center gap-3 text-sm text-tertiary">
+            {{ with .Params.tonalite }}
+            <span class="chord-box text-xs py-1 px-2">{{ . }}</span>
+            {{ end }}
+            {{ with .Params.duree }}
+            <span>{{ . }}</span>
+            {{ end }}
+          </div>
+        </a>
+        {{ else }}
+        <div class="section-card text-center text-secondary py-8">
+          Aucune chanson validée
+        </div>
+        {{ end }}
+      </div>
+    </section>
+
+    {{/* Dernières setlists */}}
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+          <span class="w-3 h-3 bg-reggae-yellow rounded-full"></span>
+          Setlists
+        </h2>
+        <a href="{{ "setlists" | relURL }}/" class="text-sm text-reggae-green hover:underline">
+          Voir tout →
+        </a>
+      </div>
+      <div class="grid gap-3">
+        {{ range first 5 $setlists.ByDate.Reverse }}
+        <a href="{{ .RelPermalink }}" class="section-card flex items-center gap-4 hover:border-reggae-green transition-colors">
+          <div class="flex-1">
+            <div class="font-semibold text-primary">{{ .Title }}</div>
+            <div class="text-sm text-secondary flex items-center gap-3">
+              {{ with .Params.lieu }}
+              <span>{{ . }}</span>
+              {{ end }}
+              {{ with .Params.date }}
+              <span>{{ time.Format "02/01/2006" . }}</span>
+              {{ end }}
+            </div>
+          </div>
+          {{ with .Params.chansons }}
+          <span class="px-3 py-1 bg-tertiary rounded-full text-sm text-secondary">
+            {{ len . }} chansons
+          </span>
+          {{ end }}
+        </a>
+        {{ else }}
+        <div class="section-card text-center text-secondary py-8">
+          Aucune setlist créée
+        </div>
+        {{ end }}
+      </div>
+    </section>
+  </div>
+
+  {{/* Idées et en cours */}}
+  <div class="grid md:grid-cols-2 gap-8 mb-12">
+
+    {{/* En cours */}}
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+          <span class="w-3 h-3 bg-reggae-yellow rounded-full"></span>
+          En cours de travail
+        </h2>
+        <a href="{{ "statuts/en_cours" | relURL }}/" class="text-sm text-reggae-green hover:underline">
+          Voir tout →
+        </a>
+      </div>
+      <div class="grid gap-3">
+        {{ range first 3 $enCours }}
+        <a href="{{ .RelPermalink }}" class="section-card flex items-center gap-4 hover:border-reggae-yellow transition-colors">
+          <span class="badge badge-en_cours">En cours</span>
+          <div class="flex-1">
+            <div class="font-semibold text-primary">{{ .Title }}</div>
+            <div class="text-sm text-secondary">{{ .Params.artiste }}</div>
+          </div>
+        </a>
+        {{ else }}
+        <div class="section-card text-center text-secondary py-6">
+          Aucune chanson en cours
+        </div>
+        {{ end }}
+      </div>
+    </section>
+
+    {{/* Idées */}}
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+          <span class="w-3 h-3 bg-reggae-red rounded-full"></span>
+          Idées à explorer
+        </h2>
+        <a href="{{ "statuts/idee" | relURL }}/" class="text-sm text-reggae-green hover:underline">
+          Voir tout →
+        </a>
+      </div>
+      <div class="grid gap-3">
+        {{ range first 3 $idees }}
+        <a href="{{ .RelPermalink }}" class="section-card flex items-center gap-4 hover:border-reggae-red transition-colors">
+          <span class="badge badge-idee">Idée</span>
+          <div class="flex-1">
+            <div class="font-semibold text-primary">{{ .Title }}</div>
+            <div class="text-sm text-secondary">{{ .Params.artiste }}</div>
+          </div>
+        </a>
+        {{ else }}
+        <div class="section-card text-center text-secondary py-6">
+          Aucune idée en attente
+        </div>
+        {{ end }}
+      </div>
+    </section>
+  </div>
+
+  {{/* Accès rapide par tonalité */}}
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold text-primary mb-4">Par tonalité</h2>
+    <div class="flex flex-wrap gap-2">
+      {{ range .Site.Taxonomies.tonalites }}
+      <a href="{{ .Page.RelPermalink }}" class="chord-box hover:border-reggae-green hover:text-reggae-green transition-colors">
+        {{ .Page.Title }} <span class="text-tertiary text-sm">({{ .Count }})</span>
+      </a>
+      {{ end }}
+    </div>
+  </section>
+
+  {{/* Contenu de la page */}}
+  {{ with .Content }}
+  <div class="prose prose-invert max-w-none">
+    {{ . }}
+  </div>
   {{ end }}
+
+</div>
 {{ end }}

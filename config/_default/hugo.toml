@@ -30,13 +30,18 @@ uglyURLs = false
 [taxonomies]
   tag = 'tags'
   category = 'categories'
-  author = 'authors'    # Added for better content attribution
+  author = 'authors'
+  statut = 'statuts'        # validee, idee, en_cours
+  artiste = 'artistes'      # Artistes/groupes originaux
+  tonalite = 'tonalites'    # Tonalités (C, Am, G, etc.)
 
 # Permalinks
 # ------------------------------------------------------------------------------
 [permalinks]
   posts = '/:year/:month/:slug/'
   pages = '/:slug/'
+  chansons = '/chansons/:slug/'
+  setlists = '/setlists/:slug/'
 
 # Output Formats
 # ------------------------------------------------------------------------------

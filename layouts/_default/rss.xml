@@ -1,0 +1,78 @@
+{{- /* ==========================================================================
+   Enhanced RSS Feed
+   Full content, images, and proper formatting
+   ========================================================================== */ -}}
+{{- $pctx := . -}}
+{{- if .IsHome -}}{{ $pctx = .Site }}{{- end -}}
+{{- $pages := slice -}}
+{{- if or $.IsHome $.IsSection -}}
+{{- $pages = $pctx.RegularPages -}}
+{{- else -}}
+{{- $pages = $pctx.Pages -}}
+{{- end -}}
+{{- $limit := .Site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 -}}
+{{- $pages = $pages | first $limit -}}
+{{- end -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" 
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>{{ if eq .Title .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{.}} | {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ .Site.Params.description | default "Recent content" | plainify | htmlUnescape }}</description>
+    <language>{{ .Site.LanguageCode | default "en-us" }}</language>
+    {{- with .Site.Params.author }}
+    <managingEditor>{{ $.Site.Params.contact.email | default "email@example.com" }} ({{ . }})</managingEditor>
+    <webMaster>{{ $.Site.Params.contact.email | default "email@example.com" }} ({{ . }})</webMaster>
+    {{- end }}
+    {{- with .Site.Params.copyright }}
+    <copyright>{{ replace . "{year}" now.Year }}</copyright>
+    {{- end }}
+    <lastBuildDate>{{ now.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</lastBuildDate>
+    {{- with .OutputFormats.Get "RSS" }}
+    <atom:link href="{{ .Permalink }}" rel="self" type="application/rss+xml" />
+    {{- end }}
+    {{- /* Site Image */ -}}
+    {{- with .Site.Params.opengraph.image }}
+    <image>
+      <url>{{ . | absURL }}</url>
+      <title>{{ $.Site.Title }}</title>
+      <link>{{ $.Site.BaseURL }}</link>
+    </image>
+    {{- end }}
+    {{- range $pages }}
+    <item>
+      <title>{{ .Title | plainify | htmlUnescape }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
+      {{- with .Params.author | default $.Site.Params.author }}
+      <dc:creator>{{ . }}</dc:creator>
+      {{- end }}
+      <guid isPermaLink="true">{{ .Permalink }}</guid>
+      {{- with .Description }}
+      <description>{{ . | plainify | htmlUnescape }}</description>
+      {{- else }}
+      <description>{{ .Summary | plainify | htmlUnescape }}</description>
+      {{- end }}
+      {{- /* Full Content */ -}}
+      <content:encoded><![CDATA[{{ .Content }}]]></content:encoded>
+      {{- /* Categories/Tags */ -}}
+      {{- range .Params.categories }}
+      <category>{{ . }}</category>
+      {{- end }}
+      {{- range .Params.tags }}
+      <category>{{ . }}</category>
+      {{- end }}
+      {{- /* Media/Image */ -}}
+      {{- with .Params.image }}
+      <media:content url="{{ . | absURL }}" medium="image" />
+      <enclosure url="{{ . | absURL }}" type="image/jpeg" />
+      {{- end }}
+    </item>
+    {{- end }}
+  </channel>
+</rss>

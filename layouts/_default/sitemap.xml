@@ -1,0 +1,59 @@
+{{- /* ==========================================================================
+   Enhanced Sitemap with Images
+   Better for SEO with image indexing support
+   ========================================================================== */ -}}
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  {{- range .Data.Pages }}
+  {{- if not .Params.noindex }}
+  <url>
+    <loc>{{ .Permalink }}</loc>
+    {{- if not .Lastmod.IsZero }}
+    <lastmod>{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+    {{- else if not .Date.IsZero }}
+    <lastmod>{{ .Date.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+    {{- end }}
+    {{- /* Priority based on page type */ -}}
+    {{- if .IsHome }}
+    <priority>1.0</priority>
+    <changefreq>daily</changefreq>
+    {{- else if .IsSection }}
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+    {{- else if eq .Section "posts" "blog" "articles" }}
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    {{- else }}
+    <priority>{{ .Sitemap.Priority | default 0.5 }}</priority>
+    <changefreq>{{ .Sitemap.ChangeFreq | default "monthly" }}</changefreq>
+    {{- end }}
+    {{- /* Image sitemap support */ -}}
+    {{- with .Params.image }}
+    <image:image>
+      <image:loc>{{ . | absURL }}</image:loc>
+      {{- with $.Title }}
+      <image:title>{{ . | htmlEscape }}</image:title>
+      {{- end }}
+    </image:image>
+    {{- end }}
+    {{- /* Multiple images support */ -}}
+    {{- with .Params.images }}
+    {{- range . }}
+    <image:image>
+      <image:loc>{{ . | absURL }}</image:loc>
+    </image:image>
+    {{- end }}
+    {{- end }}
+    {{- /* Alternate language versions */ -}}
+    {{- if $.IsTranslated }}
+    {{- range .Translations }}
+    <xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
+    {{- end }}
+    <xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
+    {{- end }}
+  </url>
+  {{- end }}
+  {{- end }}
+</urlset>

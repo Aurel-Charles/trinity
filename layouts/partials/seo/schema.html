@@ -1,0 +1,178 @@
+{{- /* ==========================================================================
+   Schema.org JSON-LD Structured Data
+   For rich snippets in search results
+   ========================================================================== */ -}}
+
+{{- $schemaType := "WebSite" -}}
+{{- $name := .Site.Title -}}
+{{- $description := .Site.Params.description | default "" -}}
+{{- $url := .Site.BaseURL -}}
+{{- $logo := "" -}}
+{{- $image := "" -}}
+
+{{- /* Schema Type from Config */ -}}
+{{- if and .Site.Params.schema .Site.Params.schema.type -}}
+  {{- $schemaType = .Site.Params.schema.type -}}
+{{- end -}}
+
+{{- /* Organization/Person Name */ -}}
+{{- if and .Site.Params.schema .Site.Params.schema.name -}}
+  {{- $name = .Site.Params.schema.name -}}
+{{- end -}}
+
+{{- /* Logo */ -}}
+{{- if and .Site.Params.schema .Site.Params.schema.logo -}}
+  {{- $logo = .Site.Params.schema.logo | absURL -}}
+{{- end -}}
+
+{{- /* Default Image */ -}}
+{{- if and .Site.Params.opengraph .Site.Params.opengraph.image -}}
+  {{- $image = .Site.Params.opengraph.image | absURL -}}
+{{- end -}}
+
+{{- /* Website Schema (always present) */ -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ .Site.Title }}",
+  "url": "{{ .Site.BaseURL }}",
+  {{- if .Site.Params.description }}
+  "description": "{{ .Site.Params.description | htmlEscape }}",
+  {{- end }}
+  "inLanguage": "{{ .Language.LanguageCode | default "en" }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ .Site.BaseURL }}search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+{{- /* Organization Schema (if configured) */ -}}
+{{- if eq $schemaType "Organization" }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ $name }}",
+  "url": "{{ $url }}"
+  {{- with $logo }},
+  "logo": "{{ . }}"
+  {{- end }}
+  {{- with $description }},
+  "description": "{{ . | htmlEscape }}"
+  {{- end }}
+  {{- with .Site.Params.social }},
+  "sameAs": [
+    {{- $socials := slice -}}
+    {{- if .twitter }}{{ $socials = $socials | append (printf "https://twitter.com/%s" (strings.TrimPrefix "@" .twitter)) }}{{ end }}
+    {{- if .facebook }}{{ $socials = $socials | append (printf "https://facebook.com/%s" .facebook) }}{{ end }}
+    {{- if .linkedin }}{{ $socials = $socials | append (printf "https://linkedin.com/company/%s" .linkedin) }}{{ end }}
+    {{- if .github }}{{ $socials = $socials | append (printf "https://github.com/%s" .github) }}{{ end }}
+    {{- if .youtube }}{{ $socials = $socials | append (printf "https://youtube.com/%s" .youtube) }}{{ end }}
+    {{- if .instagram }}{{ $socials = $socials | append (printf "https://instagram.com/%s" .instagram) }}{{ end }}
+    {{- range $i, $s := $socials }}{{ if $i }},{{ end }}"{{ $s }}"{{ end }}
+  ]
+  {{- end }}
+  {{- with .Site.Params.contact }}
+  {{- with .email }},
+  "email": "{{ . }}"
+  {{- end }}
+  {{- end }}
+}
+</script>
+{{- end }}
+
+{{- /* Article Schema (for blog posts) */ -}}
+{{- if and .IsPage (in (slice "posts" "blog" "articles") .Section) }}
+{{- $articleDesc := "" -}}
+{{- if .Description -}}
+  {{- $articleDesc = .Description -}}
+{{- else if .Summary -}}
+  {{- $articleDesc = .Summary | plainify | truncate 160 -}}
+{{- end -}}
+{{- $articleImage := "" -}}
+{{- if .Params.image -}}
+  {{- $articleImage = .Params.image | absURL -}}
+{{- else if $image -}}
+  {{- $articleImage = $image -}}
+{{- end -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ .Title | htmlEscape }}",
+  "url": "{{ .Permalink }}",
+  "datePublished": "{{ .PublishDate.Format "2006-01-02T15:04:05Z07:00" }}",
+  "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}"
+  {{- with $articleDesc }},
+  "description": "{{ . | htmlEscape }}"
+  {{- end }}
+  {{- with $articleImage }},
+  "image": "{{ . }}"
+  {{- end }},
+  "inLanguage": "{{ .Language.LanguageCode | default "en" }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ .Params.author | default .Site.Params.author | default "Author" }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ .Site.Title }}"
+    {{- with $logo }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ . }}"
+    }
+    {{- end }}
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ .Permalink }}"
+  }
+  {{- with .Params.tags }},
+  "keywords": "{{ delimit . ", " }}"
+  {{- end }}
+}
+</script>
+{{- end }}
+
+{{- /* BreadcrumbList Schema */ -}}
+{{- if not .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "{{ i18n "home" | default "Home" }}",
+      "item": "{{ .Site.BaseURL }}"
+    }
+    {{- if .Parent }},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ .Parent.Title }}",
+      "item": "{{ .Parent.Permalink }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ .Title }}",
+      "item": "{{ .Permalink }}"
+    }
+    {{- else }},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ .Title }}",
+      "item": "{{ .Permalink }}"
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}

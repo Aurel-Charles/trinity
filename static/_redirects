@@ -1,0 +1,25 @@
+# ==============================================================================
+# Netlify Redirects Configuration
+# Add your redirects here
+# ==============================================================================
+
+# Example redirects (uncomment and modify as needed):
+
+# Simple redirect
+# /old-page    /new-page    301
+
+# Redirect with wildcard
+# /blog/old/*  /articles/:splat    301
+
+# Language redirects (if not using Hugo's built-in)
+# /fr/*        /:splat    302    Language=fr
+# /*           /en/:splat    302    Language=en
+
+# Force HTTPS (usually handled by Netlify settings, but can be explicit)
+# http://example.com/*    https://example.com/:splat    301!
+
+# Redirect www to non-www (or vice versa)
+# https://www.example.com/*    https://example.com/:splat    301!
+
+# SPA fallback (if needed for client-side routing)
+# /*    /index.html    200

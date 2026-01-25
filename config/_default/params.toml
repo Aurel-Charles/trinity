@@ -1,0 +1,193 @@
+# ==============================================================================
+# COMMON SITE PARAMETERS
+# ==============================================================================
+# This file contains parameters shared across all languages.
+# Language-specific overrides go in params.en.toml, params.fr.toml, etc.
+# ==============================================================================
+
+# Theme Colors (for mobile browsers)
+# ------------------------------------------------------------------------------
+themeColor = '#ffffff'
+themeColorDark = '#0f172a'
+
+# Favicons
+# ------------------------------------------------------------------------------
+# favicon = '/favicon.ico'
+# favicon16 = '/favicon-16x16.png'
+# favicon32 = '/favicon-32x32.png'
+# appleTouchIcon = '/apple-touch-icon.png'
+# [safariPinnedTab]
+#   icon = '/safari-pinned-tab.svg'
+#   color = '#5bbad5'
+
+# Default Images (used when pages don't specify their own)
+# ------------------------------------------------------------------------------
+[opengraph]
+  image = '/images/og-default.jpg'
+  imageWidth = 1200
+  imageHeight = 630
+
+# Social Media Profiles
+# ------------------------------------------------------------------------------
+# Used for Schema.org sameAs and social links
+[social]
+  twitter = ''        # @username or just username
+  facebook = ''       # Page name or username
+  linkedin = ''       # Company name or username (use 'in/username' for personal)
+  github = ''         # Username
+  youtube = ''        # Channel name or @handle
+  instagram = ''      # Username
+
+# Schema.org / Structured Data
+# ------------------------------------------------------------------------------
+# type: 'Organization' or 'Person' (for personal sites)
+[schema]
+  type = 'Organization'
+  name = ''           # Organization/Person name (defaults to site title)
+  logo = '/images/logo.png'
+  # For Person type only:
+  # image = '/images/avatar.jpg'
+  # jobTitle = 'Software Developer'
+  # worksFor = 'Company Name'
+
+# Local Business (for local SEO)
+# ------------------------------------------------------------------------------
+# Uncomment and fill in for local businesses
+# [localBusiness]
+#   enabled = false
+#   type = 'LocalBusiness'  # or Restaurant, Store, etc.
+#   name = ''
+#   image = ''
+#   description = ''
+#   telephone = ''
+#   email = ''
+#   priceRange = '$$'
+#   [localBusiness.address]
+#     street = ''
+#     city = ''
+#     region = ''
+#     postalCode = ''
+#     country = ''
+#   [localBusiness.geo]
+#     latitude = 0.0
+#     longitude = 0.0
+#   [[localBusiness.openingHours]]
+#     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+#     opens = '09:00'
+#     closes = '17:00'
+
+# Site Verification
+# ------------------------------------------------------------------------------
+# Add verification codes from search consoles
+[verification]
+  google = ''         # Google Search Console
+  bing = ''           # Bing Webmaster Tools
+  yandex = ''         # Yandex Webmaster
+  pinterest = ''      # Pinterest
+  baidu = ''          # Baidu (China)
+  facebook = ''       # Facebook Domain Verification
+  # norton = ''       # Norton Safe Web
+
+# Analytics
+# ------------------------------------------------------------------------------
+[analytics]
+  # Google Analytics 4
+  googleAnalyticsID = ''      # e.g., 'G-XXXXXXXXXX'
+  anonymizeIP = true          # GDPR compliance
+  
+  # Google Tag Manager (use this OR googleAnalyticsID, not both)
+  googleTagManagerID = ''     # e.g., 'GTM-XXXXXXX'
+  
+  # Privacy-friendly alternatives (uncomment to enable)
+  # [analytics.plausible]
+  #   domain = ''             # Your domain
+  # [analytics.fathom]
+  #   siteID = ''
+  # [analytics.umami]
+  #   websiteID = ''
+  #   scriptURL = 'https://analytics.example.com/umami.js'
+  # simpleAnalytics = false
+  # clarity = ''              # Microsoft Clarity ID
+
+# Performance Optimizations
+# ------------------------------------------------------------------------------
+[performance]
+  # DNS prefetch / preconnect for external resources
+  preconnect = [
+    # 'https://fonts.googleapis.com',
+    # 'https://api.example.com',
+  ]
+  # Preload critical resources
+  # [[performance.preload]]
+  #   href = '/fonts/my-font.woff2'
+  #   as = 'font'
+  #   type = 'font/woff2'
+  #   crossorigin = true
+
+# Google Fonts
+# ------------------------------------------------------------------------------
+# Uncomment and configure to load Google Fonts
+# [[fonts.google]]
+#   family = 'Inter'
+#   weights = [400, 500, 600, 700]
+# [[fonts.google]]
+#   family = 'Fira Code'
+#   weights = [400, 500]
+
+# PWA (Progressive Web App)
+# ------------------------------------------------------------------------------
+[pwa]
+  enabled = false
+  name = ''                   # Defaults to site title
+  shortName = ''              # Shorter name for app icon
+  description = ''            # Defaults to site description
+  backgroundColor = '#ffffff'
+  display = 'standalone'      # fullscreen, standalone, minimal-ui, browser
+  orientation = 'portrait-primary'
+  startURL = '/'
+  scope = '/'
+  appleStatusBarStyle = 'default'  # default, black, black-translucent
+  msTileColor = '#ffffff'
+  # msTileImage = '/mstile-144x144.png'
+  
+  # PWA Icons (defaults provided if empty)
+  # [[pwa.icons]]
+  #   src = '/android-chrome-192x192.png'
+  #   sizes = '192x192'
+  #   type = 'image/png'
+  # [[pwa.icons]]
+  #   src = '/android-chrome-512x512.png'
+  #   sizes = '512x512'
+  #   type = 'image/png'
+  
+  # PWA Shortcuts (optional)
+  # [[pwa.shortcuts]]
+  #   name = 'New Post'
+  #   url = '/posts/new'
+  #   icon = '/icons/new-post.png'
+
+# Hero Section (for preloading)
+# ------------------------------------------------------------------------------
+# [hero]
+#   image = '/images/hero.jpg'
+
+# Site Features
+# ------------------------------------------------------------------------------
+[features]
+  darkMode = true
+  search = false
+  comments = false
+
+# Robots & Indexing (Global defaults)
+# ------------------------------------------------------------------------------
+# Can be overridden per-page with noindex: true or nofollow: true
+[robots]
+  index = true
+  follow = true
+  noarchive = false
+  nosnippet = false
+
+# Custom Code Injection
+# ------------------------------------------------------------------------------
+# customHead = ''     # HTML to inject in <head>
+# customCSS = []      # Additional CSS files to load

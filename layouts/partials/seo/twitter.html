@@ -1,0 +1,68 @@
+{{- /* ==========================================================================
+   Twitter Card Meta Tags
+   For Twitter/X sharing
+   ========================================================================== */ -}}
+
+{{- $card := "summary_large_image" -}}
+{{- $title := .Title -}}
+{{- $description := "" -}}
+{{- $image := "" -}}
+{{- $site := "" -}}
+{{- $creator := "" -}}
+
+{{- /* Card Type */ -}}
+{{- if and .Site.Params.twitter .Site.Params.twitter.card -}}
+  {{- $card = .Site.Params.twitter.card -}}
+{{- end -}}
+
+{{- /* Title Logic */ -}}
+{{- if .IsHome -}}
+  {{- $title = .Site.Title -}}
+{{- end -}}
+
+{{- /* Description Logic */ -}}
+{{- if .Description -}}
+  {{- $description = .Description | truncate 200 -}}
+{{- else if .Summary -}}
+  {{- $description = .Summary | plainify | truncate 200 -}}
+{{- else if .Site.Params.description -}}
+  {{- $description = .Site.Params.description | truncate 200 -}}
+{{- end -}}
+
+{{- /* Image Logic */ -}}
+{{- if .Params.image -}}
+  {{- $image = .Params.image | absURL -}}
+{{- else if .Params.images -}}
+  {{- $image = index .Params.images 0 | absURL -}}
+{{- else if and .Site.Params.opengraph .Site.Params.opengraph.image -}}
+  {{- $image = .Site.Params.opengraph.image | absURL -}}
+{{- end -}}
+
+{{- /* Twitter Accounts */ -}}
+{{- if and .Site.Params.twitter .Site.Params.twitter.site -}}
+  {{- $site = .Site.Params.twitter.site -}}
+{{- else if and .Site.Params.social .Site.Params.social.twitter -}}
+  {{- $site = .Site.Params.social.twitter -}}
+{{- end -}}
+
+{{- if .Params.twitter -}}
+  {{- $creator = .Params.twitter -}}
+{{- else if and .Site.Params.twitter .Site.Params.twitter.creator -}}
+  {{- $creator = .Site.Params.twitter.creator -}}
+{{- end -}}
+
+{{- /* Output Twitter Card Tags */ -}}
+<meta name="twitter:card" content="{{ $card }}">
+<meta name="twitter:title" content="{{ $title }}">
+{{- with $description }}
+<meta name="twitter:description" content="{{ . }}">
+{{- end }}
+{{- with $image }}
+<meta name="twitter:image" content="{{ . }}">
+{{- end }}
+{{- with $site }}
+<meta name="twitter:site" content="{{ . }}">
+{{- end }}
+{{- with $creator }}
+<meta name="twitter:creator" content="{{ . }}">
+{{- end }}

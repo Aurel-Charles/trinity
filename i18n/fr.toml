@@ -1,0 +1,69 @@
+# French UI Translations
+# ==============================================================================
+
+[readMore]
+other = 'Lire la suite'
+
+[postedOn]
+other = 'Publié le'
+
+[byAuthor]
+other = 'par'
+
+[shareOn]
+other = 'Partager sur'
+
+[tableOfContents]
+other = 'Table des Matières'
+
+[relatedPosts]
+other = 'Articles Connexes'
+
+[nextPost]
+other = 'Article Suivant'
+
+[prevPost]
+other = 'Article Précédent'
+
+[searchPlaceholder]
+other = 'Rechercher...'
+
+[noResults]
+other = 'Aucun résultat trouvé'
+
+[home]
+other = 'Accueil'
+
+[backToTop]
+other = 'Retour en haut'
+
+[lastUpdated]
+other = 'Dernière mise à jour'
+
+[minuteRead]
+one = '{{ .Count }} minute de lecture'
+other = '{{ .Count }} minutes de lecture'
+
+[comments]
+one = '{{ .Count }} commentaire'
+other = '{{ .Count }} commentaires'
+
+# Page 404
+# ==============================================================================
+[error404Title]
+other = 'Page Non Trouvée'
+
+[error404Description]
+other = "Désolé, la page que vous recherchez n'existe pas ou a été déplacée."
+
+[backToHome]
+other = "Retour à l'Accueil"
+
+[goBack]
+other = 'Retour'
+
+[helpfulLinks]
+other = 'Liens Utiles'
+
+[search]
+other = 'Rechercher'

@@ -1,0 +1,52 @@
+# ==============================================================================
+# PARAMÈTRES DU SITE - FRANÇAIS
+# ==============================================================================
+# Paramètres SEO et contenu spécifiques à la langue française.
+# Ces valeurs remplacent ou étendent celles de params.toml
+# ==============================================================================
+
+# Description du Site
+# ------------------------------------------------------------------------------
+# IMPORTANT : Apparaît dans les résultats de recherche et les partages sociaux
+# Recommandé : 150-160 caractères maximum
+description = 'Description de votre site pour les moteurs de recherche et le partage social. Gardez-la captivante et sous 160 caractères.'
+
+# Slogan du Site (optionnel)
+# ------------------------------------------------------------------------------
+# Apparaît après le titre sur la page d'accueil : "Titre du Site | Slogan"
+tagline = 'Votre Slogan'
+
+# Informations sur l'Auteur
+# ------------------------------------------------------------------------------
+# Auteur par défaut pour le contenu sans auteur explicite
+author = 'Votre Nom'
+
+# Mots-clés (optionnel, moins important pour le SEO moderne)
+# ------------------------------------------------------------------------------
+keywords = ['mot-clé1', 'mot-clé2', 'mot-clé3']
+
+# Twitter Cards
+# ------------------------------------------------------------------------------
+# card: 'summary', 'summary_large_image', 'app', 'player'
+[twitter]
+  card = 'summary_large_image'
+  site = '@votreutilisateur'      # Compte Twitter du site
+  creator = '@votreutilisateur'   # Créateur de contenu par défaut
+
+# Informations de Contact
+# ------------------------------------------------------------------------------
+[contact]
+  email = 'contact@example.fr'
+  phone = ''
+  address = ''
+
+# Mention de Copyright
+# ------------------------------------------------------------------------------
+# {year} sera remplacé par l'année en cours
+copyright = '© {year} Nom de Votre Site. Tous droits réservés.'
+
+# Surcharge Open Graph Spécifique à la Langue (optionnel)
+# ------------------------------------------------------------------------------
+# Décommentez pour utiliser une image par défaut différente pour cette langue
+# [opengraph]
+#   image = '/images/og-default-fr.jpg'

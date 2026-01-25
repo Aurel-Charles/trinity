@@ -1,0 +1,14 @@
+{{- /* ==========================================================================
+   SEO Pagination Links
+   Adds rel="next" and rel="prev" to <head> for paginated pages
+   Include this in your head partial
+   ========================================================================== */ -}}
+
+{{- if .Paginator -}}
+  {{- if .Paginator.HasPrev -}}
+<link rel="prev" href="{{ .Paginator.Prev.URL | absURL }}">
+  {{- end -}}
+  {{- if .Paginator.HasNext -}}
+<link rel="next" href="{{ .Paginator.Next.URL | absURL }}">
+  {{- end -}}
+{{- end -}}

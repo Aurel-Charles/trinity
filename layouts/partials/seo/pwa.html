@@ -1,0 +1,55 @@
+{{- /* ==========================================================================
+   PWA Meta Tags & Links
+   Progressive Web App support
+   ========================================================================== */ -}}
+
+{{- /* Web App Manifest */ -}}
+{{- if .Site.Params.pwa.enabled }}
+<link rel="manifest" href="{{ "manifest.json" | relURL }}">
+{{- end }}
+
+{{- /* Theme Color */ -}}
+<meta name="theme-color" content="{{ .Site.Params.themeColor | default "#ffffff" }}" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="{{ .Site.Params.themeColorDark | default "#0f172a" }}" media="(prefers-color-scheme: dark)">
+
+{{- /* Apple-specific meta tags */ -}}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="{{ .Site.Params.pwa.appleStatusBarStyle | default "default" }}">
+{{- with .Site.Params.pwa.name }}
+<meta name="apple-mobile-web-app-title" content="{{ . }}">
+{{- else }}
+<meta name="apple-mobile-web-app-title" content="{{ .Site.Title }}">
+{{- end }}
+
+{{- /* Microsoft Tile */ -}}
+{{- with .Site.Params.pwa.msTileColor }}
+<meta name="msapplication-TileColor" content="{{ . }}">
+{{- end }}
+{{- with .Site.Params.pwa.msTileImage }}
+<meta name="msapplication-TileImage" content="{{ . | absURL }}">
+{{- end }}
+
+{{- /* Favicons */ -}}
+{{- if .Site.Params.favicon }}
+<link rel="icon" type="image/x-icon" href="{{ .Site.Params.favicon | absURL }}">
+{{- else }}
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+{{- end }}
+
+{{- with .Site.Params.favicon16 }}
+<link rel="icon" type="image/png" sizes="16x16" href="{{ . | absURL }}">
+{{- end }}
+
+{{- with .Site.Params.favicon32 }}
+<link rel="icon" type="image/png" sizes="32x32" href="{{ . | absURL }}">
+{{- end }}
+
+{{- /* Apple Touch Icons */ -}}
+{{- with .Site.Params.appleTouchIcon }}
+<link rel="apple-touch-icon" sizes="180x180" href="{{ . | absURL }}">
+{{- end }}
+
+{{- /* Safari Pinned Tab */ -}}
+{{- with .Site.Params.safariPinnedTab }}
+<link rel="mask-icon" href="{{ .icon | absURL }}" color="{{ .color | default "#5bbad5" }}">
+{{- end }}

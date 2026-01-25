@@ -1,0 +1,52 @@
+# ==============================================================================
+# ENGLISH SITE PARAMETERS
+# ==============================================================================
+# Language-specific SEO and content parameters.
+# These override or extend the values in params.toml
+# ==============================================================================
+
+# Site Description
+# ------------------------------------------------------------------------------
+# IMPORTANT: This appears in search results and social shares
+# Recommended: 150-160 characters max
+description = 'Your site description for search engines and social sharing. Keep it compelling and under 160 characters.'
+
+# Site Tagline (optional)
+# ------------------------------------------------------------------------------
+# Appears after site title on homepage: "Site Title | Tagline"
+tagline = 'Your Site Tagline'
+
+# Author Information
+# ------------------------------------------------------------------------------
+# Default author for content without explicit author
+author = 'Your Name'
+
+# Keywords (optional, less important for modern SEO)
+# ------------------------------------------------------------------------------
+keywords = ['keyword1', 'keyword2', 'keyword3']
+
+# Twitter Cards
+# ------------------------------------------------------------------------------
+# card: 'summary', 'summary_large_image', 'app', 'player'
+[twitter]
+  card = 'summary_large_image'
+  site = '@yourusername'      # Site's Twitter account
+  creator = '@yourusername'   # Default content creator
+
+# Contact Information
+# ------------------------------------------------------------------------------
+[contact]
+  email = 'contact@example.com'
+  phone = ''
+  address = ''
+
+# Copyright Notice
+# ------------------------------------------------------------------------------
+# {year} will be replaced with current year
+copyright = '© {year} Your Site Name. All rights reserved.'
+
+# Language-Specific Open Graph Override (optional)
+# ------------------------------------------------------------------------------
+# Uncomment to use a different default image for this language
+# [opengraph]
+#   image = '/images/og-default-en.jpg'

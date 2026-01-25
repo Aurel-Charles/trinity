@@ -1,0 +1,95 @@
+{{- /* ==========================================================================
+   Open Graph Meta Tags
+   For Facebook, LinkedIn, and other social platforms
+   ========================================================================== */ -}}
+
+{{- $title := .Title -}}
+{{- $description := "" -}}
+{{- $image := "" -}}
+{{- $imageWidth := 1200 -}}
+{{- $imageHeight := 630 -}}
+{{- $type := "website" -}}
+{{- $siteName := .Site.Title -}}
+
+{{- /* Title Logic */ -}}
+{{- if .IsHome -}}
+  {{- $title = .Site.Title -}}
+{{- end -}}
+
+{{- /* Description Logic */ -}}
+{{- if .Description -}}
+  {{- $description = .Description -}}
+{{- else if .Summary -}}
+  {{- $description = .Summary | plainify | truncate 200 -}}
+{{- else if .Site.Params.description -}}
+  {{- $description = .Site.Params.description -}}
+{{- end -}}
+
+{{- /* Image Logic */ -}}
+{{- if .Params.image -}}
+  {{- $image = .Params.image | absURL -}}
+{{- else if .Params.images -}}
+  {{- $image = index .Params.images 0 | absURL -}}
+{{- else if and .Site.Params.opengraph .Site.Params.opengraph.image -}}
+  {{- $image = .Site.Params.opengraph.image | absURL -}}
+{{- end -}}
+
+{{- /* Image Dimensions */ -}}
+{{- if and .Site.Params.opengraph .Site.Params.opengraph.imageWidth -}}
+  {{- $imageWidth = .Site.Params.opengraph.imageWidth -}}
+{{- end -}}
+{{- if and .Site.Params.opengraph .Site.Params.opengraph.imageHeight -}}
+  {{- $imageHeight = .Site.Params.opengraph.imageHeight -}}
+{{- end -}}
+
+{{- /* Type Logic */ -}}
+{{- if .IsPage -}}
+  {{- if eq .Section "posts" "blog" "articles" -}}
+    {{- $type = "article" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Output Open Graph Tags */ -}}
+<meta property="og:site_name" content="{{ $siteName }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:type" content="{{ $type }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:locale" content="{{ .Language.LanguageCode | default "en_US" | replaceRE "-" "_" }}">
+{{- with $description }}
+<meta property="og:description" content="{{ . }}">
+{{- end }}
+{{- with $image }}
+<meta property="og:image" content="{{ . }}">
+<meta property="og:image:width" content="{{ $imageWidth }}">
+<meta property="og:image:height" content="{{ $imageHeight }}">
+{{- end }}
+
+{{- /* Article-specific tags */ -}}
+{{- if eq $type "article" -}}
+  {{- with .PublishDate }}
+<meta property="article:published_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+  {{- end }}
+  {{- with .Lastmod }}
+<meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+  {{- end }}
+  {{- with .Params.author }}
+<meta property="article:author" content="{{ . }}">
+  {{- end }}
+  {{- with .Params.categories }}
+    {{- range . }}
+<meta property="article:section" content="{{ . }}">
+    {{- end }}
+  {{- end }}
+  {{- with .Params.tags }}
+    {{- range . }}
+<meta property="article:tag" content="{{ . }}">
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{- /* Translated versions */ -}}
+{{- if .IsTranslated -}}
+  {{- range .Translations }}
+<meta property="og:locale:alternate" content="{{ .Language.LanguageCode | replaceRE "-" "_" }}">
+  {{- end }}
+{{- end -}}

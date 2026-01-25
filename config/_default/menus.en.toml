@@ -1,0 +1,34 @@
+# English Main Navigation Menu
+# ==============================================================================
+
+[[main]]
+  name = 'Home'
+  pageRef = '/'
+  weight = 10
+
+[[main]]
+  name = 'Podcasts'
+  pageRef = '/podcasts'
+  weight = 20
+
+[[main]]
+  name = 'Contact'
+  pageRef = '/contact'
+  weight = 30
+
+[[main]]
+  name = 'Latest Work'
+  pageRef = '/work'
+  weight = 40
+
+# Footer Menu
+# ------------------------------------------------------------------------------
+[[footer]]
+  name = 'Privacy Policy'
+  pageRef = '/privacy'
+  weight = 10
+
+[[footer]]
+  name = 'Terms of Service'
+  pageRef = '/terms'
+  weight = 20

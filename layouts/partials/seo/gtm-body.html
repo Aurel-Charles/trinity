@@ -1,0 +1,9 @@
+{{- /* ==========================================================================
+   Google Tag Manager (noscript)
+   Place immediately after opening <body> tag
+   ========================================================================== */ -}}
+
+{{- if and hugo.IsProduction .Site.Params.analytics.googleTagManagerID -}}
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ .Site.Params.analytics.googleTagManagerID }}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+{{- end -}}

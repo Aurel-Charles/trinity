@@ -1,0 +1,8 @@
+{
+  "name": "hugo-tailwind-seo-template",
+  "description": "Hugo template with Tailwind CSS v4 and SEO optimization",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.17",
+    "tailwindcss": "^4.1.17"
+  }
+}

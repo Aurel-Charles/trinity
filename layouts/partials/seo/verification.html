@@ -1,0 +1,39 @@
+{{- /* ==========================================================================
+   Site Verification Meta Tags
+   For search console verification and analytics
+   ========================================================================== */ -}}
+
+{{- /* Google Search Console */ -}}
+{{- with .Site.Params.verification.google }}
+<meta name="google-site-verification" content="{{ . }}">
+{{- end }}
+
+{{- /* Bing Webmaster Tools */ -}}
+{{- with .Site.Params.verification.bing }}
+<meta name="msvalidate.01" content="{{ . }}">
+{{- end }}
+
+{{- /* Yandex Webmaster */ -}}
+{{- with .Site.Params.verification.yandex }}
+<meta name="yandex-verification" content="{{ . }}">
+{{- end }}
+
+{{- /* Pinterest */ -}}
+{{- with .Site.Params.verification.pinterest }}
+<meta name="p:domain_verify" content="{{ . }}">
+{{- end }}
+
+{{- /* Baidu (China) */ -}}
+{{- with .Site.Params.verification.baidu }}
+<meta name="baidu-site-verification" content="{{ . }}">
+{{- end }}
+
+{{- /* Facebook Domain Verification */ -}}
+{{- with .Site.Params.verification.facebook }}
+<meta name="facebook-domain-verification" content="{{ . }}">
+{{- end }}
+
+{{- /* Norton Safe Web */ -}}
+{{- with .Site.Params.verification.norton }}
+<meta name="norton-safeweb-site-verification" content="{{ . }}">
+{{- end }}

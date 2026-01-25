@@ -1,0 +1,285 @@
+{{- /* ==========================================================================
+   Additional Schema.org Types
+   FAQ, LocalBusiness, Product, Person, HowTo
+   Activated via front matter or params
+   ========================================================================== */ -}}
+
+{{- /* FAQ Schema - for FAQ pages */ -}}
+{{- if .Params.faq -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{- range $index, $item := .Params.faq }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "Question",
+      "name": {{ $item.question | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $item.answer | jsonify }}
+      }
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}
+
+{{- /* LocalBusiness Schema - for local businesses */ -}}
+{{- if and .Site.Params.localBusiness .Site.Params.localBusiness.enabled -}}
+{{- $lb := .Site.Params.localBusiness -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": {{ $lb.type | default "LocalBusiness" | jsonify }},
+  "name": {{ $lb.name | default $.Site.Title | jsonify }},
+  "url": {{ $.Site.BaseURL | jsonify }}
+  {{- with $lb.image }},
+  "image": {{ . | absURL | jsonify }}
+  {{- end }}
+  {{- with $lb.description }},
+  "description": {{ . | jsonify }}
+  {{- end }}
+  {{- with $lb.telephone }},
+  "telephone": {{ . | jsonify }}
+  {{- end }}
+  {{- with $lb.email }},
+  "email": {{ . | jsonify }}
+  {{- end }}
+  {{- with $lb.priceRange }},
+  "priceRange": {{ . | jsonify }}
+  {{- end }}
+  {{- with $lb.address }},
+  "address": {
+    "@type": "PostalAddress"
+    {{- with .street }},
+    "streetAddress": {{ . | jsonify }}
+    {{- end }}
+    {{- with .city }},
+    "addressLocality": {{ . | jsonify }}
+    {{- end }}
+    {{- with .region }},
+    "addressRegion": {{ . | jsonify }}
+    {{- end }}
+    {{- with .postalCode }},
+    "postalCode": {{ . | jsonify }}
+    {{- end }}
+    {{- with .country }},
+    "addressCountry": {{ . | jsonify }}
+    {{- end }}
+  }
+  {{- end }}
+  {{- with $lb.geo }},
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": {{ .latitude }},
+    "longitude": {{ .longitude }}
+  }
+  {{- end }}
+  {{- with $lb.openingHours }},
+  "openingHoursSpecification": [
+    {{- range $index, $hours := . }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": {{ $hours.days | jsonify }},
+      "opens": {{ $hours.opens | jsonify }},
+      "closes": {{ $hours.closes | jsonify }}
+    }
+    {{- end }}
+  ]
+  {{- end }}
+  {{- with $lb.sameAs }},
+  "sameAs": {{ . | jsonify }}
+  {{- end }}
+}
+</script>
+{{- end }}
+
+{{- /* Product Schema - for product pages */ -}}
+{{- if .Params.product -}}
+{{- $product := .Params.product -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ $product.name | default $.Title | jsonify }},
+  "url": {{ $.Permalink | jsonify }}
+  {{- with $product.image }},
+  "image": {{ . | absURL | jsonify }}
+  {{- else }}
+  {{- with $.Params.image }},
+  "image": {{ . | absURL | jsonify }}
+  {{- end }}
+  {{- end }}
+  {{- with $product.description }},
+  "description": {{ . | jsonify }}
+  {{- else }}
+  {{- with $.Description }},
+  "description": {{ . | jsonify }}
+  {{- end }}
+  {{- end }}
+  {{- with $product.sku }},
+  "sku": {{ . | jsonify }}
+  {{- end }}
+  {{- with $product.brand }},
+  "brand": {
+    "@type": "Brand",
+    "name": {{ . | jsonify }}
+  }
+  {{- end }}
+  {{- with $product.offers }},
+  "offers": {
+    "@type": "Offer",
+    "price": {{ .price }},
+    "priceCurrency": {{ .currency | default "USD" | jsonify }},
+    "availability": {{ .availability | default "https://schema.org/InStock" | jsonify }},
+    "url": {{ $.Permalink | jsonify }}
+    {{- with .validUntil }},
+    "priceValidUntil": {{ . | jsonify }}
+    {{- end }}
+  }
+  {{- end }}
+  {{- with $product.rating }},
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": {{ .value }},
+    "reviewCount": {{ .count }}
+  }
+  {{- end }}
+}
+</script>
+{{- end }}
+
+{{- /* Person Schema - for about/bio pages */ -}}
+{{- if eq .Site.Params.schema.type "Person" -}}
+{{- if .IsHome -}}
+{{- $person := .Site.Params.schema -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": {{ $person.name | default $.Site.Title | jsonify }},
+  "url": {{ $.Site.BaseURL | jsonify }}
+  {{- with $person.image }},
+  "image": {{ . | absURL | jsonify }}
+  {{- end }}
+  {{- with $.Site.Params.description }},
+  "description": {{ . | jsonify }}
+  {{- end }}
+  {{- with $person.jobTitle }},
+  "jobTitle": {{ . | jsonify }}
+  {{- end }}
+  {{- with $person.worksFor }},
+  "worksFor": {
+    "@type": "Organization",
+    "name": {{ . | jsonify }}
+  }
+  {{- end }}
+  {{- with $.Site.Params.contact.email }},
+  "email": {{ . | jsonify }}
+  {{- end }}
+  {{- with $.Site.Params.social }},
+  "sameAs": [
+    {{- $socials := slice -}}
+    {{- with .twitter }}{{ $socials = $socials | append (printf "https://twitter.com/%s" (strings.TrimPrefix "@" .)) }}{{ end }}
+    {{- with .linkedin }}{{ $socials = $socials | append (printf "https://linkedin.com/in/%s" .) }}{{ end }}
+    {{- with .github }}{{ $socials = $socials | append (printf "https://github.com/%s" .) }}{{ end }}
+    {{- with .instagram }}{{ $socials = $socials | append (printf "https://instagram.com/%s" .) }}{{ end }}
+    {{- with .youtube }}{{ $socials = $socials | append (printf "https://youtube.com/%s" .) }}{{ end }}
+    {{- delimit $socials ",\n    " }}
+  ]
+  {{- end }}
+}
+</script>
+{{- end }}
+{{- end }}
+
+{{- /* HowTo Schema - for tutorial/guide pages */ -}}
+{{- if .Params.howto -}}
+{{- $howto := .Params.howto -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": {{ $howto.name | default $.Title | jsonify }},
+  "description": {{ $howto.description | default $.Description | jsonify }}
+  {{- with $howto.totalTime }},
+  "totalTime": {{ . | jsonify }}
+  {{- end }}
+  {{- with $howto.estimatedCost }},
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": {{ .currency | default "USD" | jsonify }},
+    "value": {{ .value | jsonify }}
+  }
+  {{- end }}
+  {{- with $howto.supply }},
+  "supply": [
+    {{- range $index, $item := . }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "HowToSupply",
+      "name": {{ $item | jsonify }}
+    }
+    {{- end }}
+  ]
+  {{- end }}
+  {{- with $howto.tool }},
+  "tool": [
+    {{- range $index, $item := . }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "HowToTool",
+      "name": {{ $item | jsonify }}
+    }
+    {{- end }}
+  ]
+  {{- end }}
+  {{- with $howto.steps }},
+  "step": [
+    {{- range $index, $step := . }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "HowToStep",
+      "name": {{ $step.name | jsonify }},
+      "text": {{ $step.text | jsonify }}
+      {{- with $step.image }},
+      "image": {{ . | absURL | jsonify }}
+      {{- end }}
+      {{- with $step.url }},
+      "url": {{ . | jsonify }}
+      {{- end }}
+    }
+    {{- end }}
+  ]
+  {{- end }}
+}
+</script>
+{{- end }}
+
+{{- /* Video Schema - for video pages */ -}}
+{{- if .Params.video -}}
+{{- $video := .Params.video -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": {{ $video.name | default $.Title | jsonify }},
+  "description": {{ $video.description | default $.Description | jsonify }},
+  "thumbnailUrl": {{ $video.thumbnail | absURL | jsonify }},
+  "uploadDate": {{ $.PublishDate.Format "2006-01-02" | jsonify }}
+  {{- with $video.duration }},
+  "duration": {{ . | jsonify }}
+  {{- end }}
+  {{- with $video.contentUrl }},
+  "contentUrl": {{ . | jsonify }}
+  {{- end }}
+  {{- with $video.embedUrl }},
+  "embedUrl": {{ . | jsonify }}
+  {{- end }}
+}
+</script>
+{{- end }}

@@ -1,0 +1,66 @@
+{{- /* ==========================================================================
+   Head Partial - Complete SEO Optimized
+   Contains all meta tags, SEO elements, performance hints, and resources
+   ========================================================================== */ -}}
+
+    {{- /* Essential Meta Tags */ -}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    {{- /* Performance: Preconnect & Preload */ -}}
+    {{ partial "seo/performance.html" . }}
+    
+    {{- /* PWA & Mobile */ -}}
+    {{ partial "seo/pwa.html" . }}
+    
+    {{- /* Core SEO Meta Tags */ -}}
+    {{ partial "seo/meta.html" . }}
+    
+    {{- /* Pagination SEO (rel=next/prev) */ -}}
+    {{ partial "seo/pagination.html" . }}
+    
+    {{- /* Site Verification (Google, Bing, etc.) */ -}}
+    {{ partial "seo/verification.html" . }}
+    
+    {{- /* Open Graph Tags */ -}}
+    {{ partial "seo/opengraph.html" . }}
+    
+    {{- /* Twitter Card Tags */ -}}
+    {{ partial "seo/twitter.html" . }}
+    
+    {{- /* Schema.org JSON-LD (Core) */ -}}
+    {{ partial "seo/schema.html" . }}
+    
+    {{- /* Schema.org JSON-LD (Extra: FAQ, Product, LocalBusiness, etc.) */ -}}
+    {{ partial "seo/schema-extra.html" . }}
+    
+    {{- /* RSS Feed */ -}}
+    {{ range .AlternativeOutputFormats -}}
+      {{ printf `<link rel="%s" type="%s" href="%s" title="%s">` .Rel .MediaType.Type .Permalink ($.Site.Title | htmlEscape) | safeHTML }}
+    {{ end -}}
+    
+    {{- /* Stylesheets (Tailwind CSS v4) - Requires Hugo 0.128+ */ -}}
+    {{ with (templates.Defer (dict "key" "global")) }}
+      {{ partial "css.html" . }}
+    {{ end }}
+    
+    {{- /* Google Fonts (if configured) */ -}}
+    {{- with .Site.Params.fonts.google }}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?{{ range $index, $font := . }}{{ if $index }}&{{ end }}family={{ $font.family | urlquery }}{{ with $font.weights }}:wght@{{ delimit . ";" }}{{ end }}{{ end }}&display=swap" rel="stylesheet">
+    {{- end }}
+    
+    {{- /* Additional Custom CSS */ -}}
+    {{- range .Site.Params.customCSS }}
+    <link rel="stylesheet" href="{{ . | absURL }}">
+    {{- end }}
+    
+    {{- /* Analytics (only in production) */ -}}
+    {{ partial "seo/analytics.html" . }}
+    
+    {{- /* Custom Head Code (from config) */ -}}
+    {{- with .Site.Params.customHead }}
+    {{ . | safeHTML }}
+    {{- end }}

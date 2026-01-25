@@ -1,0 +1,47 @@
+{{- /* ==========================================================================
+   robots.txt Template
+   Customize search engine crawling behavior
+   ========================================================================== */ -}}
+User-agent: *
+{{- if hugo.IsProduction }}
+Allow: /
+{{- else }}
+Disallow: /
+{{- end }}
+
+{{- /* Block specific paths */ -}}
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+Disallow: /*.json$
+
+{{- /* Allow specific resources */ -}}
+Allow: /css/
+Allow: /js/
+Allow: /images/
+
+{{- /* Sitemap location */ -}}
+Sitemap: {{ "sitemap.xml" | absURL }}
+
+{{- /* Crawl delay (optional - uncomment if needed) */ -}}
+{{- /* Crawl-delay: 10 */ -}}
+
+{{- /* Additional bot-specific rules */ -}}
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+{{- /* Allow Google and Bing full access */ -}}
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /

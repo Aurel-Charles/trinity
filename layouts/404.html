@@ -1,0 +1,65 @@
+{{ define "main" }}
+<div class="min-h-[60vh] flex items-center justify-center px-4">
+  <div class="text-center max-w-lg">
+    {{- /* 404 Icon/Number */ -}}
+    <h1 class="text-9xl font-bold text-accent-primary opacity-20">404</h1>
+    
+    {{- /* Title */ -}}
+    <h2 class="text-3xl font-bold text-primary mt-4">
+      {{ i18n "error404Title" | default "Page Not Found" }}
+    </h2>
+    
+    {{- /* Description */ -}}
+    <p class="text-secondary mt-4 text-lg">
+      {{ i18n "error404Description" | default "Sorry, the page you're looking for doesn't exist or has been moved." }}
+    </p>
+    
+    {{- /* Search Box (optional) */ -}}
+    {{- if .Site.Params.features.search }}
+    <div class="mt-8">
+      <form action="{{ "search" | relURL }}" method="get" class="flex gap-2 max-w-md mx-auto">
+        <input 
+          type="search" 
+          name="q" 
+          placeholder="{{ i18n "searchPlaceholder" | default "Search..." }}"
+          class="flex-1 px-4 py-2 border border-primary rounded-lg bg-primary text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+        <button type="submit" class="px-6 py-2 bg-accent-primary text-inverse rounded-lg hover:bg-accent-hover transition-colors">
+          {{ i18n "search" | default "Search" }}
+        </button>
+      </form>
+    </div>
+    {{- end }}
+    
+    {{- /* Action Buttons */ -}}
+    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{{ .Site.Home.RelPermalink }}" class="px-6 py-3 bg-accent-primary text-inverse rounded-lg hover:bg-accent-hover transition-colors inline-flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+        </svg>
+        {{ i18n "backToHome" | default "Back to Home" }}
+      </a>
+      <button onclick="history.back()" class="px-6 py-3 border border-primary text-primary rounded-lg hover:bg-tertiary transition-colors inline-flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        {{ i18n "goBack" | default "Go Back" }}
+      </button>
+    </div>
+    
+    {{- /* Suggested Links */ -}}
+    <div class="mt-12">
+      <h3 class="text-lg font-semibold text-primary mb-4">
+        {{ i18n "helpfulLinks" | default "Helpful Links" }}
+      </h3>
+      <ul class="space-y-2">
+        {{- range first 5 .Site.Menus.main }}
+        <li>
+          <a href="{{ .URL }}" class="text-accent hover:underline">{{ .Name }}</a>
+        </li>
+        {{- end }}
+      </ul>
+    </div>
+  </div>
+</div>
+{{ end }}

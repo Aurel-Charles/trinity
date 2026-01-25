@@ -1,0 +1,184 @@
+# ==============================================================================
+# HUGO CORE CONFIGURATION
+# ==============================================================================
+
+baseURL = 'https://example.org/'
+title = 'My New Hugo + Tailwind Site'
+defaultContentLanguage = 'fr'
+defaultContentLanguageInSubdir = false
+
+# Build Settings
+# ------------------------------------------------------------------------------
+enableRobotsTXT = true
+enableGitInfo = false    # Set to true if using Git for .Lastmod
+enableEmoji = true
+
+# Content Settings
+# ------------------------------------------------------------------------------
+summaryLength = 70
+pagerSize = 10
+timeout = '60s'
+
+# URL Settings
+# ------------------------------------------------------------------------------
+canonifyURLs = false
+relativeURLs = false
+uglyURLs = false
+
+# Taxonomies
+# ------------------------------------------------------------------------------
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+  author = 'authors'    # Added for better content attribution
+
+# Permalinks
+# ------------------------------------------------------------------------------
+[permalinks]
+  posts = '/:year/:month/:slug/'
+  pages = '/:slug/'
+
+# Output Formats
+# ------------------------------------------------------------------------------
+[outputs]
+  home = ['HTML', 'RSS']
+  section = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS']
+  term = ['HTML', 'RSS']
+  page = ['HTML']
+
+# Media Types (for sitemap customization)
+# ------------------------------------------------------------------------------
+[mediaTypes]
+  [mediaTypes.'application/xml']
+    suffixes = ['xml']
+  [mediaTypes.'application/manifest+json']
+    suffixes = ['json']
+
+# Output Format Customization
+# ------------------------------------------------------------------------------
+[outputFormats]
+  [outputFormats.RSS]
+    mediaType = 'application/rss+xml'
+    baseName = 'feed'
+  [outputFormats.JSON]
+    mediaType = 'application/json'
+    baseName = 'index'
+    isPlainText = true
+  [outputFormats.MANIFEST]
+    mediaType = 'application/manifest+json'
+    baseName = 'manifest'
+    isPlainText = true
+    notAlternative = true
+
+# Sitemap Configuration
+# ------------------------------------------------------------------------------
+[sitemap]
+  changefreq = 'weekly'
+  filename = 'sitemap.xml'
+  priority = 0.5
+
+# Minification
+# ------------------------------------------------------------------------------
+[minify]
+  disableCSS = false
+  disableHTML = false
+  disableJS = false
+  disableJSON = false
+  disableSVG = false
+  disableXML = false
+  minifyOutput = true
+  [minify.tdewolff]
+    [minify.tdewolff.html]
+      keepWhitespace = false
+      keepEndTags = true
+      keepQuotes = true
+
+# Module Mounts
+# ------------------------------------------------------------------------------
+[module]
+  [[module.mounts]]
+    source = 'assets'
+    target = 'assets'
+  [[module.mounts]]
+    disableWatch = true
+    source = 'hugo_stats.json'
+    target = 'assets/notwatching/hugo_stats.json'
+
+# Build Settings for Tailwind
+# ------------------------------------------------------------------------------
+[build]
+  [build.buildStats]
+    enable = true
+  [[build.cachebusters]]
+    source = 'assets/notwatching/hugo_stats\.json'
+    target = 'css'
+  [[build.cachebusters]]
+    source = '(postcss|tailwind)\.config\.js'
+    target = 'css'
+
+# Markup Settings
+# ------------------------------------------------------------------------------
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+  [markup.highlight]
+    style = 'monokai'
+    lineNos = false
+    codeFences = true
+    guessSyntax = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+    ordered = false
+
+# Security Settings
+# ------------------------------------------------------------------------------
+[security]
+  [security.funcs]
+    getenv = ['^HUGO_', '^CI$']
+
+# Caching
+# ------------------------------------------------------------------------------
+[caches]
+  [caches.images]
+    dir = ':resourceDir/_gen'
+    maxAge = '720h'
+  [caches.assets]
+    dir = ':resourceDir/_gen'
+    maxAge = '720h'
+
+# Related Content (for "Related Posts" functionality)
+# ------------------------------------------------------------------------------
+[related]
+  includeNewer = true
+  threshold = 80
+  toLower = true
+  [[related.indices]]
+    name = 'tags'
+    weight = 100
+  [[related.indices]]
+    name = 'categories'
+    weight = 80
+  [[related.indices]]
+    name = 'date'
+    weight = 10
+
+# Languages
+# ==============================================================================
+[languages]
+  [languages.en]
+    languageCode = 'en-US'
+    languageName = 'English'
+    weight = 1
+    title = 'My New Hugo + Tailwind Site'
+
+  [languages.fr]
+    languageCode = 'fr-FR'
+    languageName = 'Français'
+    weight = 2
+    title = 'Mon Nouveau Site Hugo + Tailwind'

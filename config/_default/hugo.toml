@@ -2,7 +2,7 @@
 # HUGO CORE CONFIGURATION
 # ==============================================================================
 
-baseURL = 'https://example.org/'
+baseURL = 'https://trinityband.netlify.app/'
 title = 'My New Hugo + Tailwind Site'
 defaultContentLanguage = 'fr'
 defaultContentLanguageInSubdir = false

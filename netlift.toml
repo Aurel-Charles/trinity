@@ -1,0 +1,16 @@
+[build]
+  # Commande pour générer le site (avec les liens minifiés pour la performance)
+  command = "hugo --gc --minify"
+  # Dossier où Hugo génère le site (par défaut 'public')
+  publish = "public"
+
+[build.environment]
+  # Spécifiez votre version de Hugo ici (ex: 0.121.2)
+  # Très important pour éviter les erreurs de build si vous utilisez des fonctions récentes
+  HUGO_VERSION = "0.151.0"
+  # Optionnel : force l'utilisation de Hugo Extended si vous utilisez SASS/SCSS
+  HUGO_ENABLEGITINFO = "true"
+
+[[plugins]]
+  # Plugin optionnel pour optimiser les images et le cache sur Netlify
+  package = "@netlify/plugin-hugo-cache-handler"

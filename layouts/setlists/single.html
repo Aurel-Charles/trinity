@@ -71,12 +71,32 @@
   {{/* Liste des chansons (drag & drop) */}}
   <div id="setlist" class="grid gap-3">
     {{ range $index, $chanson := .Params.chansons }}
-      {{ $page := site.GetPage (printf "/chansons/%s" $chanson.slug) }}
+      {{/* Support des deux formats: slug (ancien) ou chanson_ref (Decap CMS) */}}
+      {{ $ref := $chanson.slug | default $chanson.chanson_ref }}
+
+      {{/* Chercher la chanson par slug direct */}}
+      {{ $page := site.GetPage (printf "/chansons/%s" $ref) }}
+
+      {{/* Si non trouvée, chercher par titre dans toutes les chansons */}}
+      {{ if not $page }}
+        {{ range site.RegularPages }}
+          {{ if and (eq .Section "chansons") (eq .Title $ref) }}
+            {{ $page = . }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{/* Slug pour le data-attribute (utiliser le slug du fichier si trouvé) */}}
+      {{ $slug := $ref }}
+      {{ with $page }}
+        {{ $slug = .File.BaseFileName }}
+      {{ end }}
+
       {{ if $page }}
       <div
         class="setlist-item"
         draggable="true"
-        data-slug="{{ $chanson.slug }}"
+        data-slug="{{ $slug }}"
         data-index="{{ $index }}"
         data-duration="{{ $page.Params.duree }}"
       >
@@ -99,7 +119,9 @@
             {{ with $page.Params.artiste }}
             <span>{{ . }}</span>
             {{ end }}
-            {{ with $page.Params.tonalite }}
+            {{/* Tonalité live si spécifiée, sinon tonalité originale */}}
+            {{ $tonalite := $chanson.tonalite_live | default $page.Params.tonalite }}
+            {{ with $tonalite }}
             <span class="chord-box text-xs py-0.5 px-2">{{ . }}</span>
             {{ end }}
             {{ with $page.Params.tempo }}
@@ -117,7 +139,7 @@
         </div>
       </div>
       {{ else }}
-      <div class="setlist-item opacity-50" data-slug="{{ $chanson.slug }}" data-index="{{ $index }}">
+      <div class="setlist-item opacity-50" data-slug="{{ $ref }}" data-index="{{ $index }}">
         <div class="drag-handle">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
@@ -125,7 +147,7 @@
         </div>
         <span class="text-2xl font-bold text-tertiary w-8 text-center song-number">{{ add $index 1 }}</span>
         <div class="flex-1">
-          <span class="text-lg text-error">⚠️ Chanson introuvable: {{ $chanson.slug }}</span>
+          <span class="text-lg text-error">⚠️ Chanson introuvable: {{ $ref }}</span>
         </div>
       </div>
       {{ end }}
@@ -140,30 +162,218 @@
   </footer>
 </article>
 
-{{/* Mode Concert */}}
+{{/* Mode Concert - Amélioré avec paroles et accords */}}
 <div id="concert-mode" class="concert-mode hidden">
-  <div class="fixed top-4 right-4 flex gap-4 z-50">
-    <span id="concert-song-counter" class="text-white text-xl"></span>
-    <button onclick="exitConcertMode()" class="text-white text-2xl hover:text-reggae-green">✕</button>
+  {{/* Barre de contrôle concert */}}
+  <div class="concert-controls">
+    <button onclick="exitConcertMode()" class="concert-close-btn" title="Fermer (Échap)">✕</button>
+
+    <div class="concert-control-group">
+      <button id="concert-scroll-toggle" onclick="toggleConcertScroll()" class="concert-btn">
+        <span id="concert-scroll-icon">▶</span>
+      </button>
+
+      <div class="concert-speed-control">
+        <span class="concert-label">Vitesse</span>
+        <input type="range" id="concert-speed" min="1" max="10" value="5" class="concert-slider">
+        <span id="concert-speed-value" class="concert-value">5</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span id="concert-song-counter" class="text-white text-xl"></span>
+      <button onclick="prevSong()" class="px-3 py-1 bg-secondary rounded text-white hover:bg-reggae-green transition-colors">←</button>
+      <button onclick="nextSong()" class="px-3 py-1 bg-reggae-green rounded text-white hover:bg-opacity-80 transition-colors">→</button>
+    </div>
   </div>
 
-  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-4 z-50">
-    <button onclick="prevSong()" class="px-6 py-3 bg-secondary rounded-lg text-white text-xl hover:bg-reggae-green transition-colors">
-      ← Précédent
-    </button>
-    <button onclick="nextSong()" class="px-6 py-3 bg-reggae-green rounded-lg text-white text-xl hover:bg-opacity-80 transition-colors">
-      Suivant →
-    </button>
-  </div>
+  {{/* Contenu principal du mode concert */}}
+  <div class="concert-main-content">
+    {{/* Titre et métadonnées */}}
+    <div class="concert-header">
+      <h2 id="concert-title" class="text-4xl md:text-5xl font-bold text-white mb-2"></h2>
+      <div id="concert-meta" class="flex flex-wrap justify-center gap-4 text-xl text-secondary"></div>
+    </div>
 
-  <div id="concert-content" class="text-center pt-20 pb-32">
-    <h2 id="concert-title" class="text-5xl font-bold text-white mb-4"></h2>
-    <div id="concert-meta" class="text-2xl text-secondary mb-8"></div>
-    <div id="concert-chords" class="flex flex-wrap justify-center gap-4 mb-8"></div>
+    {{/* Layout en 2 colonnes sur grand écran */}}
+    <div class="concert-content-grid">
+      {{/* Colonne gauche: Grilles d'accords */}}
+      <div id="concert-grilles" class="concert-grilles-panel">
+        <h3 class="text-reggae-green font-bold text-lg mb-4 uppercase">Grilles d'accords</h3>
+        <div id="concert-grilles-content"></div>
+      </div>
+
+      {{/* Colonne droite: Paroles avec défilement */}}
+      <div id="concert-lyrics-wrapper" class="concert-lyrics-wrapper">
+        <div id="concert-lyrics" class="lyrics-container text-white"></div>
+      </div>
+    </div>
   </div>
 </div>
 
+{{/* Génération des données JSON pour les chansons - Utiliser dict et jsonify pour une sérialisation propre */}}
+<script id="songs-data" type="application/json">
+{{- $songs := slice }}
+{{- range $index, $chanson := .Params.chansons }}
+  {{- $ref := $chanson.slug | default $chanson.chanson_ref }}
+  {{- $page := site.GetPage (printf "/chansons/%s" $ref) }}
+  {{- if not $page }}
+    {{- range site.RegularPages }}
+      {{- if and (eq .Section "chansons") (eq .Title $ref) }}
+        {{- $page = . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if $page }}
+    {{- $grilles := dict }}
+    {{- with $page.Params.grilles }}
+      {{- range $section, $grille := . }}
+        {{- $grilleData := dict "accords" ($grille.accords | default slice) "mesures" ($grille.mesures | default 4) "pattern" ($grille.pattern | default "") "notes" ($grille.notes | default "") }}
+        {{- $grilles = merge $grilles (dict $section $grilleData) }}
+      {{- end }}
+    {{- end }}
+    {{- $paroles := dict }}
+    {{- with $page.Params.paroles }}
+      {{- range $key, $value := . }}
+        {{- if $value }}
+          {{- $paroles = merge $paroles (dict $key $value) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- $songData := dict
+      "slug" $page.File.BaseFileName
+      "title" $page.Title
+      "artiste" ($page.Params.artiste | default "")
+      "tonalite" (($chanson.tonalite_live | default $page.Params.tonalite) | default "")
+      "tempo" ($page.Params.tempo | default 0)
+      "duree" ($page.Params.duree | default "")
+      "capo" ($page.Params.capo | default 0)
+      "structure" ($page.Params.structure | default slice)
+      "grilles" $grilles
+      "paroles" $paroles
+      "notes" ($chanson.notes | default "")
+    }}
+    {{- $songs = $songs | append $songData }}
+  {{- end }}
+{{- end }}
+{{ $songs | jsonify | safeJS }}
+</script>
+
+<style>
+/* Styles spécifiques au mode concert setlist */
+.concert-main-content {
+  padding: 80px 20px 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.concert-header {
+  text-align: center;
+  padding-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.concert-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .concert-content-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .concert-grilles-panel {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+.concert-grilles-panel {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.concert-grille-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--color-reggae-green);
+}
+
+.concert-grille-section-title {
+  color: var(--color-reggae-yellow);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.concert-grille-accords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.concert-grille-chord {
+  background: var(--color-reggae-green);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.concert-grille-info {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.concert-lyrics-wrapper {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.concert-lyrics-wrapper .lyrics-container {
+  font-size: 1.5rem;
+  line-height: 2;
+}
+
+.concert-lyrics-wrapper .lyrics-line {
+  padding: 4px 0;
+}
+
+.concert-notes {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255, 193, 7, 0.1);
+  border-left: 3px solid var(--color-reggae-yellow);
+  border-radius: 0 8px 8px 0;
+  color: var(--color-reggae-yellow);
+  font-style: italic;
+}
+</style>
+
 <script>
+// ============================================================================
+// Données des chansons
+// ============================================================================
+const songsData = JSON.parse(document.getElementById('songs-data').textContent);
+
 // ============================================================================
 // Calcul de la durée totale
 // ============================================================================
@@ -304,38 +514,217 @@ function restoreOrder() {
 restoreOrder();
 
 // ============================================================================
-// Mode Concert
+// Mode Concert - Amélioré
 // ============================================================================
 let concertSongs = [];
 let currentSongIndex = 0;
+let isConcertScrolling = false;
+let concertScrollInterval = null;
+let concertLyricsWrapper = null;
 
 function enterConcertMode() {
+  // Récupérer l'ordre actuel des chansons depuis le DOM
   const items = setlist.querySelectorAll('.setlist-item[data-slug]');
-  concertSongs = Array.from(items).map(item => ({
-    slug: item.dataset.slug,
-    title: item.querySelector('a')?.textContent?.trim() || item.dataset.slug,
-    meta: item.querySelector('.text-sm.text-secondary')?.textContent?.trim() || ''
-  }));
+  concertSongs = Array.from(items).map(item => {
+    const slug = item.dataset.slug;
+    return songsData.find(s => s.slug === slug) || { slug, title: slug };
+  }).filter(s => s);
 
   if (concertSongs.length === 0) return;
 
   currentSongIndex = 0;
   document.getElementById('concert-mode').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+
+  concertLyricsWrapper = document.getElementById('concert-lyrics-wrapper');
+
+  // Initialiser le slider de vitesse
+  const speedSlider = document.getElementById('concert-speed');
+  if (speedSlider) {
+    speedSlider.addEventListener('input', function() {
+      document.getElementById('concert-speed-value').textContent = this.value;
+      if (isConcertScrolling) {
+        stopConcertScroll();
+        startConcertScroll();
+      }
+    });
+  }
+
   showCurrentSong();
 }
 
 function exitConcertMode() {
+  stopConcertScroll();
   document.getElementById('concert-mode').classList.add('hidden');
   document.body.style.overflow = '';
 }
 
 function showCurrentSong() {
   const song = concertSongs[currentSongIndex];
+  if (!song) return;
+
+  // Reset scroll
+  if (concertLyricsWrapper) {
+    concertLyricsWrapper.scrollTop = 0;
+  }
+  stopConcertScroll();
+
+  // Titre
   document.getElementById('concert-title').textContent = song.title;
-  document.getElementById('concert-meta').textContent = song.meta;
+
+  // Métadonnées
+  const metaHtml = [];
+  if (song.artiste) metaHtml.push(`<span>${song.artiste}</span>`);
+  if (song.tonalite) metaHtml.push(`<span class="chord-box px-3 py-1">${song.tonalite}</span>`);
+  if (song.tempo) metaHtml.push(`<span>${song.tempo} BPM</span>`);
+  if (song.capo > 0) metaHtml.push(`<span>Capo ${song.capo}</span>`);
+  if (song.duree) metaHtml.push(`<span>${song.duree}</span>`);
+  document.getElementById('concert-meta').innerHTML = metaHtml.join('');
+
+  // Compteur
   document.getElementById('concert-song-counter').textContent =
     `${currentSongIndex + 1} / ${concertSongs.length}`;
+
+  // Grilles d'accords
+  renderGrilles(song);
+
+  // Paroles
+  renderLyrics(song);
+}
+
+function renderGrilles(song) {
+  const container = document.getElementById('concert-grilles-content');
+  if (!container) return;
+
+  let html = '';
+
+  // Afficher les grilles dans l'ordre de la structure
+  const displayedSections = new Set();
+
+  if (song.structure && song.structure.length > 0) {
+    song.structure.forEach(section => {
+      if (displayedSections.has(section)) return;
+      displayedSections.add(section);
+
+      const grille = song.grilles[section];
+      if (grille && grille.accords && grille.accords.length > 0) {
+        html += `
+          <div class="concert-grille-section">
+            <div class="concert-grille-section-title">${section}</div>
+            <div class="concert-grille-accords">
+              ${grille.accords.map(a => `<span class="concert-grille-chord">${a}</span>`).join('')}
+            </div>
+            <div class="concert-grille-info">
+              ${grille.mesures ? `${grille.mesures} mesures` : ''}
+              ${grille.pattern ? ` • ${grille.pattern}` : ''}
+            </div>
+            ${grille.notes ? `<div class="concert-grille-info italic mt-1">${grille.notes}</div>` : ''}
+          </div>
+        `;
+      }
+    });
+  } else {
+    // Pas de structure définie, afficher toutes les grilles
+    for (const [section, grille] of Object.entries(song.grilles || {})) {
+      if (grille && grille.accords && grille.accords.length > 0) {
+        html += `
+          <div class="concert-grille-section">
+            <div class="concert-grille-section-title">${section}</div>
+            <div class="concert-grille-accords">
+              ${grille.accords.map(a => `<span class="concert-grille-chord">${a}</span>`).join('')}
+            </div>
+            <div class="concert-grille-info">
+              ${grille.mesures ? `${grille.mesures} mesures` : ''}
+              ${grille.pattern ? ` • ${grille.pattern}` : ''}
+            </div>
+          </div>
+        `;
+      }
+    }
+  }
+
+  if (!html) {
+    html = '<p class="text-secondary italic">Aucune grille d\'accords</p>';
+  }
+
+  container.innerHTML = html;
+}
+
+function renderLyrics(song) {
+  const container = document.getElementById('concert-lyrics');
+  if (!container) return;
+
+  let html = '';
+
+  // Notes spécifiques à cette setlist
+  if (song.notes) {
+    html += `<div class="concert-notes">📝 ${song.notes}</div>`;
+  }
+
+  // Construire les paroles selon la structure
+  if (song.structure && song.structure.length > 0 && song.paroles) {
+    let coupletCount = 0;
+    let refrainCount = 0;
+    let pontCount = 0;
+
+    song.structure.forEach(section => {
+      let lyricsKey = section;
+
+      if (section === 'couplet') {
+        coupletCount++;
+        lyricsKey = `couplet_${coupletCount}`;
+      } else if (section === 'refrain') {
+        refrainCount++;
+        lyricsKey = 'refrain';
+      } else if (section === 'pont') {
+        pontCount++;
+        lyricsKey = `pont_${pontCount}`;
+        if (!song.paroles[lyricsKey]) {
+          lyricsKey = 'pont';
+        }
+      }
+
+      const lyrics = song.paroles[lyricsKey];
+      if (lyrics) {
+        html += `
+          <div class="mb-6">
+            <div class="text-reggae-green font-semibold text-sm uppercase mb-2">${section}</div>
+            ${lyrics.trim().split('\n').map((line, i) =>
+              line ? `<div class="lyrics-line" data-line="${i}">${line}</div>` : ''
+            ).join('')}
+          </div>
+        `;
+      } else if (section !== 'intro' && section !== 'outro' && section !== 'solo') {
+        // Section sans paroles (mais pas intro/outro/solo)
+        html += `
+          <div class="mb-6">
+            <div class="text-reggae-green font-semibold text-sm uppercase mb-2">${section}</div>
+            <div class="text-tertiary italic">—</div>
+          </div>
+        `;
+      }
+    });
+  } else if (song.paroles) {
+    // Pas de structure, afficher toutes les paroles
+    for (const [section, lyrics] of Object.entries(song.paroles)) {
+      if (lyrics) {
+        html += `
+          <div class="mb-6">
+            <div class="text-reggae-green font-semibold text-sm uppercase mb-2">${section.replace('_', ' ')}</div>
+            ${lyrics.trim().split('\n').map((line, i) =>
+              line ? `<div class="lyrics-line" data-line="${i}">${line}</div>` : ''
+            ).join('')}
+          </div>
+        `;
+      }
+    }
+  }
+
+  if (!html) {
+    html = '<p class="text-secondary italic text-center">Aucune parole disponible</p>';
+  }
+
+  container.innerHTML = html;
 }
 
 function nextSong() {
@@ -352,13 +741,62 @@ function prevSong() {
   }
 }
 
+// ============================================================================
+// Auto-scroll mode concert
+// ============================================================================
+function toggleConcertScroll() {
+  if (isConcertScrolling) {
+    stopConcertScroll();
+  } else {
+    startConcertScroll();
+  }
+}
+
+function startConcertScroll() {
+  if (!concertLyricsWrapper) return;
+
+  isConcertScrolling = true;
+  const icon = document.getElementById('concert-scroll-icon');
+  if (icon) icon.textContent = '⏸';
+
+  const speedSlider = document.getElementById('concert-speed');
+  const speed = speedSlider ? parseInt(speedSlider.value) : 5;
+  const scrollSpeed = 0.5 + (speed * 0.4);
+
+  concertScrollInterval = setInterval(() => {
+    if (concertLyricsWrapper.scrollTop < concertLyricsWrapper.scrollHeight - concertLyricsWrapper.clientHeight) {
+      concertLyricsWrapper.scrollTop += scrollSpeed;
+    } else {
+      stopConcertScroll();
+    }
+  }, 50);
+}
+
+function stopConcertScroll() {
+  isConcertScrolling = false;
+  const icon = document.getElementById('concert-scroll-icon');
+  if (icon) icon.textContent = '▶';
+
+  if (concertScrollInterval) {
+    clearInterval(concertScrollInterval);
+    concertScrollInterval = null;
+  }
+}
+
+// ============================================================================
 // Raccourcis clavier
+// ============================================================================
 document.addEventListener('keydown', (e) => {
-  if (document.getElementById('concert-mode').classList.contains('hidden')) return;
+  const concertMode = document.getElementById('concert-mode');
+  if (concertMode.classList.contains('hidden')) return;
 
   if (e.key === 'Escape') exitConcertMode();
-  if (e.key === 'ArrowRight' || e.key === ' ') nextSong();
+  if (e.key === 'ArrowRight') nextSong();
   if (e.key === 'ArrowLeft') prevSong();
+  if (e.key === ' ') {
+    e.preventDefault();
+    toggleConcertScroll();
+  }
 });
 </script>
 {{ end }}

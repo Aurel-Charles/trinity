@@ -1,0 +1,403 @@
+# ==============================================================================
+# DECAP CMS CONFIGURATION
+# ==============================================================================
+
+# Locale
+locale: 'fr'
+local_backend: true
+
+# Media
+media_folder: static/images/uploads
+public_folder: /images/uploads
+
+# Slug settings
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+# Use DecapBridge PKCE auth (required)
+backend:
+  name: git-gateway
+  repo: Aurel-Charles/trinity
+  branch: main
+  auth_type: pkce
+  base_url: https://auth.decapbridge.com
+  auth_endpoint: /sites/50fffadf-9d37-4d59-a583-1de2275c6dd2/pkce
+  auth_token_endpoint: /sites/50fffadf-9d37-4d59-a583-1de2275c6dd2/token
+  gateway_url: https://gateway.decapbridge.com
+
+  # See who did what (optional)
+  commit_messages:
+    create: Create {{collection}} "{{slug}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    update: Update {{collection}} "{{slug}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    delete: Delete {{collection}} "{{slug}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    uploadMedia: Upload "{{path}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    deleteMedia: Delete "{{path}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    openAuthoring: Message {{message}} - {{author-name}} <{{author-login}}> via DecapBridge
+
+# Enable PKCE fields (optional, recommended)
+auth:
+  email_claim: email
+  first_name_claim: first_name
+  last_name_claim: last_name
+  avatar_url_claim: avatar_url
+
+# Better Decap + Bridge logo (optional)
+logo_url: https://decapbridge.com/decapcms-with-bridge.svg
+
+# Add site links in Decap CMS (optional)
+site_url: https://trinityband.netlify.app
+
+# ==============================================================================
+# COLLECTIONS
+# ==============================================================================
+
+collections:
+  # --------------------------------------------------------------------------
+  # CHANSONS
+  # --------------------------------------------------------------------------
+  - name: "chansons"
+    label: "Chansons"
+    label_singular: "Chanson"
+    folder: "content/chansons"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "toml-frontmatter"
+    editor:
+      preview: false
+    sortable_fields: ['title', 'date', 'statut', 'artiste']
+    view_filters:
+      - label: "Validées"
+        field: statut
+        pattern: 'validee'
+      - label: "En cours"
+        field: statut
+        pattern: 'en_cours'
+      - label: "Idées"
+        field: statut
+        pattern: 'idee'
+    view_groups:
+      - label: "Par statut"
+        field: statut
+      - label: "Par artiste"
+        field: artiste
+    fields:
+      # ========== INFORMATIONS DE BASE ==========
+      - {label: "Titre", name: "title", widget: "string"}
+      - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD"}
+      - {label: "Brouillon", name: "draft", widget: "boolean", default: false}
+
+      - label: "Artiste"
+        name: "artiste"
+        widget: "string"
+        required: false
+
+      - label: "Statut"
+        name: "statut"
+        widget: "select"
+        options:
+          - {label: "Validée", value: "validee"}
+          - {label: "En cours", value: "en_cours"}
+          - {label: "Idée", value: "idee"}
+        default: "idee"
+
+      - label: "Tonalité"
+        name: "tonalite"
+        widget: "select"
+        options: ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
+                  "Am", "A#m", "Bm", "Cm", "C#m", "Dm", "Ebm", "Em", "Fm", "F#m", "Gm", "G#m"]
+        default: "C"
+
+      - label: "Tempo (BPM)"
+        name: "tempo"
+        widget: "number"
+        value_type: "int"
+        min: 40
+        max: 200
+        default: 80
+
+      - label: "Capo"
+        name: "capo"
+        widget: "number"
+        value_type: "int"
+        min: 0
+        max: 12
+        default: 0
+
+      - label: "Durée"
+        name: "duree"
+        widget: "string"
+        default: "3:30"
+
+      - label: "Difficulté"
+        name: "difficulte"
+        widget: "select"
+        options:
+          - {label: "1 - Très facile", value: 1}
+          - {label: "2 - Facile", value: 2}
+          - {label: "3 - Moyen", value: 3}
+          - {label: "4 - Difficile", value: 4}
+          - {label: "5 - Très difficile", value: 5}
+        default: 2
+
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        required: false
+
+      # ========== STRUCTURE DU MORCEAU ==========
+      # Liste des sections qui composent la chanson
+      - label: "Structure"
+        name: "structure"
+        widget: "list"
+        hint: "Ordre des sections (ex: intro, couplet, refrain, couplet, refrain, outro)"
+        default: ["intro", "couplet", "refrain", "couplet", "refrain", "outro"]
+        field:
+          label: "Section"
+          name: "section"
+          widget: "select"
+          options:
+            - {label: "Intro", value: "intro"}
+            - {label: "Couplet", value: "couplet"}
+            - {label: "Refrain", value: "refrain"}
+            - {label: "Pont", value: "pont"}
+            - {label: "Solo", value: "solo"}
+            - {label: "Outro", value: "outro"}
+
+      # ========== GRILLES D'ACCORDS (DYNAMIQUE) ==========
+      # Chaque section peut avoir sa propre grille d'accords
+      - label: "Grilles d'accords"
+        name: "grilles"
+        widget: "object"
+        collapsed: false
+        hint: "Définissez les accords pour chaque section utilisée dans la structure"
+        fields:
+          - label: "Intro"
+            name: "intro"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - label: "Accords"
+                name: "accords"
+                widget: "list"
+                hint: "Liste des accords (ex: Am, G, F, E)"
+                default: ["Am", "G", "F", "E"]
+              - {label: "Nombre de mesures", name: "mesures", widget: "number", value_type: "int", default: 4, min: 1}
+              - {label: "Pattern rythmique", name: "pattern", widget: "string", default: "↓ ↓↑ ↓↑ ↓↑", hint: "Ex: ↓ ↓↑ ↓↑ ↓↑"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+
+          - label: "Couplet"
+            name: "couplet"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - label: "Accords"
+                name: "accords"
+                widget: "list"
+                default: ["Am", "G", "F", "E"]
+              - {label: "Nombre de mesures", name: "mesures", widget: "number", value_type: "int", default: 8, min: 1}
+              - {label: "Pattern rythmique", name: "pattern", widget: "string", default: "↓ ↓↑ ↓↑ ↓↑"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+
+          - label: "Refrain"
+            name: "refrain"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - label: "Accords"
+                name: "accords"
+                widget: "list"
+                default: ["C", "G", "Am", "F"]
+              - {label: "Nombre de mesures", name: "mesures", widget: "number", value_type: "int", default: 8, min: 1}
+              - {label: "Pattern rythmique", name: "pattern", widget: "string", default: "↓ ↓↑ ↓↑ ↓↑"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+
+          - label: "Pont"
+            name: "pont"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - label: "Accords"
+                name: "accords"
+                widget: "list"
+                default: ["Dm", "Am", "E", "Am"]
+              - {label: "Nombre de mesures", name: "mesures", widget: "number", value_type: "int", default: 4, min: 1}
+              - {label: "Pattern rythmique", name: "pattern", widget: "string", default: "↓ ↓↑ ↓↑ ↓↑"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+
+          - label: "Solo"
+            name: "solo"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - label: "Accords"
+                name: "accords"
+                widget: "list"
+                default: ["Am", "G", "F", "E"]
+              - {label: "Nombre de mesures", name: "mesures", widget: "number", value_type: "int", default: 8, min: 1}
+              - {label: "Pattern rythmique", name: "pattern", widget: "string", default: "Libre"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+
+          - label: "Outro"
+            name: "outro"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - label: "Accords"
+                name: "accords"
+                widget: "list"
+                default: ["Am", "G", "F", "E"]
+              - {label: "Nombre de mesures", name: "mesures", widget: "number", value_type: "int", default: 4, min: 1}
+              - {label: "Pattern rythmique", name: "pattern", widget: "string", default: "Fade out"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+
+      # ========== PAROLES ==========
+      - label: "Paroles"
+        name: "paroles"
+        widget: "object"
+        collapsed: true
+        fields:
+          - {label: "Couplet 1", name: "couplet_1", widget: "text", required: false}
+          - {label: "Couplet 2", name: "couplet_2", widget: "text", required: false}
+          - {label: "Couplet 3", name: "couplet_3", widget: "text", required: false}
+          - {label: "Refrain", name: "refrain", widget: "text", required: false}
+          - {label: "Pont", name: "pont", widget: "text", required: false}
+
+      # ========== NOTES PAR INSTRUMENT ==========
+      - label: "Notes par instrument"
+        name: "instruments"
+        widget: "object"
+        collapsed: true
+        fields:
+          - label: "Guitare"
+            name: "guitare"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - {label: "Rôle", name: "role", widget: "string", default: "Rythmique reggae"}
+              - {label: "Notes", name: "notes", widget: "text", required: false}
+
+          - label: "Basse"
+            name: "basse"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - {label: "Rôle", name: "role", widget: "string", default: "Ligne mélodique"}
+              - {label: "Notes", name: "notes", widget: "text", required: false}
+
+          - label: "Piano/Clavier"
+            name: "piano"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - {label: "Rôle", name: "role", widget: "string", default: "Accompagnement"}
+              - {label: "Notes", name: "notes", widget: "text", required: false}
+
+          - label: "Batterie"
+            name: "batterie"
+            widget: "object"
+            collapsed: true
+            required: false
+            fields:
+              - {label: "Rôle", name: "role", widget: "string", default: "One drop"}
+              - {label: "Notes", name: "notes", widget: "text", required: false}
+
+      # ========== ENREGISTREMENTS ==========
+      - label: "Enregistrements"
+        name: "enregistrements"
+        widget: "list"
+        required: false
+        collapsed: true
+        label_singular: "Enregistrement"
+        summary: "{{fields.titre}} - {{fields.date}}"
+        fields:
+          - {label: "Titre", name: "titre", widget: "string"}
+          - {label: "Fichier audio", name: "url", widget: "file", media_folder: "/static/songs", public_folder: "/songs"}
+          - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD"}
+
+      # ========== NOTES SUPPLÉMENTAIRES ==========
+      - {label: "Notes supplémentaires", name: "body", widget: "markdown", required: false}
+
+  # --------------------------------------------------------------------------
+  # SETLISTS
+  # --------------------------------------------------------------------------
+  - name: "setlists"
+    label: "Setlists"
+    label_singular: "Setlist"
+    folder: "content/setlists"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "toml-frontmatter"
+    editor:
+      preview: false
+    summary: "{{title}} - {{date}} ({{lieu}})"
+    fields:
+      - {label: "Titre", name: "title", widget: "string", hint: "Ex: Concert Fête de la Musique 2025"}
+      - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD"}
+      - {label: "Brouillon", name: "draft", widget: "boolean", default: false}
+      - {label: "Lieu", name: "lieu", widget: "string", required: false}
+      - {label: "Durée totale estimée", name: "duree_totale", widget: "string", required: false, hint: "Ex: 1h30"}
+
+      # Liste des chansons avec sélection depuis les chansons validées
+      - label: "Programme"
+        name: "chansons"
+        widget: "list"
+        label_singular: "Chanson"
+        summary: "{{fields.chanson_ref}} ({{fields.tonalite_live}})"
+        fields:
+          # Menu déroulant avec les chansons validées
+          - label: "Chanson"
+            name: "chanson_ref"
+            widget: "relation"
+            collection: "chansons"
+            search_fields: ["title", "artiste"]
+            value_field: "title"
+            display_fields: ["title", "artiste", "tonalite"]
+            options_length: 50
+            # Filtrer uniquement les chansons validées
+            filter:
+              field: "statut"
+              value: "validee"
+
+          # Tonalité pour ce concert (peut différer de l'originale)
+          - label: "Tonalité live"
+            name: "tonalite_live"
+            widget: "select"
+            required: false
+            hint: "Laisser vide pour utiliser la tonalité originale"
+            options: ["", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
+                      "Am", "A#m", "Bm", "Cm", "C#m", "Dm", "Ebm", "Em", "Fm", "F#m", "Gm", "G#m"]
+
+          # Notes spécifiques pour ce concert
+          - label: "Notes"
+            name: "notes"
+            widget: "string"
+            required: false
+            hint: "Ex: Version courte, Sans intro, etc."
+
+      - {label: "Notes générales", name: "body", widget: "markdown", required: false}
+
+  # --------------------------------------------------------------------------
+  # PAGES
+  # --------------------------------------------------------------------------
+  - name: "pages"
+    label: "Pages"
+    files:
+      - label: "Accueil"
+        name: "home"
+        file: "content/_index.md"
+        fields:
+          - {label: "Titre", name: "title", widget: "string"}
+          - {label: "Contenu", name: "body", widget: "markdown"}

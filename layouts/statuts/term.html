@@ -1,0 +1,70 @@
+{{ define "main" }}
+<div class="max-w-5xl mx-auto px-4 py-8">
+  {{/* Le terme de taxonomie (ex: "validee", "idee", "en_cours") */}}
+  {{ $term := .Data.Term }}
+
+  {{/* Récupérer toutes les chansons avec ce statut */}}
+  {{ $allChansons := where site.RegularPages "Section" "chansons" }}
+  {{ $chansons := where $allChansons "Params.statut" $term }}
+
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-primary mb-2">{{ .Title }}</h1>
+    {{ with .Description }}
+    <p class="text-secondary text-lg">{{ . }}</p>
+    {{ end }}
+    <p class="text-tertiary mt-2">{{ len $chansons }} chanson{{ if gt (len $chansons) 1 }}s{{ end }}</p>
+  </header>
+
+  {{ if $chansons }}
+  <div class="grid gap-4">
+    {{ range $chansons }}
+    <a href="{{ .RelPermalink }}" class="section-card card-hover block">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-primary mb-1">{{ .Title }}</h2>
+          <div class="flex flex-wrap items-center gap-3 text-sm">
+            {{ with .Params.artiste }}
+            <span class="text-secondary">{{ . }}</span>
+            {{ end }}
+            {{ with .Params.tonalite }}
+            <span class="chord-box text-xs py-1 px-2">{{ . }}</span>
+            {{ end }}
+            {{ with .Params.tempo }}
+            <span class="text-tertiary">{{ . }} BPM</span>
+            {{ end }}
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          {{ with .Params.difficulte }}
+          <span class="flex">
+            {{ range seq 1 5 }}
+              {{ if le . $.Params.difficulte }}
+              <span class="difficulty-star text-sm">★</span>
+              {{ else }}
+              <span class="difficulty-star-empty text-sm">★</span>
+              {{ end }}
+            {{ end }}
+          </span>
+          {{ end }}
+          <span class="text-reggae-green">→</span>
+        </div>
+      </div>
+    </a>
+    {{ end }}
+  </div>
+  {{ else }}
+  <div class="section-card text-center py-12">
+    <p class="text-secondary text-lg">Aucune chanson avec le statut "{{ $term }}".</p>
+    <a href="{{ "chansons" | relURL }}/" class="inline-block mt-4 text-reggae-green hover:underline">
+      Voir toutes les chansons →
+    </a>
+  </div>
+  {{ end }}
+
+  <footer class="mt-8 pt-8 border-t border-primary">
+    <a href="{{ "chansons" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors">
+      ← Retour aux chansons
+    </a>
+  </footer>
+</div>
+{{ end }}

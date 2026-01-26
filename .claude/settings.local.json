@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(hugo config:*)"
+      "Bash(hugo config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(hugo:*)",
+      "Bash(grep:*)",
+      "Bash(git push:*)"
     ]
   }
 }

@@ -104,7 +104,7 @@ notes = """
 # Enregistrements (liens vers les versions enregistrées en répet)
 [[enregistrements]]
 titre = 'Répétition du 20 janvier'
-url = 'https://example.com/audio/another-pray-repet-2025-01-20.mp3'
+url = '/songs/AUDIO-2025-12-22-21-50-13.m4a'
 date = '2025-01-20'
 
 [[enregistrements]]

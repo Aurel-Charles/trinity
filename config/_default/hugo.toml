@@ -3,7 +3,7 @@
 # ==============================================================================
 
 baseURL = 'https://trinityband.netlify.app/'
-title = 'My New Hugo + Tailwind Site'
+title = 'The ... Band'
 defaultContentLanguage = 'fr'
 defaultContentLanguageInSubdir = false
 
@@ -180,10 +180,10 @@ uglyURLs = false
     languageCode = 'en-US'
     languageName = 'English'
     weight = 1
-    title = 'My New Hugo + Tailwind Site'
+    title = 'The ... Band'
 
   [languages.fr]
     languageCode = 'fr-FR'
     languageName = 'Français'
     weight = 2
-    title = 'Mon Nouveau Site Hugo + Tailwind'
+    title = 'The ... Band'

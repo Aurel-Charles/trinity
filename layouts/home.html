@@ -186,16 +186,19 @@
   </div>
 
   {{/* Accès rapide par tonalité */}}
+  {{ $tonalites := .Site.Taxonomies.tonalites }}
+  {{ if gt (len $tonalites) 0 }}
   <section class="mb-12">
     <h2 class="text-2xl font-bold text-primary mb-4">Par tonalité</h2>
     <div class="flex flex-wrap gap-2">
-      {{ range .Site.Taxonomies.tonalites }}
+      {{ range $tonalites }}
       <a href="{{ .Page.RelPermalink }}" class="chord-box hover:border-reggae-green hover:text-reggae-green transition-colors">
         {{ .Page.Title }} <span class="text-tertiary text-sm">({{ .Count }})</span>
       </a>
       {{ end }}
     </div>
   </section>
+  {{ end }}
 
   {{/* Contenu de la page */}}
   {{ with .Content }}

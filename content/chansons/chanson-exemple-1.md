@@ -13,6 +13,17 @@ duree = '4:15'
 difficulte = 2
 tags = ['roots', 'one drop', 'cover']
 
+# Enregistrements (liens vers les versions enregistrées en répet)
+[[enregistrements]]
+titre = 'Répétition du 20 janvier'
+url = 'https://example.com/audio/another-pray-repet-2025-01-20.mp3'
+date = '2025-01-20'
+
+[[enregistrements]]
+titre = 'Répétition du 15 janvier'
+url = 'https://example.com/audio/another-pray-repet-2025-01-15.mp3'
+date = '2025-01-15'
+
 # Structure du morceau (DOIT être avant les blocs [])
 structure = ['intro', 'couplet', 'refrain', 'couplet', 'refrain', 'refrain', 'outro']
 

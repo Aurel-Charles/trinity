@@ -292,12 +292,25 @@
 /* Auto-scroll Controls */
 .scroll-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .scroll-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .scroll-controls > * {
+    justify-content: center;
+  }
 }
 
 /* Instrument Tabs */
@@ -433,6 +446,112 @@
   inset: 0;
   background-color: #000;
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.concert-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%);
+  border-bottom: 1px solid var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+.concert-close-btn {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid var(--color-text-tertiary);
+  border-radius: 50%;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.concert-close-btn:hover {
+  border-color: var(--color-reggae-red);
+  color: var(--color-reggae-red);
+}
+
+.concert-control-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.concert-btn {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-reggae-green);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.concert-btn:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.1);
+}
+
+.concert-speed-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2rem;
+}
+
+.concert-label {
+  color: var(--color-text-tertiary);
+  font-size: 0.875rem;
+}
+
+.concert-slider {
+  width: 100px;
+  accent-color: var(--color-reggae-green);
+}
+
+.concert-value {
+  color: var(--color-reggae-gold);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.concert-info {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.concert-key {
+  padding: 0.375rem 0.75rem;
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-reggae-gold);
+  border-radius: 0.375rem;
+  color: var(--color-reggae-gold);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+
+.concert-lyrics-wrapper {
+  flex: 1;
   overflow-y: auto;
   padding: 2rem;
 }
@@ -442,6 +561,170 @@
   line-height: 1.8;
   max-width: 900px;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .concert-controls {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .concert-speed-control {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .concert-mode .lyrics-container {
+    font-size: 1.5rem;
+  }
+}
+
+/* Audio Player */
+.audio-player-container {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.audio-track {
+  display: none;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+}
+
+.audio-track.active {
+  display: block;
+  border-color: var(--color-reggae-green);
+}
+
+.audio-track-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.audio-track-title {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.audio-track-date {
+  color: var(--color-text-tertiary);
+  font-size: 0.875rem;
+}
+
+.audio-element {
+  display: none;
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.audio-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: 50%;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.audio-btn:hover {
+  border-color: var(--color-reggae-green);
+  color: var(--color-reggae-green);
+}
+
+.audio-play-btn {
+  width: 3rem;
+  height: 3rem;
+  background: var(--color-reggae-green);
+  border-color: var(--color-reggae-green);
+  color: white;
+  font-size: 1.25rem;
+}
+
+.audio-play-btn:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: white;
+}
+
+.audio-progress-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 200px;
+}
+
+.audio-progress {
+  flex: 1;
+  height: 6px;
+  accent-color: var(--color-reggae-green);
+  cursor: pointer;
+}
+
+.audio-time {
+  color: var(--color-text-tertiary);
+  font-size: 0.75rem;
+  font-family: ui-monospace, monospace;
+  min-width: 3rem;
+}
+
+.audio-volume-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.audio-volume-icon {
+  font-size: 1rem;
+}
+
+.audio-volume {
+  width: 80px;
+  height: 4px;
+  accent-color: var(--color-reggae-green);
+}
+
+@media (max-width: 640px) {
+  .audio-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .audio-controls > *:first-child {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .audio-progress-container {
+    width: 100%;
+  }
+
+  .audio-volume-container {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Chord Diagram */

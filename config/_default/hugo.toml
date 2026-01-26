@@ -12,6 +12,7 @@ defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 enableGitInfo = false    # Set to true if using Git for .Lastmod
 enableEmoji = true
+buildFuture = true       # Publier les contenus datés dans le futur (setlists à venir)
 
 # Content Settings
 # ------------------------------------------------------------------------------

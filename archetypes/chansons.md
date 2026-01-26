@@ -68,12 +68,6 @@ pont = """
 Paroles du pont
 """
 
-# Enregistrements (optionnel - liens vers les versions enregistrées)
-# [[enregistrements]]
-# titre = 'Répétition du 15 janvier'
-# url = '/audio/chanson-repet-2025-01-15.mp3'
-# date = '2025-01-15'
-
 # Notes par instrument
 [instruments.guitare]
 role = 'Rythmique reggae'
@@ -92,6 +86,12 @@ role = 'Accompagnement'
 notes = """
 - Bubble pattern classique
 """
+
+# Enregistrements (optionnel - DOIT être à la fin, après tous les blocs [])
+# [[enregistrements]]
+# titre = 'Répétition du 15 janvier'
+# url = '/audio/chanson-repet-2025-01-15.mp3'
+# date = '2025-01-15'
 +++
 
 <!-- Notes supplémentaires -->

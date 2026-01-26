@@ -232,6 +232,43 @@
   </section>
   {{ end }}
 
+  {{/* Player Audio - si des enregistrements sont disponibles */}}
+  {{ with .Params.enregistrements }}
+  <section class="mb-8">
+    <h2 class="text-2xl font-bold text-primary mb-4">Enregistrements</h2>
+    <div class="audio-player-container">
+      {{ range $index, $track := . }}
+      <div class="audio-track {{ if eq $index 0 }}active{{ end }}" data-index="{{ $index }}">
+        <div class="audio-track-info">
+          <span class="audio-track-title">{{ .titre | default (printf "Piste %d" (add $index 1)) }}</span>
+          {{ with .date }}<span class="audio-track-date">{{ . }}</span>{{ end }}
+        </div>
+        <audio id="audio-{{ $index }}" class="audio-element" preload="metadata">
+          <source src="{{ .url }}" type="audio/mpeg">
+        </audio>
+      </div>
+      {{ end }}
+
+      <div class="audio-controls">
+        <button onclick="prevTrack()" class="audio-btn" title="Piste précédente">⏮</button>
+        <button onclick="togglePlay()" class="audio-btn audio-play-btn" id="play-btn" title="Lecture/Pause">▶</button>
+        <button onclick="nextTrack()" class="audio-btn" title="Piste suivante">⏭</button>
+
+        <div class="audio-progress-container">
+          <span id="audio-current-time" class="audio-time">0:00</span>
+          <input type="range" id="audio-progress" class="audio-progress" min="0" max="100" value="0">
+          <span id="audio-duration" class="audio-time">0:00</span>
+        </div>
+
+        <div class="audio-volume-container">
+          <span class="audio-volume-icon">🔊</span>
+          <input type="range" id="audio-volume" class="audio-volume" min="0" max="100" value="80">
+        </div>
+      </div>
+    </div>
+  </section>
+  {{ end }}
+
   {{/* Navigation */}}
   <footer class="flex justify-between items-center pt-8 border-t border-primary">
     <a href="{{ "chansons" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors">
@@ -249,43 +286,6 @@
     {{ end }}
   </footer>
 </article>
-
-{{/* Player Audio - si des enregistrements sont disponibles */}}
-{{ with .Params.enregistrements }}
-<section class="mb-8">
-  <h2 class="text-2xl font-bold text-primary mb-4">Enregistrements</h2>
-  <div class="audio-player-container">
-    {{ range $index, $track := . }}
-    <div class="audio-track {{ if eq $index 0 }}active{{ end }}" data-index="{{ $index }}">
-      <div class="audio-track-info">
-        <span class="audio-track-title">{{ .titre | default (printf "Piste %d" (add $index 1)) }}</span>
-        {{ with .date }}<span class="audio-track-date">{{ . }}</span>{{ end }}
-      </div>
-      <audio id="audio-{{ $index }}" class="audio-element" preload="metadata">
-        <source src="{{ .url }}" type="audio/mpeg">
-      </audio>
-    </div>
-    {{ end }}
-
-    <div class="audio-controls">
-      <button onclick="prevTrack()" class="audio-btn" title="Piste précédente">⏮</button>
-      <button onclick="togglePlay()" class="audio-btn audio-play-btn" id="play-btn" title="Lecture/Pause">▶</button>
-      <button onclick="nextTrack()" class="audio-btn" title="Piste suivante">⏭</button>
-
-      <div class="audio-progress-container">
-        <span id="audio-current-time" class="audio-time">0:00</span>
-        <input type="range" id="audio-progress" class="audio-progress" min="0" max="100" value="0">
-        <span id="audio-duration" class="audio-time">0:00</span>
-      </div>
-
-      <div class="audio-volume-container">
-        <span class="audio-volume-icon">🔊</span>
-        <input type="range" id="audio-volume" class="audio-volume" min="0" max="100" value="80">
-      </div>
-    </div>
-  </div>
-</section>
-{{ end }}
 
 {{/* Mode Concert (caché par défaut) */}}
 <div id="concert-mode" class="concert-mode hidden">

@@ -9,48 +9,51 @@
 
 @theme {
   /* ==========================================================================
-     REGGAE COLOR PALETTE
+     REGGAE COLOR PALETTE - High Contrast Edition
      ========================================================================== */
 
-  /* Reggae Brand Colors */
-  --color-reggae-green: #1DB954;
-  --color-reggae-yellow: #FFD700;
-  --color-reggae-red: #E63946;
-  --color-reggae-dark: #1a1a2e;
-  --color-reggae-darker: #0f0f1a;
+  /* Reggae Brand Colors - Vibrant & Saturated */
+  --color-reggae-green: #22c55e;
+  --color-reggae-yellow: #facc15;
+  --color-reggae-red: #ef4444;
+  --color-reggae-gold: #fbbf24;
+  --color-reggae-dark: #0c0c14;
+  --color-reggae-darker: #050508;
 
-  /* Background Colors */
-  --color-bg-primary: #1a1a2e;
-  --color-bg-secondary: #252542;
-  --color-bg-tertiary: #2d2d4a;
-  --color-bg-accent: #1DB95420;
+  /* Background Colors - Deep & Rich */
+  --color-bg-primary: #0c0c14;
+  --color-bg-secondary: #141420;
+  --color-bg-tertiary: #1c1c2e;
+  --color-bg-accent: #22c55e15;
+  --color-bg-card: #18182a;
 
-  /* Text Colors */
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #cbd5e1;
-  --color-text-tertiary: #94a3b8;
-  --color-text-accent: #1DB954;
-  --color-text-inverse: #1a1a2e;
+  /* Text Colors - High Contrast */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e2e8f0;
+  --color-text-tertiary: #a1a1aa;
+  --color-text-accent: #4ade80;
+  --color-text-inverse: #0c0c14;
 
-  /* Border Colors */
-  --color-border-primary: #3d3d5c;
-  --color-border-secondary: #4d4d6a;
-  --color-border-accent: #1DB954;
+  /* Border Colors - More Visible */
+  --color-border-primary: #3f3f5c;
+  --color-border-secondary: #52527a;
+  --color-border-accent: #22c55e;
+  --color-border-subtle: #2a2a40;
 
   /* Accent Colors */
-  --color-accent-primary: #1DB954;
-  --color-accent-secondary: #FFD700;
-  --color-accent-hover: #1ed760;
+  --color-accent-primary: #22c55e;
+  --color-accent-secondary: #facc15;
+  --color-accent-hover: #4ade80;
 
   /* Semantic Colors - Status */
-  --color-success: #1DB954;      /* Validée */
-  --color-warning: #FFD700;      /* En cours */
-  --color-error: #E63946;        /* Idée */
-  --color-info: #3b82f6;
+  --color-success: #22c55e;      /* Validée */
+  --color-warning: #facc15;      /* En cours */
+  --color-error: #ef4444;        /* Idée */
+  --color-info: #60a5fa;
 
   /* Utility Colors */
-  --color-shadow: rgba(0, 0, 0, 0.3);
-  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-shadow: rgba(0, 0, 0, 0.5);
+  --color-overlay: rgba(0, 0, 0, 0.85);
 }
 
 /* Light Mode (optional - site is dark by default) */
@@ -178,36 +181,42 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
+  padding: 0.375rem 1rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .badge-validee {
-  background-color: var(--color-reggae-green);
+  background: linear-gradient(135deg, var(--color-reggae-green), #16a34a);
   color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .badge-en_cours {
-  background-color: var(--color-reggae-yellow);
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--color-reggae-yellow), #eab308);
+  color: #0c0c14;
+  font-weight: 800;
 }
 
 .badge-idee {
-  background-color: var(--color-reggae-red);
+  background: linear-gradient(135deg, var(--color-reggae-red), #dc2626);
   color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Difficulty Stars */
 .difficulty-star {
-  color: var(--color-reggae-yellow);
+  color: var(--color-reggae-gold);
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
 }
 
 .difficulty-star-empty {
-  color: var(--color-border-primary);
+  color: var(--color-border-secondary);
+  opacity: 0.5;
 }
 
 /* Chord Box */
@@ -218,93 +227,124 @@
   min-width: 3rem;
   padding: 0.5rem 0.75rem;
   background-color: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: 0.375rem;
+  border: 2px solid var(--color-reggae-gold);
+  border-radius: 0.5rem;
   font-family: ui-monospace, monospace;
-  font-weight: 600;
-  color: var(--color-reggae-yellow);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-reggae-gold);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Section Card */
 .section-card {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg-card);
   border: 1px solid var(--color-border-primary);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .section-card-title {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background-color: var(--color-reggae-green);
+  padding: 0.375rem 1rem;
+  background: linear-gradient(135deg, var(--color-reggae-green), #16a34a);
   color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  border-radius: 0.25rem;
-  margin-bottom: 0.75rem;
+  letter-spacing: 0.05em;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
 }
 
 /* Lyrics Container */
 .lyrics-container {
-  font-size: 1.125rem;
-  line-height: 2;
+  font-size: 1.2rem;
+  line-height: 2.2;
   white-space: pre-wrap;
+  color: var(--color-text-secondary);
 }
 
 .lyrics-line {
-  padding: 0.25rem 0;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  margin: 0.125rem 0;
+}
+
+.lyrics-line:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .lyrics-line.active {
-  background-color: var(--color-reggae-green);
+  background: linear-gradient(135deg, var(--color-reggae-green), #16a34a);
   color: white;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  font-weight: 600;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  transform: scale(1.02);
 }
 
 /* Auto-scroll Controls */
 .scroll-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
 }
 
+@media (max-width: 640px) {
+  .scroll-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .scroll-controls > * {
+    justify-content: center;
+  }
+}
+
 /* Instrument Tabs */
 .tab-btn {
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  border-radius: 0.375rem 0.375rem 0 0;
-  border: 1px solid transparent;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  border-radius: 0.5rem 0.5rem 0 0;
+  border: 2px solid transparent;
   border-bottom: none;
-  background-color: transparent;
-  color: var(--color-text-secondary);
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-tertiary);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .tab-btn:hover {
   color: var(--color-text-primary);
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border-secondary);
 }
 
 .tab-btn.active {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg-card);
   color: var(--color-reggae-green);
-  border-color: var(--color-border-primary);
+  border-color: var(--color-reggae-green);
+  border-bottom-color: var(--color-bg-card);
 }
 
 .tab-content {
   display: none;
-  padding: 1rem;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
+  padding: 1.5rem;
+  background-color: var(--color-bg-card);
+  border: 2px solid var(--color-reggae-green);
+  border-top: none;
   border-radius: 0 0.5rem 0.5rem 0.5rem;
 }
 
@@ -317,26 +357,36 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: 0.5rem;
+  padding: 1.25rem;
+  background-color: var(--color-bg-card);
+  border: 2px solid var(--color-border-primary);
+  border-radius: 0.75rem;
   cursor: grab;
   transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .setlist-item:hover {
   border-color: var(--color-reggae-green);
+  background-color: var(--color-bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
 }
 
 .setlist-item.dragging {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: grabbing;
+  border-color: var(--color-reggae-gold);
 }
 
 .setlist-item .drag-handle {
   color: var(--color-text-tertiary);
   cursor: grab;
+  transition: color 0.2s;
+}
+
+.setlist-item:hover .drag-handle {
+  color: var(--color-reggae-green);
 }
 
 /* Transposition Buttons */
@@ -344,30 +394,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   background-color: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: 0.375rem;
+  border: 2px solid var(--color-border-secondary);
+  border-radius: 0.5rem;
   color: var(--color-text-primary);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.25rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .transpose-btn:hover {
-  background-color: var(--color-reggae-green);
+  background: linear-gradient(135deg, var(--color-reggae-green), #16a34a);
   border-color: var(--color-reggae-green);
   color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
 /* Filter Tabs */
 .filter-tab {
-  padding: 0.5rem 1.5rem;
-  font-weight: 500;
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
   border-radius: 9999px;
-  border: 1px solid var(--color-border-primary);
-  background-color: transparent;
+  border: 2px solid var(--color-border-secondary);
+  background-color: var(--color-bg-tertiary);
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.2s;
@@ -375,13 +428,21 @@
 
 .filter-tab:hover {
   border-color: var(--color-reggae-green);
-  color: var(--color-reggae-green);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
 }
 
 .filter-tab.active {
-  background-color: var(--color-reggae-green);
+  background: linear-gradient(135deg, var(--color-reggae-green), #16a34a);
   border-color: var(--color-reggae-green);
   color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Hidden utility */
+.hidden {
+  display: none !important;
 }
 
 /* Concert Mode */
@@ -390,6 +451,116 @@
   inset: 0;
   background-color: #000;
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.concert-mode.hidden {
+  display: none !important;
+}
+
+.concert-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%);
+  border-bottom: 1px solid var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+.concert-close-btn {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid var(--color-text-tertiary);
+  border-radius: 50%;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.concert-close-btn:hover {
+  border-color: var(--color-reggae-red);
+  color: var(--color-reggae-red);
+}
+
+.concert-control-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.concert-btn {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-reggae-green);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.concert-btn:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.1);
+}
+
+.concert-speed-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2rem;
+}
+
+.concert-label {
+  color: var(--color-text-tertiary);
+  font-size: 0.875rem;
+}
+
+.concert-slider {
+  width: 100px;
+  accent-color: var(--color-reggae-green);
+}
+
+.concert-value {
+  color: var(--color-reggae-gold);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.concert-info {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.concert-key {
+  padding: 0.375rem 0.75rem;
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-reggae-gold);
+  border-radius: 0.375rem;
+  color: var(--color-reggae-gold);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+
+.concert-lyrics-wrapper {
+  flex: 1;
   overflow-y: auto;
   padding: 2rem;
 }
@@ -399,6 +570,170 @@
   line-height: 1.8;
   max-width: 900px;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .concert-controls {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .concert-speed-control {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .concert-mode .lyrics-container {
+    font-size: 1.5rem;
+  }
+}
+
+/* Audio Player */
+.audio-player-container {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.audio-track {
+  display: none;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+}
+
+.audio-track.active {
+  display: block;
+  border-color: var(--color-reggae-green);
+}
+
+.audio-track-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.audio-track-title {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.audio-track-date {
+  color: var(--color-text-tertiary);
+  font-size: 0.875rem;
+}
+
+.audio-element {
+  display: none;
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.audio-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: 50%;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.audio-btn:hover {
+  border-color: var(--color-reggae-green);
+  color: var(--color-reggae-green);
+}
+
+.audio-play-btn {
+  width: 3rem;
+  height: 3rem;
+  background: var(--color-reggae-green);
+  border-color: var(--color-reggae-green);
+  color: white;
+  font-size: 1.25rem;
+}
+
+.audio-play-btn:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: white;
+}
+
+.audio-progress-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 200px;
+}
+
+.audio-progress {
+  flex: 1;
+  height: 6px;
+  accent-color: var(--color-reggae-green);
+  cursor: pointer;
+}
+
+.audio-time {
+  color: var(--color-text-tertiary);
+  font-size: 0.75rem;
+  font-family: ui-monospace, monospace;
+  min-width: 3rem;
+}
+
+.audio-volume-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.audio-volume-icon {
+  font-size: 1rem;
+}
+
+.audio-volume {
+  width: 80px;
+  height: 4px;
+  accent-color: var(--color-reggae-green);
+}
+
+@media (max-width: 640px) {
+  .audio-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .audio-controls > *:first-child {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .audio-progress-container {
+    width: 100%;
+  }
+
+  .audio-volume-container {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Chord Diagram */
@@ -431,4 +766,88 @@
 
 .search-input::placeholder {
   color: var(--color-text-tertiary);
+}
+
+/* =============================================================================
+   ADDITIONAL TYPOGRAPHY & READABILITY
+   ============================================================================= */
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+/* Links */
+a {
+  transition: color 0.2s, opacity 0.2s;
+}
+
+/* Prose Content */
+.prose {
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+}
+
+.prose strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.prose a {
+  color: var(--color-reggae-green);
+}
+
+.prose a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Cards hover effect */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Glow effects */
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Gradient text */
+.text-gradient-reggae {
+  background: linear-gradient(135deg, var(--color-reggae-green), var(--color-reggae-yellow), var(--color-reggae-red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-reggae-green);
 }

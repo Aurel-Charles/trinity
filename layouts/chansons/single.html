@@ -232,6 +232,43 @@
   </section>
   {{ end }}
 
+  {{/* Player Audio - si des enregistrements sont disponibles */}}
+  {{ with .Params.enregistrements }}
+  <section class="mb-8">
+    <h2 class="text-2xl font-bold text-primary mb-4">Enregistrements</h2>
+    <div class="audio-player-container">
+      {{ range $index, $track := . }}
+      <div class="audio-track {{ if eq $index 0 }}active{{ end }}" data-index="{{ $index }}">
+        <div class="audio-track-info">
+          <span class="audio-track-title">{{ .titre | default (printf "Piste %d" (add $index 1)) }}</span>
+          {{ with .date }}<span class="audio-track-date">{{ . }}</span>{{ end }}
+        </div>
+        <audio id="audio-{{ $index }}" class="audio-element" preload="metadata">
+          <source src="{{ .url }}" type="audio/mpeg">
+        </audio>
+      </div>
+      {{ end }}
+
+      <div class="audio-controls">
+        <button onclick="prevTrack()" class="audio-btn" title="Piste précédente">⏮</button>
+        <button onclick="togglePlay()" class="audio-btn audio-play-btn" id="play-btn" title="Lecture/Pause">▶</button>
+        <button onclick="nextTrack()" class="audio-btn" title="Piste suivante">⏭</button>
+
+        <div class="audio-progress-container">
+          <span id="audio-current-time" class="audio-time">0:00</span>
+          <input type="range" id="audio-progress" class="audio-progress" min="0" max="100" value="0">
+          <span id="audio-duration" class="audio-time">0:00</span>
+        </div>
+
+        <div class="audio-volume-container">
+          <span class="audio-volume-icon">🔊</span>
+          <input type="range" id="audio-volume" class="audio-volume" min="0" max="100" value="80">
+        </div>
+      </div>
+    </div>
+  </section>
+  {{ end }}
+
   {{/* Navigation */}}
   <footer class="flex justify-between items-center pt-8 border-t border-primary">
     <a href="{{ "chansons" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors">
@@ -252,8 +289,31 @@
 
 {{/* Mode Concert (caché par défaut) */}}
 <div id="concert-mode" class="concert-mode hidden">
-  <button onclick="exitConcertMode()" class="fixed top-4 right-4 text-white text-2xl hover:text-reggae-green z-50">✕</button>
-  <div id="concert-lyrics" class="lyrics-container text-white"></div>
+  {{/* Barre de contrôle concert */}}
+  <div class="concert-controls">
+    <button onclick="exitConcertMode()" class="concert-close-btn" title="Fermer (Échap)">✕</button>
+
+    <div class="concert-control-group">
+      <button id="concert-scroll-toggle" onclick="toggleConcertScroll()" class="concert-btn">
+        <span id="concert-scroll-icon">▶</span>
+      </button>
+
+      <div class="concert-speed-control">
+        <span class="concert-label">Vitesse</span>
+        <input type="range" id="concert-speed" min="1" max="10" value="5" class="concert-slider">
+        <span id="concert-speed-value" class="concert-value">5</span>
+      </div>
+    </div>
+
+    <div class="concert-info">
+      <span class="text-reggae-green font-bold">{{ .Title }}</span>
+      {{ with .Params.tonalite }}<span class="concert-key" id="concert-key">{{ . }}</span>{{ end }}
+    </div>
+  </div>
+
+  <div id="concert-lyrics-wrapper" class="concert-lyrics-wrapper">
+    <div id="concert-lyrics" class="lyrics-container text-white"></div>
+  </div>
 </div>
 
 {{/* Chargement du JavaScript externe */}}

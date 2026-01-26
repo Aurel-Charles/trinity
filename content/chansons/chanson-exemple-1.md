@@ -13,7 +13,7 @@ duree = '4:15'
 difficulte = 2
 tags = ['roots', 'one drop', 'cover']
 
-# Structure du morceau (DOIT être avant les blocs [])
+# Structure du morceau (DOIT être avant les blocs [] et [[]])
 structure = ['intro', 'couplet', 'refrain', 'couplet', 'refrain', 'refrain', 'outro']
 
 # Grilles d'accords
@@ -100,6 +100,17 @@ notes = """
 - Main droite : triades en staccato
 - Jouer léger, ne pas couvrir la guitare
 """
+
+# Enregistrements (liens vers les versions enregistrées en répet)
+[[enregistrements]]
+titre = 'Répétition du 20 janvier'
+url = '/songs/AUDIO-2025-12-22-21-50-13.m4a'
+date = '2025-01-20'
+
+[[enregistrements]]
+titre = 'Répétition du 15 janvier'
+url = 'https://example.com/audio/another-pray-repet-2025-01-15.mp3'
+date = '2025-01-15'
 +++
 
 Chanson d'exemple pour tester le template. Les paroles sont des placeholders.

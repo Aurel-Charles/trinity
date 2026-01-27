@@ -2,7 +2,7 @@
 # HUGO CORE CONFIGURATION
 # ==============================================================================
 
-baseURL = 'https://trinityband.netlify.app/'
+baseURL = 'https://aurel-charles.github.io/trinity/'
 title = 'The ... Band'
 defaultContentLanguage = 'fr'
 defaultContentLanguageInSubdir = false

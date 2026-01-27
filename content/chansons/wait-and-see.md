@@ -63,4 +63,9 @@ role = "Accompagnement"
 
 [instruments.batterie]
 role = "One drop"
+
+[[enregistrements]]
+date = "2026-01-19"
+url = "/songs/audio-2026-01-19-21-34-05.m4a"
+titre = "Wait and see"
 +++

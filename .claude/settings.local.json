@@ -6,7 +6,13 @@
       "Bash(git commit:*)",
       "Bash(hugo:*)",
       "Bash(grep:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(python3:*)",
+      "Bash(wc:*)",
+      "Bash(gh api:*)",
+      "Bash(gh run list:*)",
+      "Bash(curl:*)"
     ]
   }
 }

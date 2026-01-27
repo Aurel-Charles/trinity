@@ -15,32 +15,32 @@ structure = ["intro", "couplet", "refrain", "couplet", "refrain", "outro"]
 [grilles]
 
 [grilles.intro]
-accords = ["D-", "A-", "F", "E-", "D-"]
+accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
 mesures = 16
 pattern = "↓ ↓↑ ↓↑ ↓↑"
 
 [grilles.couplet]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-"]
+accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
 mesures = 16
 pattern = "↓ ↓↑ ↓↑ ↓↑"
 
 [grilles.refrain]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-"]
+accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
 mesures = 18
 pattern = "↓ ↓↑ ↓↑ ↓↑"
 
 [grilles.pont]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-"]
+accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
 mesures = 16
 pattern = "↓ ↓↑ ↓↑ ↓↑"
 
 [grilles.solo]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-"]
+accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
 mesures = 16
 pattern = "Libre"
 
 [grilles.outro]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-"]
+accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
 mesures = 16
 pattern = "Fade out"
 

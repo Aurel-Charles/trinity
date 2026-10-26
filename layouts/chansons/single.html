@@ -80,7 +80,6 @@
     </div>
 
     {{ with .Params.instruments }}
-    {{/* Guitare */}}
     <div id="tab-guitare" class="tab-content active">
       {{ with .guitare }}
       <div class="mb-2 text-reggae-green font-semibold">{{ .role }}</div>
@@ -88,7 +87,6 @@
       {{ end }}
     </div>
 
-    {{/* Basse */}}
     <div id="tab-basse" class="tab-content">
       {{ with .basse }}
       <div class="mb-2 text-reggae-green font-semibold">{{ .role }}</div>
@@ -96,7 +94,6 @@
       {{ end }}
     </div>
 
-    {{/* Piano */}}
     <div id="tab-piano" class="tab-content">
       {{ with .piano }}
       <div class="mb-2 text-reggae-green font-semibold">{{ .role }}</div>
@@ -119,33 +116,45 @@
     <div class="grid gap-4">
       {{ $page := . }}
       {{ $displayed := slice }}
-      {{/* Afficher les grilles dans l'ordre de la structure */}}
       {{ range .Params.structure }}
         {{ $sectionName := . }}
-        {{/* Éviter les doublons */}}
         {{ if not (in $displayed $sectionName) }}
           {{ $displayed = $displayed | append $sectionName }}
           {{ with index $page.Params.grilles $sectionName }}
           <div class="section-card">
             <span class="section-card-title">{{ $sectionName }}</span>
 
-            <div class="flex flex-wrap gap-2 mb-3">
-              {{ range .accords }}
-              <span class="chord-box chord" data-chord="{{ . }}">{{ . }}</span>
-              {{ end }}
-            </div>
+            {{/* Affichage visuel par mesure */}}
+            {{ $accords := .accords }}
+            {{ $mesuresParAccord := .mesures_par_accord }}
+            
+            {{ if $mesuresParAccord }}
+              {{/* Mode grille visuelle : 4 colonnes = 4 temps par ligne */}}
+              <div class="grid grid-cols-4 gap-2 mb-3">
+                {{ range $i, $accord := $accords }}
+                  {{ $count := index $mesuresParAccord $i }}
+                  {{ range seq $count }}
+                    <span class="chord-box chord text-center py-3 px-2" data-chord="{{ $accord }}">{{ $accord }}</span>
+                  {{ end }}
+                {{ end }}
+              </div>
+            {{ else }}
+              {{/* Mode simple */}}
+              <div class="flex flex-wrap gap-2 mb-3">
+                {{ range $accords }}
+                <span class="chord-box chord" data-chord="{{ . }}">{{ . }}</span>
+                {{ end }}
+              </div>
+            {{ end }}
 
             <div class="flex flex-wrap gap-4 text-sm text-secondary">
-              {{ with .mesures }}
-              <span>{{ . }} mesures</span>
-              {{ end }}
               {{ with .pattern }}
               <span class="font-mono">{{ . }}</span>
               {{ end }}
             </div>
 
             {{ with .notes }}
-            <div class="mt-2 text-sm text-tertiary italic">{{ . }}</div>
+            <div class="mt-2 text-sm text-tertiary italic whitespace-pre-wrap">{{ . }}</div>
             {{ end }}
           </div>
           {{ end }}
@@ -188,18 +197,15 @@
           {{ $sectionName := . }}
           {{ $lyricsKey := $sectionName }}
 
-          {{/* Construire la clé des paroles avec numérotation */}}
           {{ if eq $sectionName "couplet" }}
             {{ $coupletCount = add $coupletCount 1 }}
             {{ $lyricsKey = printf "couplet_%d" $coupletCount }}
           {{ else if eq $sectionName "refrain" }}
             {{ $refrainCount = add $refrainCount 1 }}
-            {{/* Le refrain utilise souvent les mêmes paroles */}}
             {{ $lyricsKey = "refrain" }}
           {{ else if eq $sectionName "pont" }}
             {{ $pontCount = add $pontCount 1 }}
             {{ $lyricsKey = printf "pont_%d" $pontCount }}
-            {{/* Fallback sur "pont" si pont_1 n'existe pas */}}
             {{ if not (index $page.Params.paroles $lyricsKey) }}
               {{ $lyricsKey = "pont" }}
             {{ end }}
@@ -232,7 +238,7 @@
   </section>
   {{ end }}
 
-  {{/* Player Audio - si des enregistrements sont disponibles */}}
+  {{/* Player Audio */}}
   {{ with .Params.enregistrements }}
   <section class="mb-8">
     <h2 class="text-2xl font-bold text-primary mb-4">Enregistrements</h2>
@@ -287,9 +293,8 @@
   </footer>
 </article>
 
-{{/* Mode Concert (caché par défaut) */}}
+{{/* Mode Concert */}}
 <div id="concert-mode" class="concert-mode hidden">
-  {{/* Barre de contrôle concert */}}
   <div class="concert-controls">
     <button onclick="exitConcertMode()" class="concert-close-btn" title="Fermer (Échap)">✕</button>
 
@@ -316,7 +321,6 @@
   </div>
 </div>
 
-{{/* Chargement du JavaScript externe */}}
 {{ $js := resources.Get "js/chansons.js" | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
 {{ end }}

@@ -1,71 +1,43 @@
 +++
-title = "Wait and see"
-date = "2026-01-27"
+title = 'Wait and See'
+date = 2026-10-13
 draft = false
-artiste = "Trinity"
-statut = "en_cours"
-tonalite = "Dm"
-tempo = 120
+
+artiste = 'Original'
+statut = 'validee'
+tonalite = 'Dm'
+tempo = 88
 capo = 0
-duree = "4:30"
-difficulte = 3
-tags = ["Stepper", "Roots"]
-structure = ["intro", "couplet", "refrain", "couplet", "refrain", "outro"]
+duree = '3:50'
+difficulte = 2
+tags = ['ska', 'upbeat', 'original']
 
-[grilles]
+structure = ['grille']
 
-[grilles.intro]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
-mesures = 16
-pattern = "↓ ↓↑ ↓↑ ↓↑"
-
-[grilles.couplet]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
-mesures = 16
-pattern = "↓ ↓↑ ↓↑ ↓↑"
-
-[grilles.refrain]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
-mesures = 18
-pattern = "↓ ↓↑ ↓↑ ↓↑"
-
-[grilles.pont]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
-mesures = 16
-pattern = "↓ ↓↑ ↓↑ ↓↑"
-
-[grilles.solo]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
-mesures = 16
-pattern = "Libre"
-
-[grilles.outro]
-accords = ["D-", "D-", "A-", "A-", "F", "E-", "D-", "D-"]
-mesures = 16
-pattern = "Fade out"
+[grilles.grille]
+accords = ['Dm', 'Am', 'F', 'Em', 'Dm']
+mesures_par_accord = [4, 4, 2, 2, 4]
+pattern = '↓ ↓↑ ↓↑ ↓↑'
+notes = 'Dm x4 / Am x4 / F x2 / Em x2 / Dm x4'
 
 [paroles]
-couplet_1 = "Couplet1 \"Wait and see\""
-couplet_2 = "Couplet2 \"\"Wait and see\""
-couplet_3 = "Couplet3 \"Wait and see\""
-refrain = "Refrain \"\"Wait and see\""
+couplet_1 = """
+(Paroles à compléter)
+"""
 
-[instruments]
+refrain = """
+(Paroles à compléter)
+"""
 
 [instruments.guitare]
-role = "Rythmique reggae"
+role = 'Ska upstroke'
+notes = '- Attaque franche'
 
 [instruments.basse]
-role = "Ligne mélodique"
+role = 'Walking bass'
+notes = '- Style ska traditionnel'
 
 [instruments.piano]
-role = "Accompagnement"
-
-[instruments.batterie]
-role = "One drop"
-
-[[enregistrements]]
-date = "2026-01-19"
-url = "/songs/audio-2026-01-19-21-34-05.m4a"
-titre = "Wait and see"
+role = 'Stabs ska'
+notes = '- Accords courts'
 +++

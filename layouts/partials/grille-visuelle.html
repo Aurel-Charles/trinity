@@ -1,0 +1,23 @@
+{{/* Affichage visuel des accords par mesure */}}
+{{/* Si mesures_par_accord existe, on répète chaque accord */}}
+{{ $accords := .accords }}
+{{ $mesuresParAccord := .mesures_par_accord }}
+
+{{ if $mesuresParAccord }}
+  {{/* Mode visuel : répéter chaque accord selon son nombre de mesures */}}
+  <div class="grid grid-cols-4 gap-2 mb-3">
+    {{ range $i, $accord := $accords }}
+      {{ $count := index $mesuresParAccord $i | default 1 }}
+      {{ range seq $count }}
+        <span class="chord-box chord text-center py-3" data-chord="{{ $accord }}">{{ $accord }}</span>
+      {{ end }}
+    {{ end }}
+  </div>
+{{ else }}
+  {{/* Mode simple : afficher chaque accord une fois */}}
+  <div class="flex flex-wrap gap-2 mb-3">
+    {{ range $accords }}
+      <span class="chord-box chord" data-chord="{{ . }}">{{ . }}</span>
+    {{ end }}
+  </div>
+{{ end }}

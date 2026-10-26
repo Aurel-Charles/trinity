@@ -188,3 +188,6 @@ uglyURLs = false
     languageName = 'Français'
     weight = 2
     title = 'The ... Band'
+
+  [security.exec]
+    allow = ['^(dart-)?sass$', '^go$', '^git$', '^node$', '^postcss$', '^tailwindcss$']

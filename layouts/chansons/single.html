@@ -26,7 +26,8 @@
       </div>
       {{ end }}
       {{ with .Params.tempo }}<div class="meta-tile"><span class="meta-tile-label">Tempo</span><span class="meta-tile-value">{{ . }} <small>BPM</small></span></div>{{ end }}
-      {{ with .Params.duree }}<div class="meta-tile"><span class="meta-tile-label">Durée</span><span class="meta-tile-value">{{ . }}</span></div>{{ end }}
+      {{ $duree := partial "trinity/duree-chanson.html" . }}
+      {{ with $duree }}<div class="meta-tile"><span class="meta-tile-label">{{ if and $.Params.enregistrements (ne . ($.Params.duree | default "")) }}Durée · dernière répète{{ else }}Durée estimée{{ end }}</span><span class="meta-tile-value">{{ . }}</span></div>{{ end }}
       {{ with .Params.capo }}{{ if gt . 0 }}<div class="meta-tile"><span class="meta-tile-label">Capo</span><span class="meta-tile-value">case {{ . }}</span></div>{{ end }}{{ end }}
       {{ with .Params.difficulte }}<div class="meta-tile"><span class="meta-tile-label">Difficulté</span><span class="meta-tile-value">{{ . }}<small> / 5</small></span></div>{{ end }}
     </div>

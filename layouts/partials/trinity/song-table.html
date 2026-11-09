@@ -18,7 +18,7 @@
       </span>
       <span>{{ with $p.Params.tonalite }}<span class="chord-box">{{ . }}</span>{{ end }}</span>
       <span class="col-tempo font-mono">{{ with $p.Params.tempo }}{{ . }} <span class="text-xs text-muted">BPM</span>{{ else }}<span class="text-muted">—</span>{{ end }}</span>
-      <span class="col-duree font-mono">{{ $p.Params.duree | default "—" }}</span>
+      <span class="col-duree font-mono">{{ partial "trinity/duree-chanson.html" $p | default "—" }}</span>
       <span class="col-statut"><span class="badge badge-{{ $p.Params.statut | default "idee" }}">{{ partial "trinity/statut-label.html" $p.Params.statut }}</span></span>
     </a>
   {{ end }}

@@ -4,7 +4,7 @@
 {{ $validees := where $chansons ".Params.statut" "validee" }}
 {{ $enCours := where $chansons ".Params.statut" "en_cours" }}
 {{ $idees := where $chansons ".Params.statut" "idee" }}
-{{ $durees := slice }}{{ range $chansons }}{{ $durees = $durees | append .Params.duree }}{{ end }}
+{{ $durees := slice }}{{ range $chansons }}{{ $durees = $durees | append (partial "trinity/duree-chanson.html" .) }}{{ end }}
 {{ $totalRepertoire := partial "trinity/duree-totale.html" $durees }}
 
 {{/* Prochain concert : la setlist à venir la plus proche, sinon la plus récente */}}
@@ -28,7 +28,7 @@
 
     {{ with $prochain }}
     {{ $pages := partial "trinity/setlist-pages.html" . }}
-    {{ $d := slice }}{{ range $pages }}{{ $d = $d | append .Params.duree }}{{ end }}
+    {{ $d := slice }}{{ range $pages }}{{ $d = $d | append (partial "trinity/duree-chanson.html" .) }}{{ end }}
     <a href="{{ .RelPermalink }}" class="flex-[1_1_340px] min-w-0 rounded-[20px] p-7 flex flex-col gap-3.5 bg-accent text-on-accent hover:brightness-105">
       <span class="font-mono text-xs font-bold tracking-[0.12em] uppercase">{{ if $aVenir }}Prochain concert{{ else }}Dernière setlist{{ end }}</span>
       <span class="font-display font-extrabold text-[34px] leading-none">{{ .Title }}</span>

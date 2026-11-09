@@ -1,0 +1,18 @@
+{{- /* Durée d'une chanson :
+       1. la durée réelle du dernier enregistrement (le plus récent), si elle est connue dans data/audio.toml
+       2. sinon la durée estimée écrite dans la fiche (champ "duree")
+       Renvoie un texte "m:ss" (ou "" si rien). */ -}}
+{{- $duree := .Params.duree | default "" -}}
+{{- with .Params.enregistrements -}}
+  {{- $dernier := index (sort . "date" "desc") 0 -}}
+  {{- with $dernier.url -}}
+    {{- $url := . -}}
+    {{- with index (where (site.Data.audio.fichiers | default slice) "url" $url) 0 -}}
+      {{- $s := int .secondes -}}
+      {{- if gt $s 0 -}}
+        {{- $duree = printf "%d:%02d" (div $s 60) (mod $s 60) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $duree -}}

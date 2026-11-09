@@ -3,6 +3,11 @@
   "description": "Hugo template with Tailwind CSS v4 and SEO optimization",
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.17",
+    "music-metadata": "^12.3.5",
     "tailwindcss": "^4.1.17"
+  },
+  "scripts": {
+    "durees": "node scripts/maj-durees-audio.mjs",
+    "build": "node scripts/maj-durees-audio.mjs && hugo --gc --minify"
   }
 }

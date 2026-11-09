@@ -1,0 +1,43 @@
+# Fichier généré par scripts/maj-durees-audio.mjs — ne pas modifier à la main.
+# Durée en secondes de chaque fichier audio de static/songs/.
+
+[[fichiers]]
+url = "/songs/SLOWDOWN.mp3"
+secondes = 194
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/another-pray.mp3"
+secondes = 282
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/dreams.mp3"
+secondes = 222
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/good-feelings.mp3"
+secondes = 237
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/rise-up.mp3"
+secondes = 262
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/slow-down.mp3"
+secondes = 205
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/sweet-love.mp3"
+secondes = 246
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/tribulations.mp3"
+secondes = 257
+
+[[fichiers]]
+url = "/songs/repete-2026-11-02/wait-and-see.mp3"
+secondes = 305
+
+[[fichiers]]
+url = "/songs/wait-and-see-2026-01-19.mp3"
+secondes = 270
+

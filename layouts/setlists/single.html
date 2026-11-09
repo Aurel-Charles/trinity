@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{ $pagesChansons := partial "trinity/setlist-pages.html" . }}
-{{ $durees := slice }}{{ range $pagesChansons }}{{ $durees = $durees | append .Params.duree }}{{ end }}
+{{ $durees := slice }}{{ range $pagesChansons }}{{ $durees = $durees | append (partial "trinity/duree-chanson.html" .) }}{{ end }}
 {{ $total := partial "trinity/duree-totale.html" $durees }}
 {{ $aVenir := ge .Date now }}
 <article class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-20 flex flex-wrap gap-10 items-start">
@@ -27,7 +27,7 @@
           {{ range where site.RegularPages "Section" "chansons" }}{{ if eq .Title $ref }}{{ $page = . }}{{ end }}{{ end }}
         {{ end }}
         {{ with $page }}
-        <li class="setlist-item" draggable="true" data-slug="{{ .File.BaseFileName }}" data-index="{{ $index }}" data-duration="{{ .Params.duree }}">
+        <li class="setlist-item" draggable="true" data-slug="{{ .File.BaseFileName }}" data-index="{{ $index }}" data-duration="{{ partial "trinity/duree-chanson.html" . }}">
           <span class="drag-handle no-print" aria-hidden="true"><i data-lucide="grip-vertical" class="w-5 h-5"></i></span>
           <span class="setlist-num song-number">{{ add $index 1 }}</span>
           <span class="flex-1 min-w-0 flex flex-col gap-1">
@@ -36,7 +36,7 @@
           </span>
           {{ with ($chanson.tonalite_live | default .Params.tonalite) }}<span class="chord-box">{{ . }}</span>{{ end }}
           <span class="hidden sm:inline w-20 text-right font-mono text-[15px] text-soft">{{ with .Params.tempo }}{{ . }} BPM{{ end }}</span>
-          <span class="w-14 text-right font-mono text-[15px]">{{ .Params.duree | default "—" }}</span>
+          <span class="w-14 text-right font-mono text-[15px]">{{ partial "trinity/duree-chanson.html" . | default "—" }}</span>
         </li>
         {{ else }}
         <li class="setlist-item opacity-60" data-slug="{{ $ref }}" data-index="{{ $index }}">
@@ -164,7 +164,7 @@
       "artiste" ($page.Params.artiste | default "")
       "tonalite" (($chanson.tonalite_live | default $page.Params.tonalite) | default "")
       "tempo" ($page.Params.tempo | default 0)
-      "duree" ($page.Params.duree | default "")
+      "duree" (partial "trinity/duree-chanson.html" $page)
       "capo" ($page.Params.capo | default 0)
       "structure" ($page.Params.structure | default slice)
       "grilles" $grilles

@@ -9,7 +9,7 @@
   <div class="flex flex-col gap-4">
     {{ range .Pages.ByDate.Reverse }}
     {{ $pages := partial "trinity/setlist-pages.html" . }}
-    {{ $d := slice }}{{ range $pages }}{{ $d = $d | append .Params.duree }}{{ end }}
+    {{ $d := slice }}{{ range $pages }}{{ $d = $d | append (partial "trinity/duree-chanson.html" .) }}{{ end }}
     {{ $aVenir := ge .Date now }}
     <a href="{{ .RelPermalink }}" class="section-card card-hover flex flex-wrap items-center gap-6">
       <div class="flex flex-col items-center justify-center w-20 h-20 rounded-2xl {{ if $aVenir }}bg-accent text-on-accent{{ else }}bg-surface-2{{ end }}">

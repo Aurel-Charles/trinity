@@ -1,6 +1,8 @@
 [build]
-  # Commande pour générer le site (avec les liens minifiés pour la performance)
-  command = "hugo --gc --minify"
+  # Commande pour générer le site :
+  # 1. mesure la durée des enregistrements de static/songs/ → data/audio.toml
+  # 2. construit le site avec Hugo (minifié)
+  command = "node scripts/maj-durees-audio.mjs && hugo --gc --minify"
   # Dossier où Hugo génère le site (par défaut 'public')
   publish = "public"
 

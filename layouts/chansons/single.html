@@ -1,161 +1,80 @@
 {{ define "main" }}
-<article class="max-w-5xl mx-auto px-4 py-8">
-  {{/* Header avec métadonnées */}}
-  <header class="mb-8">
-    <div class="flex flex-wrap items-center gap-3 mb-4">
-      <span class="badge badge-{{ .Params.statut }}">{{ .Params.statut | default "idee" }}</span>
-      {{ with .Params.artiste }}
-      <a href="{{ "artistes" | relURL }}/{{ . | urlize }}/" class="text-secondary hover:text-reggae-green transition-colors">
-        {{ . }}
-      </a>
-      {{ end }}
+{{ $page := . }}
+<article class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-20 flex flex-col gap-10">
+
+  {{/* En-tête */}}
+  <header class="flex flex-col gap-5">
+    <a href="{{ "chansons" | relURL }}/" class="inline-flex items-center gap-2 min-h-11 self-start text-soft hover:text-accent">
+      <i data-lucide="chevron-left" class="w-[18px] h-[18px]"></i> Tous les morceaux
+    </a>
+    <div class="flex flex-wrap items-center gap-2.5">
+      <span class="badge badge-{{ .Params.statut | default "idee" }}">{{ partial "trinity/statut-label.html" .Params.statut }}</span>
+      {{ with .Params.artiste }}<a href="{{ "artistes" | relURL }}/{{ . | urlize }}/" class="text-sm text-muted hover:text-accent">{{ . }}</a>{{ end }}
+      {{ with .Params.tags }}<span class="text-dim" aria-hidden="true">·</span><span class="text-sm text-muted">{{ delimit . " · " }}</span>{{ end }}
     </div>
+    <h1 class="text-6xl sm:text-8xl leading-[0.9] tracking-[-0.04em]">{{ .Title }}</h1>
 
-    <h1 class="text-4xl font-bold text-primary mb-4">{{ .Title }}</h1>
-
-    {{/* Métadonnées principales */}}
-    <div class="flex flex-wrap gap-6 text-secondary">
+    <div class="flex flex-wrap gap-3 mt-2">
       {{ with .Params.tonalite }}
-      <div class="flex items-center gap-2">
-        <span class="text-tertiary">Tonalité:</span>
-        <span class="chord-box text-sm" id="current-key">{{ . }}</span>
+      <div class="meta-tile !flex-row items-center gap-3.5 !py-3 !pl-4.5 !pr-3">
+        <span class="meta-tile-label">Tonalité</span>
+        <button type="button" class="transpose-btn" onclick="transpose(-1)" aria-label="Descendre d'un demi-ton">−</button>
+        <span id="current-key" class="min-w-14 text-center font-mono font-bold text-2xl text-accent">{{ . }}</span>
+        <button type="button" class="transpose-btn" onclick="transpose(1)" aria-label="Monter d'un demi-ton">+</button>
+        <span class="font-mono text-sm text-muted" aria-live="polite"><span id="transpose-value">0</span> ½ton</span>
+        <button type="button" class="text-sm text-soft underline min-h-11 px-2 hover:text-accent" onclick="resetTranspose()">Revenir</button>
       </div>
       {{ end }}
-
-      {{ with .Params.tempo }}
-      <div class="flex items-center gap-2">
-        <span class="text-tertiary">Tempo:</span>
-        <span class="font-semibold">{{ . }} BPM</span>
-      </div>
-      {{ end }}
-
-      {{ with .Params.duree }}
-      <div class="flex items-center gap-2">
-        <span class="text-tertiary">Durée:</span>
-        <span class="font-semibold">{{ . }}</span>
-      </div>
-      {{ end }}
-
-      {{ with .Params.capo }}
-      {{ if gt . 0 }}
-      <div class="flex items-center gap-2">
-        <span class="text-tertiary">Capo:</span>
-        <span class="font-semibold">Fret {{ . }}</span>
-      </div>
-      {{ end }}
-      {{ end }}
-
-      {{ with .Params.difficulte }}
-      <div class="flex items-center gap-2">
-        <span class="text-tertiary">Difficulté:</span>
-        <span class="flex">
-          {{ range seq 1 5 }}
-            {{ if le . $.Params.difficulte }}
-            <span class="difficulty-star">★</span>
-            {{ else }}
-            <span class="difficulty-star-empty">★</span>
-            {{ end }}
-          {{ end }}
-        </span>
-      </div>
-      {{ end }}
-    </div>
-
-    {{/* Transposition */}}
-    <div class="flex items-center gap-3 mt-4 p-3 bg-secondary rounded-lg inline-flex">
-      <span class="text-tertiary text-sm">Transposer:</span>
-      <button class="transpose-btn" onclick="transpose(-1)" title="- 1 demi-ton">−</button>
-      <span id="transpose-value" class="font-mono font-semibold w-8 text-center">0</span>
-      <button class="transpose-btn" onclick="transpose(1)" title="+ 1 demi-ton">+</button>
-      <button class="text-sm text-tertiary hover:text-reggae-green ml-2" onclick="resetTranspose()">Reset</button>
+      {{ with .Params.tempo }}<div class="meta-tile"><span class="meta-tile-label">Tempo</span><span class="meta-tile-value">{{ . }} <small>BPM</small></span></div>{{ end }}
+      {{ with .Params.duree }}<div class="meta-tile"><span class="meta-tile-label">Durée</span><span class="meta-tile-value">{{ . }}</span></div>{{ end }}
+      {{ with .Params.capo }}{{ if gt . 0 }}<div class="meta-tile"><span class="meta-tile-label">Capo</span><span class="meta-tile-value">case {{ . }}</span></div>{{ end }}{{ end }}
+      {{ with .Params.difficulte }}<div class="meta-tile"><span class="meta-tile-label">Difficulté</span><span class="meta-tile-value">{{ . }}<small> / 5</small></span></div>{{ end }}
     </div>
   </header>
 
-  {{/* Onglets instruments */}}
-  <div class="mb-8">
-    <div class="flex gap-1 border-b border-primary">
-      <button class="tab-btn active" onclick="showTab('guitare')">🎸 Guitare</button>
-      <button class="tab-btn" onclick="showTab('basse')">🎸 Basse</button>
-      <button class="tab-btn" onclick="showTab('piano')">🎹 Piano</button>
+  {{/* Grilles d'accords */}}
+  <section class="flex flex-col gap-4" aria-labelledby="h-grilles">
+    <div class="flex flex-wrap items-baseline justify-between gap-3">
+      <h2 id="h-grilles">Grilles</h2>
+      {{ with .Params.structure }}<span class="font-mono text-sm text-soft">Structure : {{ delimit . " → " }}</span>{{ end }}
     </div>
-
-    {{ with .Params.instruments }}
-    <div id="tab-guitare" class="tab-content active">
-      {{ with .guitare }}
-      <div class="mb-2 text-reggae-green font-semibold">{{ .role }}</div>
-      <div class="text-secondary whitespace-pre-wrap">{{ .notes | markdownify }}</div>
-      {{ end }}
-    </div>
-
-    <div id="tab-basse" class="tab-content">
-      {{ with .basse }}
-      <div class="mb-2 text-reggae-green font-semibold">{{ .role }}</div>
-      <div class="text-secondary whitespace-pre-wrap">{{ .notes | markdownify }}</div>
-      {{ end }}
-    </div>
-
-    <div id="tab-piano" class="tab-content">
-      {{ with .piano }}
-      <div class="mb-2 text-reggae-green font-semibold">{{ .role }}</div>
-      <div class="text-secondary whitespace-pre-wrap">{{ .notes | markdownify }}</div>
-      {{ end }}
-    </div>
-    {{ end }}
-  </div>
-
-  {{/* Structure et grilles d'accords */}}
-  <section class="mb-8">
-    <h2 class="text-2xl font-bold text-primary mb-4">Structure & Grilles d'accords</h2>
-
-    {{ with .Params.structure }}
-    <div class="mb-4 text-sm text-tertiary">
-      <strong>Structure:</strong> {{ delimit . " → " }}
-    </div>
-    {{ end }}
-
-    <div class="grid gap-4">
-      {{ $page := . }}
+    <div class="flex flex-wrap gap-5">
       {{ $displayed := slice }}
+      {{ $tonique := index (findRE `^[A-G][#b]?` ($page.Params.tonalite | default "")) 0 }}
       {{ range .Params.structure }}
         {{ $sectionName := . }}
         {{ if not (in $displayed $sectionName) }}
           {{ $displayed = $displayed | append $sectionName }}
           {{ with index $page.Params.grilles $sectionName }}
-          <div class="section-card">
-            <span class="section-card-title">{{ $sectionName }}</span>
-
-            {{/* Affichage visuel par mesure */}}
+          {{ $nb := 0 }}{{ range .mesures_par_accord }}{{ $nb = add $nb . }}{{ end }}
+          <div class="section-card flex-[1_1_460px] min-w-0 flex flex-col gap-4">
+            <div class="flex justify-between items-center gap-3">
+              <h3 class="capitalize">{{ replace $sectionName "_" " " }}</h3>
+              {{ if gt $nb 0 }}<span class="font-mono text-sm text-muted">{{ $nb }} mesures</span>{{ end }}
+            </div>
             {{ $accords := .accords }}
-            {{ $mesuresParAccord := .mesures_par_accord }}
-            
-            {{ if $mesuresParAccord }}
-              {{/* Mode grille visuelle : 4 colonnes = 4 temps par ligne */}}
-              <div class="grid grid-cols-4 gap-2 mb-3">
+            {{ $mpa := .mesures_par_accord }}
+            {{ if $mpa }}
+              <div class="chord-grid">
                 {{ range $i, $accord := $accords }}
-                  {{ $count := index $mesuresParAccord $i }}
+                  {{ $count := index $mpa $i | default 1 }}
                   {{ range seq $count }}
-                    <span class="chord-box chord text-center py-3 px-2" data-chord="{{ $accord }}">{{ $accord }}</span>
+                  <span class="chord-cell chord{{ if and $tonique (hasPrefix $accord $tonique) }} accent{{ end }}" data-chord="{{ $accord }}">{{ $accord }}</span>
                   {{ end }}
                 {{ end }}
               </div>
             {{ else }}
-              {{/* Mode simple */}}
-              <div class="flex flex-wrap gap-2 mb-3">
-                {{ range $accords }}
-                <span class="chord-box chord" data-chord="{{ . }}">{{ . }}</span>
-                {{ end }}
+              <div class="flex flex-wrap gap-2">
+                {{ range $accords }}<span class="chord-box chord !text-lg !px-4 !py-2" data-chord="{{ . }}">{{ . }}</span>{{ end }}
               </div>
             {{ end }}
-
-            <div class="flex flex-wrap gap-4 text-sm text-secondary">
-              {{ with .pattern }}
-              <span class="font-mono">{{ . }}</span>
-              {{ end }}
+            {{ with .pattern }}
+            <div class="flex items-center gap-3 pt-1">
+              <span class="text-sm text-muted">Rythmique</span>
+              <span class="font-mono text-xl tracking-[0.1em]">{{ . }}</span>
             </div>
-
-            {{ with .notes }}
-            <div class="mt-2 text-sm text-tertiary italic whitespace-pre-wrap">{{ . }}</div>
             {{ end }}
+            {{ with .notes }}<div class="text-sm text-muted whitespace-pre-wrap border-t border-dashed border-line-3 pt-3">{{ . }}</div>{{ end }}
           </div>
           {{ end }}
         {{ end }}
@@ -163,85 +82,94 @@
     </div>
   </section>
 
-  {{/* Paroles avec auto-scroll */}}
-  <section class="mb-8">
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-      <h2 class="text-2xl font-bold text-primary">Paroles</h2>
-
-      <div class="scroll-controls">
-        <button id="scroll-toggle" onclick="toggleAutoScroll()" class="flex items-center gap-2 px-4 py-2 bg-reggae-green text-white rounded-lg font-semibold hover:bg-opacity-80 transition-colors">
-          <span id="scroll-icon">▶</span>
-          <span id="scroll-text">Auto-scroll</span>
-        </button>
-
-        <div class="flex items-center gap-2">
-          <label class="text-sm text-tertiary">Vitesse:</label>
-          <input type="range" id="scroll-speed" min="1" max="10" value="5" class="w-24 accent-reggae-green">
-          <span id="speed-value" class="text-sm font-mono w-6">5</span>
+  {{/* Paroles + instruments */}}
+  <section class="flex flex-wrap gap-6 items-start">
+    <div class="flex-[2_1_480px] min-w-0 flex flex-col gap-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2>Paroles</h2>
+        <div class="scroll-controls no-print">
+          <button type="button" id="scroll-toggle" onclick="toggleAutoScroll()" class="btn btn-accent">
+            <i data-lucide="play" class="w-4 h-4" id="scroll-icon"></i>
+            <span id="scroll-text">Auto-scroll</span>
+          </button>
+          <label class="flex items-center gap-2 text-sm text-muted">
+            Vitesse
+            <input type="range" id="scroll-speed" min="1" max="10" value="5" class="w-24">
+            <span id="speed-value" class="font-mono w-5 text-ink">5</span>
+          </label>
+          <button type="button" onclick="enterConcertMode()" class="btn btn-ghost">
+            <i data-lucide="maximize" class="w-4 h-4"></i> Mode concert
+          </button>
         </div>
+      </div>
 
-        <button onclick="enterConcertMode()" class="px-4 py-2 border border-primary rounded-lg text-secondary hover:border-reggae-green hover:text-reggae-green transition-colors">
-          Mode Concert
-        </button>
+      <div id="lyrics-wrapper" class="section-card max-h-[600px] overflow-y-auto">
+        <div id="lyrics" class="lyrics-container">
+          {{ $coupletCount := 0 }}{{ $pontCount := 0 }}{{ $matched := 0 }}
+          {{ range .Params.structure }}
+            {{ $sectionName := . }}
+            {{ $lyricsKey := $sectionName }}
+            {{ if eq $sectionName "couplet" }}
+              {{ $coupletCount = add $coupletCount 1 }}
+              {{ $lyricsKey = printf "couplet_%d" $coupletCount }}
+            {{ else if eq $sectionName "refrain" }}
+              {{ $lyricsKey = "refrain" }}
+            {{ else if eq $sectionName "pont" }}
+              {{ $pontCount = add $pontCount 1 }}
+              {{ $lyricsKey = printf "pont_%d" $pontCount }}
+              {{ if not (index $page.Params.paroles $lyricsKey) }}{{ $lyricsKey = "pont" }}{{ end }}
+            {{ end }}
+            {{ with index $page.Params.paroles $lyricsKey }}
+            {{ $matched = add $matched 1 }}
+            <div class="mb-6">
+              <div class="eyebrow !text-accent mb-2">{{ replace $sectionName "_" " " }}</div>
+              {{ range $i, $line := split (trim . "\n") "\n" }}{{ if $line }}<div class="lyrics-line" data-line="{{ $i }}">{{ $line }}</div>{{ end }}{{ end }}
+            </div>
+            {{ end }}
+          {{ end }}
+          {{/* Paroles dont la clé n'est pas dans la structure (ex. couplet_1, refrain) */}}
+          {{ if eq $matched 0 }}
+            {{ range $key, $txt := .Params.paroles }}
+              {{ if $txt }}
+              <div class="mb-6">
+                <div class="eyebrow !text-accent mb-2">{{ replace $key "_" " " }}</div>
+                {{ range $i, $line := split (trim $txt "\n") "\n" }}{{ if $line }}<div class="lyrics-line" data-line="{{ $i }}">{{ $line }}</div>{{ end }}{{ end }}
+              </div>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        </div>
       </div>
     </div>
 
-    <div id="lyrics-wrapper" class="section-card max-h-[600px] overflow-y-auto">
-      <div id="lyrics" class="lyrics-container">
-        {{ $page := . }}
-        {{ $coupletCount := 0 }}
-        {{ $refrainCount := 0 }}
-        {{ $pontCount := 0 }}
-
-        {{ range .Params.structure }}
-          {{ $sectionName := . }}
-          {{ $lyricsKey := $sectionName }}
-
-          {{ if eq $sectionName "couplet" }}
-            {{ $coupletCount = add $coupletCount 1 }}
-            {{ $lyricsKey = printf "couplet_%d" $coupletCount }}
-          {{ else if eq $sectionName "refrain" }}
-            {{ $refrainCount = add $refrainCount 1 }}
-            {{ $lyricsKey = "refrain" }}
-          {{ else if eq $sectionName "pont" }}
-            {{ $pontCount = add $pontCount 1 }}
-            {{ $lyricsKey = printf "pont_%d" $pontCount }}
-            {{ if not (index $page.Params.paroles $lyricsKey) }}
-              {{ $lyricsKey = "pont" }}
-            {{ end }}
-          {{ end }}
-
-          {{ $lyrics := index $page.Params.paroles $lyricsKey }}
-
-          {{ if $lyrics }}
-          <div class="mb-6">
-            <div class="text-reggae-green font-semibold text-sm uppercase mb-2">{{ $sectionName }}</div>
-            {{ range $i, $line := split (trim $lyrics "\n") "\n" }}
-              {{ if $line }}
-              <div class="lyrics-line" data-line="{{ $i }}">{{ $line }}</div>
-              {{ end }}
-            {{ end }}
-          </div>
-          {{ end }}
+    {{ with .Params.instruments }}
+    <div class="flex-[1_1_340px] min-w-0 flex flex-col gap-4">
+      <h2>Par instrument</h2>
+      <div class="flex flex-col gap-2.5">
+        {{ range $nom, $inst := . }}
+        <div class="section-card !py-4 !px-5 flex gap-4 items-start">
+          <span class="flex-[0_0_88px] font-display font-bold text-lg capitalize">{{ $nom }}</span>
+          <span class="flex flex-col gap-1 min-w-0">
+            {{ with $inst.role }}<span class="font-semibold">{{ . }}</span>{{ end }}
+            {{ with $inst.notes }}<span class="text-muted text-[15px] whitespace-pre-wrap">{{ . | markdownify }}</span>{{ end }}
+          </span>
+        </div>
         {{ end }}
       </div>
     </div>
+    {{ end }}
   </section>
 
-  {{/* Notes supplémentaires */}}
   {{ with .Content }}
-  <section class="mb-8">
-    <h2 class="text-2xl font-bold text-primary mb-4">Notes</h2>
-    <div class="prose prose-invert max-w-none">
-      {{ . }}
-    </div>
+  <section class="flex flex-col gap-4">
+    <h2>Notes</h2>
+    <div class="section-card prose-site">{{ . }}</div>
   </section>
   {{ end }}
 
-  {{/* Player Audio */}}
   {{ with .Params.enregistrements }}
-  <section class="mb-8">
-    <h2 class="text-2xl font-bold text-primary mb-4">Enregistrements</h2>
+  <section class="flex flex-col gap-4">
+    <h2>Enregistrements</h2>
     <div class="audio-player-container">
       {{ range $index, $track := . }}
       <div class="audio-track {{ if eq $index 0 }}active{{ end }}" data-index="{{ $index }}">
@@ -249,75 +177,58 @@
           <span class="audio-track-title">{{ .titre | default (printf "Piste %d" (add $index 1)) }}</span>
           {{ with .date }}<span class="audio-track-date">{{ . }}</span>{{ end }}
         </div>
-        <audio id="audio-{{ $index }}" class="audio-element" preload="metadata">
-          <source src="{{ .url }}" type="audio/mpeg">
-        </audio>
+        <audio id="audio-{{ $index }}" class="audio-element" preload="metadata"><source src="{{ .url }}" type="audio/mpeg"></audio>
       </div>
       {{ end }}
-
       <div class="audio-controls">
-        <button onclick="prevTrack()" class="audio-btn" title="Piste précédente">⏮</button>
-        <button onclick="togglePlay()" class="audio-btn audio-play-btn" id="play-btn" title="Lecture/Pause">▶</button>
-        <button onclick="nextTrack()" class="audio-btn" title="Piste suivante">⏭</button>
-
+        <button type="button" onclick="prevTrack()" class="audio-btn" aria-label="Piste précédente"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
+        <button type="button" onclick="togglePlay()" class="audio-btn audio-play-btn" id="play-btn" aria-label="Lecture / pause"><i data-lucide="play" class="w-5 h-5" id="play-icon"></i></button>
+        <button type="button" onclick="nextTrack()" class="audio-btn" aria-label="Piste suivante"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
         <div class="audio-progress-container">
           <span id="audio-current-time" class="audio-time">0:00</span>
-          <input type="range" id="audio-progress" class="audio-progress" min="0" max="100" value="0">
+          <input type="range" id="audio-progress" class="audio-progress" min="0" max="100" value="0" aria-label="Position">
           <span id="audio-duration" class="audio-time">0:00</span>
         </div>
-
         <div class="audio-volume-container">
-          <span class="audio-volume-icon">🔊</span>
-          <input type="range" id="audio-volume" class="audio-volume" min="0" max="100" value="80">
+          <i data-lucide="volume-2" class="w-4 h-4 text-muted"></i>
+          <input type="range" id="audio-volume" class="audio-volume" min="0" max="100" value="80" aria-label="Volume">
         </div>
       </div>
     </div>
   </section>
   {{ end }}
 
-  {{/* Navigation */}}
-  <footer class="flex justify-between items-center pt-8 border-t border-primary">
-    <a href="{{ "chansons" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors">
-      ← Retour aux chansons
+  <footer class="flex flex-wrap justify-between items-center gap-4 pt-8 border-t border-line">
+    <a href="{{ "chansons" | relURL }}/" class="inline-flex items-center gap-2 min-h-11 text-soft hover:text-accent">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux morceaux
     </a>
-
     {{ with .Params.tags }}
     <div class="flex flex-wrap gap-2">
-      {{ range . }}
-      <a href="{{ "tags" | relURL }}/{{ . | urlize }}/" class="text-sm px-3 py-1 bg-tertiary rounded-full text-secondary hover:text-reggae-green transition-colors">
-        #{{ . }}
-      </a>
-      {{ end }}
+      {{ range . }}<a href="{{ "tags" | relURL }}/{{ . | urlize }}/" class="text-sm px-3 py-1.5 rounded-full bg-surface-2 text-soft hover:text-accent">#{{ . }}</a>{{ end }}
     </div>
     {{ end }}
   </footer>
 </article>
 
-{{/* Mode Concert */}}
+{{/* Mode concert */}}
 <div id="concert-mode" class="concert-mode hidden">
   <div class="concert-controls">
-    <button onclick="exitConcertMode()" class="concert-close-btn" title="Fermer (Échap)">✕</button>
-
+    <button type="button" onclick="exitConcertMode()" class="concert-close-btn" aria-label="Fermer (Échap)"><i data-lucide="x" class="w-5 h-5"></i></button>
     <div class="concert-control-group">
-      <button id="concert-scroll-toggle" onclick="toggleConcertScroll()" class="concert-btn">
-        <span id="concert-scroll-icon">▶</span>
-      </button>
-
+      <button type="button" id="concert-scroll-toggle" onclick="toggleConcertScroll()" class="concert-btn" aria-label="Défilement automatique"><i data-lucide="play" class="w-5 h-5" id="concert-scroll-icon"></i></button>
       <div class="concert-speed-control">
         <span class="concert-label">Vitesse</span>
-        <input type="range" id="concert-speed" min="1" max="10" value="5" class="concert-slider">
+        <input type="range" id="concert-speed" min="1" max="10" value="5" class="concert-slider" aria-label="Vitesse">
         <span id="concert-speed-value" class="concert-value">5</span>
       </div>
     </div>
-
     <div class="concert-info">
-      <span class="text-reggae-green font-bold">{{ .Title }}</span>
+      <span class="font-display font-bold text-xl">{{ .Title }}</span>
       {{ with .Params.tonalite }}<span class="concert-key" id="concert-key">{{ . }}</span>{{ end }}
     </div>
   </div>
-
   <div id="concert-lyrics-wrapper" class="concert-lyrics-wrapper">
-    <div id="concert-lyrics" class="lyrics-container text-white"></div>
+    <div id="concert-lyrics" class="lyrics-container"></div>
   </div>
 </div>
 

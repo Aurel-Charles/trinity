@@ -1,0 +1,3 @@
+{{- /* Libellé lisible d'un statut : validee → Validée */ -}}
+{{- $labels := dict "validee" "Validée" "en_cours" "En cours" "idee" "Idée" -}}
+{{- return (index $labels (. | default "idee") | default .) -}}

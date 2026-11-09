@@ -1,182 +1,96 @@
 {{ define "main" }}
-<div class="max-w-5xl mx-auto px-4 py-8">
-  <header class="mb-8">
-    <h1 class="text-4xl font-bold text-primary mb-2">Chansons</h1>
-    <p class="text-secondary">{{ len .Pages }} chansons dans le répertoire</p>
+{{ $pages := .Pages.ByTitle }}
+{{ $validees := where $pages ".Params.statut" "validee" }}
+{{ $enCours := where $pages ".Params.statut" "en_cours" }}
+{{ $idees := where $pages ".Params.statut" "idee" }}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-20 flex flex-col gap-8">
+  <header class="flex flex-col gap-3">
+    <p class="eyebrow">Répertoire</p>
+    <h1 class="text-5xl sm:text-7xl leading-[0.95] tracking-tight">{{ .Title }}</h1>
+    <p class="text-soft">{{ len $pages }} morceaux dans le répertoire</p>
   </header>
 
-  {{/* Filtres par statut */}}
-  <div class="flex flex-wrap gap-2 mb-6">
-    <button class="filter-tab active" onclick="filterByStatus('all')">
-      Toutes ({{ len .Pages }})
-    </button>
-    {{ $validees := where .Pages ".Params.statut" "validee" }}
-    <button class="filter-tab" onclick="filterByStatus('validee')">
-      Validées ({{ len $validees }})
-    </button>
-    {{ $enCours := where .Pages ".Params.statut" "en_cours" }}
-    <button class="filter-tab" onclick="filterByStatus('en_cours')">
-      En cours ({{ len $enCours }})
-    </button>
-    {{ $idees := where .Pages ".Params.statut" "idee" }}
-    <button class="filter-tab" onclick="filterByStatus('idee')">
-      Idées ({{ len $idees }})
-    </button>
-  </div>
-
-  {{/* Recherche et tri */}}
-  <div class="flex flex-wrap gap-4 mb-6">
-    <div class="relative flex-1 min-w-[200px]">
-      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-      </svg>
-      <input
-        type="text"
-        id="search-input"
-        class="search-input"
-        placeholder="Rechercher par titre ou artiste..."
-        oninput="filterChansons()"
-      >
+  <div class="flex flex-wrap gap-3 items-center justify-between">
+    <div role="group" aria-label="Filtrer par statut" class="flex flex-wrap gap-2">
+      <button type="button" class="filter-tab active" onclick="filterByStatus('all', this)">Tous · {{ len $pages }}</button>
+      <button type="button" class="filter-tab" onclick="filterByStatus('validee', this)">Validées · {{ len $validees }}</button>
+      <button type="button" class="filter-tab" onclick="filterByStatus('en_cours', this)">En cours · {{ len $enCours }}</button>
+      <button type="button" class="filter-tab" onclick="filterByStatus('idee', this)">Idées · {{ len $idees }}</button>
     </div>
-
-    <select id="sort-select" class="px-4 py-3 bg-secondary border border-primary rounded-lg text-primary" onchange="sortChansons()">
-      <option value="title-asc">Titre A-Z</option>
-      <option value="title-desc">Titre Z-A</option>
-      <option value="artiste-asc">Artiste A-Z</option>
-      <option value="difficulty-asc">Difficulté ↑</option>
-      <option value="difficulty-desc">Difficulté ↓</option>
-    </select>
+    <div class="flex flex-wrap gap-3 flex-[0_1_520px]">
+      <label class="relative flex-1 min-w-[200px]">
+        <span class="sr-only-text">Rechercher un morceau</span>
+        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted pointer-events-none"></i>
+        <input type="search" id="search-input" class="search-input" placeholder="Rechercher un morceau…" oninput="filterChansons()">
+      </label>
+      <label class="sr-only-text" for="sort-select">Trier</label>
+      <select id="sort-select" class="select-input" onchange="sortChansons()">
+        <option value="title-asc">Titre A-Z</option>
+        <option value="title-desc">Titre Z-A</option>
+        <option value="artiste-asc">Artiste A-Z</option>
+        <option value="difficulty-asc">Difficulté ↑</option>
+        <option value="difficulty-desc">Difficulté ↓</option>
+      </select>
+    </div>
   </div>
 
-  {{/* Liste des chansons */}}
-  <div id="chansons-list" class="grid gap-4">
-    {{ range .Pages }}
-    <article
-      class="chanson-item section-card hover:border-reggae-green transition-colors"
-      data-title="{{ .Title | lower }}"
-      data-artiste="{{ .Params.artiste | lower }}"
-      data-statut="{{ .Params.statut }}"
-      data-difficulty="{{ .Params.difficulte | default 0 }}"
-    >
-      <a href="{{ .RelPermalink }}" class="flex flex-wrap items-center gap-4">
-        {{/* Statut */}}
-        <span class="badge badge-{{ .Params.statut }}">{{ .Params.statut | default "idee" }}</span>
-
-        {{/* Titre et artiste */}}
-        <div class="flex-1 min-w-[200px]">
-          <h2 class="text-xl font-semibold text-primary hover:text-reggae-green transition-colors">
-            {{ .Title }}
-          </h2>
-          {{ with .Params.artiste }}
-          <p class="text-secondary">{{ . }}</p>
-          {{ end }}
-        </div>
-
-        {{/* Métadonnées */}}
-        <div class="flex flex-wrap items-center gap-4 text-sm text-secondary">
-          {{ with .Params.tonalite }}
-          <span class="chord-box text-xs">{{ . }}</span>
-          {{ end }}
-
-          {{ with .Params.tempo }}
-          <span>{{ . }} BPM</span>
-          {{ end }}
-
-          {{ with .Params.duree }}
-          <span>{{ . }}</span>
-          {{ end }}
-
-          {{ with .Params.difficulte }}
-          <span class="flex">
-            {{ range seq 1 5 }}
-              {{ if le . $.Params.difficulte }}
-              <span class="difficulty-star text-xs">★</span>
-              {{ else }}
-              <span class="difficulty-star-empty text-xs">★</span>
-              {{ end }}
-            {{ end }}
-          </span>
-          {{ end }}
-        </div>
-
-        {{/* Flèche */}}
-        <svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-        </svg>
-      </a>
-    </article>
-    {{ end }}
+  <div class="overflow-x-auto">
+    {{ partial "trinity/song-table.html" $pages }}
   </div>
 
-  {{/* Message si aucun résultat */}}
-  <div id="no-results" class="hidden text-center py-12 text-secondary">
-    <p class="text-xl mb-2">Aucune chanson trouvée</p>
-    <p>Essayez avec d'autres termes de recherche</p>
+  <div id="no-results" class="hidden text-center py-12 text-muted">
+    Aucun morceau ne correspond. Essaie un autre mot ou un autre statut.
   </div>
 </div>
 
 <script>
 let currentFilter = 'all';
 
-function filterByStatus(status) {
+function filterByStatus(status, btn) {
   currentFilter = status;
-
-  // Mettre à jour les boutons
-  document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   filterChansons();
+}
+
+function renumber() {
+  let n = 0;
+  document.querySelectorAll('.chanson-item').forEach(item => {
+    if (!item.classList.contains('hidden')) {
+      n++;
+      const num = item.querySelector('.song-num');
+      if (num) num.textContent = String(n).padStart(2, '0');
+    }
+  });
+  return n;
 }
 
 function filterChansons() {
   const searchTerm = document.getElementById('search-input').value.toLowerCase();
-  const items = document.querySelectorAll('.chanson-item');
-  let visibleCount = 0;
-
-  items.forEach(item => {
-    const title = item.dataset.title;
-    const artiste = item.dataset.artiste;
-    const statut = item.dataset.statut;
-
-    const matchesSearch = title.includes(searchTerm) || artiste.includes(searchTerm);
-    const matchesFilter = currentFilter === 'all' || statut === currentFilter;
-
-    if (matchesSearch && matchesFilter) {
-      item.classList.remove('hidden');
-      visibleCount++;
-    } else {
-      item.classList.add('hidden');
-    }
+  document.querySelectorAll('.chanson-item').forEach(item => {
+    const matchesSearch = item.dataset.title.includes(searchTerm) || item.dataset.artiste.includes(searchTerm);
+    const matchesFilter = currentFilter === 'all' || item.dataset.statut === currentFilter;
+    item.classList.toggle('hidden', !(matchesSearch && matchesFilter));
   });
-
-  // Afficher/masquer le message "aucun résultat"
-  document.getElementById('no-results').classList.toggle('hidden', visibleCount > 0);
+  document.getElementById('no-results').classList.toggle('hidden', renumber() > 0);
 }
 
 function sortChansons() {
   const sortValue = document.getElementById('sort-select').value;
   const list = document.getElementById('chansons-list');
   const items = Array.from(list.querySelectorAll('.chanson-item'));
-
   items.sort((a, b) => {
     switch (sortValue) {
-      case 'title-asc':
-        return a.dataset.title.localeCompare(b.dataset.title);
-      case 'title-desc':
-        return b.dataset.title.localeCompare(a.dataset.title);
-      case 'artiste-asc':
-        return a.dataset.artiste.localeCompare(b.dataset.artiste);
-      case 'difficulty-asc':
-        return parseInt(a.dataset.difficulty) - parseInt(b.dataset.difficulty);
-      case 'difficulty-desc':
-        return parseInt(b.dataset.difficulty) - parseInt(a.dataset.difficulty);
-      default:
-        return 0;
+      case 'title-asc': return a.dataset.title.localeCompare(b.dataset.title);
+      case 'title-desc': return b.dataset.title.localeCompare(a.dataset.title);
+      case 'artiste-asc': return a.dataset.artiste.localeCompare(b.dataset.artiste);
+      case 'difficulty-asc': return parseInt(a.dataset.difficulty) - parseInt(b.dataset.difficulty);
+      case 'difficulty-desc': return parseInt(b.dataset.difficulty) - parseInt(a.dataset.difficulty);
+      default: return 0;
     }
   });
-
-  // Réordonner les éléments dans le DOM
   items.forEach(item => list.appendChild(item));
+  renumber();
 }
 </script>
 {{ end }}

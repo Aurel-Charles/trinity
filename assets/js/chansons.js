@@ -31,38 +31,23 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-/**
- * Transpose un accord d'un certain nombre de demi-tons
- * @param {string} chord - L'accord à transposer (ex: "Am7", "F#m", "Bb")
- * @param {number} semitones - Nombre de demi-tons (positif ou négatif)
- * @returns {string} - L'accord transposé
- */
 function transposeChord(chord, semitones) {
-  // Extraire la note de base et le suffixe (m, 7, maj7, etc.)
   const match = chord.match(/^([A-G][#b]?)(.*)$/);
   if (!match) return chord;
 
   let [, note, suffix] = match;
 
-  // Trouver l'index de la note
   let noteIndex = NOTES.indexOf(note);
   if (noteIndex === -1) noteIndex = NOTES_FLAT.indexOf(note);
   if (noteIndex === -1) return chord;
 
-  // Transposer
   let newIndex = (noteIndex + semitones + 12) % 12;
-
-  // Utiliser les dièses ou les bémols selon la note originale
   let useFlats = note.includes('b');
   let newNote = useFlats ? NOTES_FLAT[newIndex] : NOTES[newIndex];
 
   return newNote + suffix;
 }
 
-/**
- * Applique une transposition relative
- * @param {number} semitones - Nombre de demi-tons à ajouter
- */
 function transpose(semitones) {
   currentTranspose += semitones;
 
@@ -71,7 +56,6 @@ function transpose(semitones) {
     transposeValueEl.textContent = currentTranspose > 0 ? '+' + currentTranspose : currentTranspose;
   }
 
-  // Mettre à jour la tonalité affichée
   const keyEl = document.getElementById('current-key');
   if (keyEl) {
     const originalKey = keyEl.getAttribute('data-original') || keyEl.textContent;
@@ -81,15 +65,11 @@ function transpose(semitones) {
     keyEl.textContent = transposeChord(originalKey, currentTranspose);
   }
 
-  // Mettre à jour tous les accords
   originalChords.forEach(item => {
     item.element.textContent = transposeChord(item.original, currentTranspose);
   });
 }
 
-/**
- * Réinitialise la transposition à 0
- */
 function resetTranspose() {
   currentTranspose = 0;
 
@@ -126,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (speedValueEl) {
         speedValueEl.textContent = this.value;
       }
-      // Si on scrolle déjà, redémarrer avec la nouvelle vitesse
       if (isScrolling) {
         stopAutoScroll();
         startAutoScroll();
@@ -135,9 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-/**
- * Bascule l'auto-scroll on/off
- */
 function toggleAutoScroll() {
   if (isScrolling) {
     stopAutoScroll();
@@ -146,9 +122,6 @@ function toggleAutoScroll() {
   }
 }
 
-/**
- * Démarre l'auto-scroll des paroles
- */
 function startAutoScroll() {
   if (!lyricsWrapper || !speedSlider) return;
 
@@ -157,11 +130,14 @@ function startAutoScroll() {
   const scrollIcon = document.getElementById('scroll-icon');
   const scrollText = document.getElementById('scroll-text');
 
-  if (scrollIcon) scrollIcon.textContent = '⏸';
+  if (scrollIcon) {
+    scrollIcon.outerHTML = '<i data-lucide="pause" class="w-4 h-4" id="scroll-icon"></i>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
   if (scrollText) scrollText.textContent = 'Pause';
 
   const speed = parseInt(speedSlider.value);
-  const scrollSpeed = 0.5 + (speed * 0.3); // pixels par tick
+  const scrollSpeed = 0.5 + (speed * 0.3);
 
   scrollInterval = setInterval(() => {
     if (lyricsWrapper.scrollTop < lyricsWrapper.scrollHeight - lyricsWrapper.clientHeight) {
@@ -172,16 +148,16 @@ function startAutoScroll() {
   }, 50);
 }
 
-/**
- * Arrête l'auto-scroll des paroles
- */
 function stopAutoScroll() {
   isScrolling = false;
 
   const scrollIcon = document.getElementById('scroll-icon');
   const scrollText = document.getElementById('scroll-text');
 
-  if (scrollIcon) scrollIcon.textContent = '▶';
+  if (scrollIcon) {
+    scrollIcon.outerHTML = '<i data-lucide="play" class="w-4 h-4" id="scroll-icon"></i>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
   if (scrollText) scrollText.textContent = 'Auto-scroll';
 
   if (scrollInterval) {
@@ -197,9 +173,6 @@ let isConcertScrolling = false;
 let concertScrollInterval = null;
 let concertLyricsWrapper = null;
 
-/**
- * Entre en mode concert (plein écran, gros texte)
- */
 function enterConcertMode() {
   const concertMode = document.getElementById('concert-mode');
   const concertLyrics = document.getElementById('concert-lyrics');
@@ -213,7 +186,6 @@ function enterConcertMode() {
 
   concertLyricsWrapper = document.getElementById('concert-lyrics-wrapper');
 
-  // Initialiser le slider de vitesse concert
   const concertSpeedSlider = document.getElementById('concert-speed');
   if (concertSpeedSlider) {
     concertSpeedSlider.addEventListener('input', function() {
@@ -226,11 +198,10 @@ function enterConcertMode() {
       }
     });
   }
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-/**
- * Sort du mode concert
- */
 function exitConcertMode() {
   stopConcertScroll();
   const concertMode = document.getElementById('concert-mode');
@@ -240,9 +211,6 @@ function exitConcertMode() {
   document.body.style.overflow = '';
 }
 
-/**
- * Toggle l'auto-scroll en mode concert
- */
 function toggleConcertScroll() {
   if (isConcertScrolling) {
     stopConcertScroll();
@@ -251,15 +219,15 @@ function toggleConcertScroll() {
   }
 }
 
-/**
- * Démarre l'auto-scroll en mode concert
- */
 function startConcertScroll() {
   if (!concertLyricsWrapper) return;
 
   isConcertScrolling = true;
   const icon = document.getElementById('concert-scroll-icon');
-  if (icon) icon.textContent = '⏸';
+  if (icon) {
+    icon.outerHTML = '<i data-lucide="pause" class="w-5 h-5" id="concert-scroll-icon"></i>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
 
   const speedSlider = document.getElementById('concert-speed');
   const speed = speedSlider ? parseInt(speedSlider.value) : 5;
@@ -274,13 +242,13 @@ function startConcertScroll() {
   }, 50);
 }
 
-/**
- * Arrête l'auto-scroll en mode concert
- */
 function stopConcertScroll() {
   isConcertScrolling = false;
   const icon = document.getElementById('concert-scroll-icon');
-  if (icon) icon.textContent = '▶';
+  if (icon) {
+    icon.outerHTML = '<i data-lucide="play" class="w-5 h-5" id="concert-scroll-icon"></i>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
 
   if (concertScrollInterval) {
     clearInterval(concertScrollInterval);
@@ -339,7 +307,6 @@ function initAudioPlayer() {
         audio.volume = this.value / 100;
       });
     });
-    // Initialiser le volume
     audioElements.forEach(audio => {
       audio.volume = volumeSlider.value / 100;
     });
@@ -348,16 +315,22 @@ function initAudioPlayer() {
 
 function togglePlay() {
   const audio = audioElements[currentTrackIndex];
-  const playBtn = document.getElementById('play-btn');
+  const playIcon = document.getElementById('play-icon');
 
   if (!audio) return;
 
   if (audio.paused) {
     audio.play();
-    if (playBtn) playBtn.textContent = '⏸';
+    if (playIcon) {
+      playIcon.outerHTML = '<i data-lucide="pause" class="w-5 h-5" id="play-icon"></i>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
   } else {
     audio.pause();
-    if (playBtn) playBtn.textContent = '▶';
+    if (playIcon) {
+      playIcon.outerHTML = '<i data-lucide="play" class="w-5 h-5" id="play-icon"></i>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
   }
 }
 
@@ -373,6 +346,7 @@ function nextTrack() {
 
   if (wasPlaying) {
     audioElements[currentTrackIndex].play();
+    updatePlayIcon(true);
   }
 }
 
@@ -388,6 +362,7 @@ function prevTrack() {
 
   if (wasPlaying) {
     audioElements[currentTrackIndex].play();
+    updatePlayIcon(true);
   }
 }
 
@@ -396,9 +371,16 @@ function updateActiveTrack() {
     track.classList.toggle('active', index === currentTrackIndex);
   });
   updateDuration();
+  updatePlayIcon(false);
+}
 
-  const playBtn = document.getElementById('play-btn');
-  if (playBtn) playBtn.textContent = '▶';
+function updatePlayIcon(isPlaying) {
+  const playIcon = document.getElementById('play-icon');
+  if (playIcon) {
+    const iconName = isPlaying ? 'pause' : 'play';
+    playIcon.outerHTML = `<i data-lucide="${iconName}" class="w-5 h-5" id="play-icon"></i>`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
 }
 
 function updateProgress() {
@@ -441,7 +423,6 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
-  // Raccourci Espace pour toggle auto-scroll
   if (e.key === ' ' && e.target === document.body) {
     e.preventDefault();
     if (isInConcertMode) {

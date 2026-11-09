@@ -1,0 +1,13 @@
+{{- /* Renvoie les pages chansons d'une setlist, dans l'ordre */ -}}
+{{- $pages := slice -}}
+{{- range .Params.chansons -}}
+  {{- $ref := .slug | default .chanson_ref -}}
+  {{- $p := site.GetPage (printf "/chansons/%s" $ref) -}}
+  {{- if not $p -}}
+    {{- range where site.RegularPages "Section" "chansons" -}}
+      {{- if eq .Title $ref -}}{{- $p = . -}}{{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with $p -}}{{- $pages = $pages | append . -}}{{- end -}}
+{{- end -}}
+{{- return $pages -}}

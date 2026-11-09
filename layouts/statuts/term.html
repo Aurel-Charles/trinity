@@ -1,14 +1,23 @@
 {{ define "main" }}
 <div class="max-w-5xl mx-auto px-4 py-8">
-  {{/* Le terme de taxonomie (ex: "validee", "idee", "en_cours") */}}
   {{ $term := .Data.Term }}
 
-  {{/* Récupérer toutes les chansons avec ce statut */}}
   {{ $allChansons := where site.RegularPages "Section" "chansons" }}
   {{ $chansons := where $allChansons "Params.statut" $term }}
 
   <header class="mb-8">
-    <h1 class="text-4xl font-bold text-primary mb-2">{{ .Title }}</h1>
+    <h1 class="text-4xl font-bold text-primary mb-2 flex items-center gap-3">
+      {{ if eq $term "validee" }}
+      <i data-lucide="check-circle" class="w-10 h-10 text-reggae-green"></i>
+      {{ else if eq $term "en_cours" }}
+      <i data-lucide="loader" class="w-10 h-10 text-reggae-yellow"></i>
+      {{ else if eq $term "idee" }}
+      <i data-lucide="lightbulb" class="w-10 h-10 text-idea"></i>
+      {{ else }}
+      <i data-lucide="tag" class="w-10 h-10"></i>
+      {{ end }}
+      {{ .Title }}
+    </h1>
     {{ with .Description }}
     <p class="text-secondary text-lg">{{ . }}</p>
     {{ end }}
@@ -30,23 +39,25 @@
             <span class="chord-box text-xs py-1 px-2">{{ . }}</span>
             {{ end }}
             {{ with .Params.tempo }}
-            <span class="text-tertiary">{{ . }} BPM</span>
+            <span class="text-tertiary flex items-center gap-1">
+              <i data-lucide="gauge" class="w-3 h-3"></i> {{ . }} BPM
+            </span>
             {{ end }}
           </div>
         </div>
         <div class="flex items-center gap-4">
           {{ with .Params.difficulte }}
-          <span class="flex">
+          <span class="flex gap-0.5">
             {{ range seq 1 5 }}
               {{ if le . $.Params.difficulte }}
-              <span class="difficulty-star text-sm">★</span>
+              <i data-lucide="star" class="w-4 h-4 fill-reggae-yellow text-reggae-yellow"></i>
               {{ else }}
-              <span class="difficulty-star-empty text-sm">★</span>
+              <i data-lucide="star" class="w-4 h-4 text-dim"></i>
               {{ end }}
             {{ end }}
           </span>
           {{ end }}
-          <span class="text-reggae-green">→</span>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-reggae-green"></i>
         </div>
       </div>
     </a>
@@ -54,16 +65,17 @@
   </div>
   {{ else }}
   <div class="section-card text-center py-12">
+    <i data-lucide="music-2" class="w-12 h-12 mx-auto mb-4 text-tertiary"></i>
     <p class="text-secondary text-lg">Aucune chanson avec le statut "{{ $term }}".</p>
-    <a href="{{ "chansons" | relURL }}/" class="inline-block mt-4 text-reggae-green hover:underline">
-      Voir toutes les chansons →
+    <a href="{{ "chansons" | relURL }}/" class="inline-flex items-center gap-2 mt-4 text-reggae-green hover:underline">
+      Voir toutes les chansons <i data-lucide="arrow-right" class="w-4 h-4"></i>
     </a>
   </div>
   {{ end }}
 
   <footer class="mt-8 pt-8 border-t border-primary">
-    <a href="{{ "chansons" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors">
-      ← Retour aux chansons
+    <a href="{{ "chansons" | relURL }}/" class="text-secondary hover:text-reggae-green transition-colors flex items-center gap-2">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux chansons
     </a>
   </footer>
 </div>

@@ -1,0 +1,17 @@
+{{- /* Additionne des durées "m:ss" et renvoie "m:ss" (ou "" si aucune) */ -}}
+{{- $total := 0 -}}
+{{- range . -}}
+  {{- with . -}}
+    {{- $parts := split (string .) ":" -}}
+    {{- if eq (len $parts) 2 -}}
+      {{- $m := index $parts 0 | strings.TrimLeft "0" | default "0" | int -}}
+      {{- $s := index $parts 1 | strings.TrimLeft "0" | default "0" | int -}}
+      {{- $total = add $total (add (mul $m 60) $s) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $out := "" -}}
+{{- if gt $total 0 -}}
+  {{- $out = printf "%d:%02d" (div $total 60) (mod $total 60) -}}
+{{- end -}}
+{{- return $out -}}

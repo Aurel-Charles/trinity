@@ -3,17 +3,33 @@
 <head>
   {{ partial "head.html" . }}
 </head>
-<body class="bg-primary text-primary">
+<body>
   {{ partial "seo/gtm-body.html" . }}
-  <header class="bg-primary text-primary">
-    {{ partial "header.html" . }}
-  </header>
-  <main class="bg-secondary">
+  {{ partial "header.html" . }}
+  <main>
     {{ block "main" . }}
     {{ end }}
   </main>
   <footer>
     {{ partial "footer.html" . }}
   </footer>
+  <script>
+    lucide.createIcons();
+    /* Bouton soleil / lune */
+    document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var root = document.documentElement;
+        var light = !root.classList.contains('light');
+        root.classList.toggle('light', light);
+        root.classList.toggle('dark', !light);
+        try { localStorage.setItem('theme', light ? 'light' : 'dark'); } catch (e) {}
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', light ? '#FBF4EA' : '#1A0F0C');
+        document.querySelectorAll('[data-theme-toggle]').forEach(function (b) {
+          b.setAttribute('aria-label', light ? 'Passer en mode sombre' : 'Passer en mode clair');
+        });
+      });
+    });
+  </script>
 </body>
 </html>

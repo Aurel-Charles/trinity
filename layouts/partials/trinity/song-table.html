@@ -1,0 +1,26 @@
+{{- /* Tableau des morceaux. Reçoit une liste de pages chansons. */ -}}
+<div class="song-table">
+  <div class="song-row song-row-head" aria-hidden="true">
+    <span>N°</span><span>Titre</span><span>Tonalité</span><span class="col-tempo">Tempo</span><span class="col-duree">Durée</span><span class="col-statut">Statut</span>
+  </div>
+  <div id="chansons-list">
+  {{ range $i, $p := . }}
+    <a href="{{ $p.RelPermalink }}"
+       class="song-row chanson-item"
+       data-title="{{ $p.Title | lower }}"
+       data-artiste="{{ $p.Params.artiste | lower }}"
+       data-statut="{{ $p.Params.statut }}"
+       data-difficulty="{{ $p.Params.difficulte | default 0 }}">
+      <span class="song-num font-mono text-sm text-muted">{{ printf "%02d" (add $i 1) }}</span>
+      <span class="flex flex-col gap-0.5 min-w-0">
+        <span class="song-title truncate">{{ $p.Title }}</span>
+        {{ with $p.Params.artiste }}<span class="text-sm text-muted">{{ . }}</span>{{ end }}
+      </span>
+      <span>{{ with $p.Params.tonalite }}<span class="chord-box">{{ . }}</span>{{ end }}</span>
+      <span class="col-tempo font-mono">{{ with $p.Params.tempo }}{{ . }} <span class="text-xs text-muted">BPM</span>{{ else }}<span class="text-muted">—</span>{{ end }}</span>
+      <span class="col-duree font-mono">{{ $p.Params.duree | default "—" }}</span>
+      <span class="col-statut"><span class="badge badge-{{ $p.Params.statut | default "idee" }}">{{ partial "trinity/statut-label.html" $p.Params.statut }}</span></span>
+    </a>
+  {{ end }}
+  </div>
+</div>

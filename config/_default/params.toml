@@ -175,7 +175,7 @@ themeColorDark = '#0f172a'
 # ------------------------------------------------------------------------------
 [features]
   darkMode = true
-  search = false
+  search = true
   comments = false
 
 # Robots & Indexing (Global defaults)

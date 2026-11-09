@@ -1,65 +1,59 @@
-<header class="sticky top-0 z-50 bg-primary/95 backdrop-blur-sm border-b border-secondary shadow-lg">
-  <div class="max-w-6xl mx-auto px-4">
-    <nav class="flex items-center justify-between h-16">
+{{ $current := . }}
+<header class="site-header">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <nav class="flex items-center justify-between gap-4 py-4" aria-label="Navigation principale">
       {{/* Logo */}}
-      <a href="{{ "/" | relURL }}" class="flex items-center gap-2 text-xl font-bold text-primary hover:text-reggae-green transition-colors">
-        <span class="text-reggae-green text-2xl">♪</span>
-        <span>{{ .Site.Title }}</span>
+      <a href="{{ "/" | relURL }}" class="flex items-center gap-3">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" class="text-accent">
+          <g fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="17" cy="11" r="7"></circle><circle cx="10" cy="23" r="7"></circle><circle cx="24" cy="23" r="7"></circle>
+          </g>
+        </svg>
+        <span class="font-display font-extrabold text-[22px] tracking-tight">{{ .Site.Title }}</span>
       </a>
 
-      {{/* Navigation principale */}}
-      <div class="hidden md:flex items-center gap-1">
-        {{ range .Site.Menus.main }}
-          {{ if .HasChildren }}
-          {{/* Menu avec sous-menu */}}
-          <div class="relative group">
-            <a href="{{ .URL }}" class="flex items-center gap-1 px-4 py-2 text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-              {{ .Name }}
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </a>
-            <div class="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-              <div class="dropdown-menu rounded-lg shadow-xl py-2 min-w-[160px]">
-                {{ range .Children }}
-                <a href="{{ .URL }}" class="block px-4 py-2 text-secondary hover:text-reggae-green hover:bg-white/5 transition-colors">
-                  {{ .Name }}
-                </a>
-                {{ end }}
+      <div class="flex items-center gap-2">
+        {{/* Navigation desktop */}}
+        <div class="hidden md:flex items-center gap-1">
+          {{ range .Site.Menus.main }}
+            {{ $active := or ($current.IsMenuCurrent "main" .) ($current.HasMenuCurrent "main" .) }}
+            {{ if .HasChildren }}
+            <div class="relative group">
+              <a href="{{ .URL }}" class="nav-link{{ if $active }} active{{ end }}">
+                {{ .Name }} <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </a>
+              <div class="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all">
+                <div class="dropdown-menu py-2 min-w-[180px]">
+                  {{ range .Children }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}
+                </div>
               </div>
             </div>
-          </div>
-          {{ else }}
-          {{/* Menu simple */}}
-          <a href="{{ .URL }}" class="px-4 py-2 text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-            {{ .Name }}
-          </a>
+            {{ else }}
+            <a href="{{ .URL }}" class="nav-link{{ if $active }} active{{ end }}">{{ .Name }}</a>
+            {{ end }}
           {{ end }}
-        {{ end }}
-      </div>
+        </div>
 
-      {{/* Menu mobile toggle */}}
-      <button id="mobile-menu-toggle" class="md:hidden p-2 text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
+        {{/* Bouton thème */}}
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="Passer en mode clair">
+          <span class="theme-icon-sun"><i data-lucide="sun" class="w-5 h-5"></i></span>
+          <span class="theme-icon-moon"><i data-lucide="moon" class="w-5 h-5"></i></span>
+        </button>
+
+        {{/* Menu mobile */}}
+        <button type="button" id="mobile-menu-toggle" class="icon-btn md:hidden" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
     </nav>
 
-    {{/* Menu mobile */}}
     <div id="mobile-menu" class="hidden md:hidden pb-4">
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 pt-2 border-t border-line">
         {{ range .Site.Menus.main }}
-        <a href="{{ .URL }}" class="px-4 py-3 text-secondary hover:text-reggae-green hover:bg-white/5 rounded-lg transition-colors">
-          {{ .Name }}
-        </a>
-        {{ if .HasChildren }}
+        <a href="{{ .URL }}" class="nav-link">{{ .Name }}</a>
           {{ range .Children }}
-          <a href="{{ .URL }}" class="px-4 py-2 pl-8 text-sm text-tertiary hover:text-reggae-green hover:bg-white/5 rounded-lg transition-colors">
-            {{ .Name }}
-          </a>
+          <a href="{{ .URL }}" class="nav-link pl-8 text-sm">{{ .Name }}</a>
           {{ end }}
-        {{ end }}
         {{ end }}
       </div>
     </div>
@@ -67,7 +61,12 @@
 </header>
 
 <script>
-document.getElementById('mobile-menu-toggle')?.addEventListener('click', function() {
-  document.getElementById('mobile-menu')?.classList.toggle('hidden');
+document.getElementById('mobile-menu-toggle')?.addEventListener('click', function () {
+  const menu = document.getElementById('mobile-menu');
+  const open = menu.classList.toggle('hidden') === false;
+  this.setAttribute('aria-expanded', open ? 'true' : 'false');
+  this.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+  this.innerHTML = '<i data-lucide="' + (open ? 'x' : 'menu') + '" class="w-5 h-5"></i>';
+  lucide.createIcons();
 });
 </script>

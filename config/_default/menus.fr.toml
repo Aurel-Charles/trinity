@@ -34,6 +34,11 @@
   pageRef = '/setlists'
   weight = 30
 
+[[main]]
+  name = 'Fiche technique'
+  pageRef = '/fiche-technique'
+  weight = 40
+
 # Footer Menu
 # ------------------------------------------------------------------------------
 [[footer]]

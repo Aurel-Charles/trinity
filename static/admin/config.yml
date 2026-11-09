@@ -345,3 +345,109 @@ collections:
           - {label: "Nom du groupe", name: "title", widget: "string"}
           - {label: "Description (Google, partages)", name: "description", widget: "string", required: false, hint: "Une phrase de 150 caractères environ."}
           - {label: "Texte d'introduction", name: "body", widget: "markdown", required: false, buttons: ["bold", "italic", "link"], editor_components: []}
+
+      - label: "Fiche technique"
+        name: "fiche_technique"
+        file: "data/fiche_technique.toml"
+        format: "toml"
+        description: "Tout ce qui est affiché sur la page /fiche-technique/."
+        fields:
+          - {label: "Fichier Excel à télécharger", name: "fichier_excel", widget: "file", media_folder: "/static/fiche-technique", public_folder: "/fiche-technique", choose_url: false, hint: "Remplace le fichier proposé par le bouton « Télécharger la fiche »."}
+          - {label: "Date de mise à jour", name: "mise_a_jour", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, picker_utc: true}
+          - label: "Groupe"
+            name: "groupe"
+            widget: "object"
+            collapsed: true
+            fields:
+              - {label: "Nom", name: "nom", widget: "string"}
+              - {label: "Style", name: "style", widget: "string"}
+              - {label: "Nombre de musiciens", name: "musiciens", widget: "number", value_type: "int", min: 1}
+              - {label: "Durée du set", name: "duree_set", widget: "string", hint: "Ex. 40 min"}
+              - {label: "Note (encadré)", name: "note", widget: "text", required: false}
+          - label: "Contact"
+            name: "contact"
+            widget: "object"
+            collapsed: true
+            fields:
+              - {label: "Nom", name: "nom", widget: "string", hint: "Seul le nom est affiché. Téléphones et email restent uniquement dans le fichier Excel."}
+          - label: "Musiciens (code couleur)"
+            name: "musiciens"
+            widget: "list"
+            label_singular: "musicien"
+            collapsed: true
+            summary: "{{fields.nom}} — {{fields.role}}"
+            hint: "L'identifiant sert à relier les lignes des tableaux et du plan à un musicien."
+            fields:
+              - {label: "Identifiant (minuscules, sans espace)", name: "id", widget: "string", pattern: ['^[a-z0-9_-]+$', "Minuscules, chiffres, - ou _ uniquement"]}
+              - {label: "Prénom", name: "nom", widget: "string"}
+              - {label: "Rôle", name: "role", widget: "string"}
+              - {label: "Couleur", name: "couleur", widget: "color", default: "#DDD6FE"}
+          - label: "Line-up sur scène"
+            name: "lineup"
+            widget: "list"
+            label_singular: "poste"
+            collapsed: true
+            summary: "{{fields.poste}} — {{fields.musicien}}"
+            fields:
+              - {label: "Poste", name: "poste", widget: "string"}
+              - {label: "Musicien (identifiant)", name: "musicien", widget: "string", hint: "Ex. thomas, jf, stephane, julien, aurelien"}
+              - {label: "Instrument / matériel", name: "instrument", widget: "string"}
+              - {label: "Amplification demandée", name: "ampli", widget: "string", required: false}
+              - {label: "Notes", name: "notes", widget: "text", required: false}
+          - label: "Matériel demandé à la salle"
+            name: "backline"
+            widget: "list"
+            label_singular: "élément"
+            collapsed: true
+            summary: "{{fields.element}} ({{fields.quantite}})"
+            fields:
+              - {label: "Élément", name: "element", widget: "string"}
+              - {label: "Quantité", name: "quantite", widget: "string", hint: "Un nombre, ou « auto » pour compter automatiquement (voir ci-dessous)."}
+              - label: "Compter automatiquement"
+                name: "compter"
+                widget: "select"
+                required: false
+                options:
+                  - {label: "Boîtes DI (patch list)", value: "di"}
+                  - {label: "Grands pieds (patch list)", value: "grand_pied"}
+                  - {label: "Petits pieds (patch list)", value: "petit_pied"}
+                  - {label: "Retours de scène", value: "retours"}
+              - {label: "Détail", name: "detail", widget: "text", required: false}
+              - {label: "Notes", name: "notes", widget: "text", required: false}
+          - label: "Patch list"
+            name: "patch"
+            widget: "list"
+            label_singular: "voie"
+            collapsed: true
+            summary: "{{fields.source}} — {{fields.micro}}"
+            hint: "Les numéros de voie suivent l'ordre de la liste."
+            fields:
+              - {label: "Source", name: "source", widget: "string"}
+              - {label: "Instrument", name: "instrument", widget: "string", required: false}
+              - {label: "Micro / DI", name: "micro", widget: "string"}
+              - {label: "Support", name: "support", widget: "string", required: false, hint: "Ex. Grand pied (perche), Petit pied (perche courte), Pince / clamp, —"}
+              - {label: "Notes", name: "notes", widget: "string", required: false}
+              - {label: "Musicien (identifiant)", name: "musicien", widget: "string", required: false}
+          - label: "Retours de scène"
+            name: "retours"
+            widget: "list"
+            label_singular: "retour"
+            collapsed: true
+            summary: "{{fields.destinataire}}"
+            fields:
+              - {label: "Destinataire", name: "destinataire", widget: "string"}
+              - {label: "Type", name: "type", widget: "string", default: "Wedge"}
+              - {label: "Musicien (identifiant)", name: "musicien", widget: "string", required: false}
+          - label: "Plan de scène"
+            name: "plan"
+            widget: "list"
+            label_singular: "emplacement"
+            collapsed: true
+            summary: "{{fields.nom}} — {{fields.rang}}, colonne {{fields.colonne}}"
+            hint: "Vue depuis le public. Colonne 1 = jardin (gauche), 5 = cour (droite)."
+            fields:
+              - {label: "Nom", name: "nom", widget: "string"}
+              - {label: "Musicien (identifiant)", name: "musicien", widget: "string", required: false}
+              - {label: "Rang", name: "rang", widget: "select", options: [{label: "Fond de scène", value: "fond"}, {label: "Milieu", value: "milieu"}, {label: "Bord de scène", value: "bord"}]}
+              - {label: "Colonne (1 à 5)", name: "colonne", widget: "number", value_type: "int", min: 1, max: 5}
+              - {label: "Alimentation", name: "alim", widget: "string", required: false, hint: "Ex. 230 V (ampli basse)"}

@@ -777,3 +777,50 @@ input[type="range"] { accent-color: var(--t-accent); }
   .site-header, .no-print { display: none !important; }
   html, body { background: #fff !important; color: #000 !important; }
 }
+
+/* =============================================================================
+   FICHE TECHNIQUE
+   ============================================================================= */
+.ft-chip { display: inline-flex; align-items: center; padding: 0.375rem 0.75rem; border-radius: 999px; background: var(--t-surface-2); color: var(--t-soft); font-size: 0.875rem; font-weight: 600; }
+.ft-dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.625rem 1.25rem; margin: 0; }
+.ft-dl dt { color: var(--t-muted); font-size: 0.875rem; padding-top: 0.125rem; }
+.ft-dl dd { margin: 0; font-weight: 500; }
+.ft-dot { width: 0.875rem; height: 0.875rem; border-radius: 999px; flex: 0 0 auto; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
+.ft-note { padding: 1rem 1.25rem; border-radius: 1rem; background: var(--t-chip); color: var(--t-text); line-height: 1.6; }
+.ft-table-wrap { overflow-x: auto; border: 1px solid var(--t-line); border-radius: 1.25rem; background: var(--t-surface); }
+.ft-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.9375rem; }
+.ft-table th { text-align: left; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-muted); padding: 0.875rem 1rem; border-bottom: 1px solid var(--t-line); white-space: nowrap; }
+.ft-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--t-line-2); vertical-align: top; line-height: 1.45; }
+.ft-table tbody tr:last-child td { border-bottom: 0; }
+.ft-table tbody tr:hover td { background: var(--t-surface-2); }
+.ft-row-color { display: inline-block; width: 0.625rem; height: 0.625rem; border-radius: 999px; margin-right: 0.5rem; vertical-align: 0.05em; }
+.ft-tag, .ft-voie, .ft-zone { color: #1A0F0C; }
+.ft-tag { display: inline-block; padding: 0.125rem 0.625rem; border-radius: 999px; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; }
+.ft-voie { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; border-radius: 0.5rem; font-family: var(--font-mono); font-weight: 700; font-size: 0.875rem; }
+.ft-qty { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--t-accent); }
+.ft-patch td { padding-top: 0.625rem; padding-bottom: 0.625rem; vertical-align: middle; }
+
+.ft-stage { border: 1px solid var(--t-line); border-radius: 1.25rem; background: var(--t-surface); padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.ft-stage-label { font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-muted); }
+.ft-stage-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.5rem; min-height: 5.5rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--t-line-3); }
+.ft-zone { border-radius: 0.875rem; padding: 0.625rem; display: flex; flex-direction: column; justify-content: center; gap: 0.125rem; text-align: center; font-size: 0.8125rem; line-height: 1.25; }
+.ft-zone strong { font-family: var(--font-display); font-size: 0.9375rem; }
+.ft-zone .ft-alim { font-size: 0.75rem; opacity: 0.8; }
+.ft-stage-public { display: flex; justify-content: space-between; align-items: center; padding-top: 0.25rem; font-size: 0.8125rem; color: var(--t-soft); }
+@media (max-width: 560px) {
+  .ft-stage { padding: 0.75rem; }
+  .ft-stage-row { gap: 0.3rem; }
+  .ft-zone { padding: 0.4rem 0.25rem; font-size: 0.6875rem; }
+  .ft-zone strong { font-size: 0.75rem; }
+  .ft-zone .ft-alim { font-size: 0.625rem; }
+  .ft-zone[style*="grid-column: 3"] { grid-column: 2 / 5 !important; }
+}
+@media print {
+  .ft { padding-top: 0 !important; gap: 1.5rem !important; }
+  .ft-table-wrap, .ft-stage, .section-card { border-color: #ccc !important; background: #fff !important; }
+  .ft-table { min-width: 0; font-size: 10pt; }
+  .ft-table td, .ft-table th { color: #000 !important; }
+  .ft-note { background: #f3f3f3 !important; }
+  .ft h2 { break-after: avoid; }
+  .ft section { break-inside: avoid; }
+}

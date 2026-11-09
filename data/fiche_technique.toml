@@ -1,0 +1,361 @@
+# Fiche technique — affichée sur /fiche-technique/
+# Modifiable depuis l'admin (Pages > Fiche technique) ou directement ici.
+
+fichier_excel = "/fiche-technique/the-trinities-fiche-technique.xlsx"
+mise_a_jour = "2026-11-09"
+
+[groupe]
+nom = "The Trinities"
+style = "Reggae"
+musiciens = 5
+duree_set = "40 min"
+note = "Configuration optimale décrite dans cette fiche — nous nous adaptons volontiers au matériel et aux contraintes de la salle. N'hésitez pas à nous contacter avant le jour J."
+
+# Téléphones et email : uniquement dans le fichier Excel téléchargeable (pas sur la page)
+[contact]
+nom = "Aurélien CHARLES"
+
+# Code couleur : chaque musicien a une couleur reprise dans les tableaux et le plan
+[[musiciens]]
+id = "thomas"
+nom = "Thomas"
+role = "Chant / Guitare"
+couleur = "#BFDBFE"
+
+[[musiciens]]
+id = "jf"
+nom = "JF"
+role = "Batterie"
+couleur = "#BBF7D0"
+
+[[musiciens]]
+id = "stephane"
+nom = "Stéphane"
+role = "Clavier 1"
+couleur = "#FBCFE8"
+
+[[musiciens]]
+id = "julien"
+nom = "Julien"
+role = "Clavier 2 / Sampler / Mélodica"
+couleur = "#DDD6FE"
+
+[[musiciens]]
+id = "aurelien"
+nom = "Aurélien"
+role = "Basse"
+couleur = "#FED7AA"
+
+# ---------- Line-up sur scène ----------
+[[lineup]]
+poste = "Chant lead"
+musicien = "thomas"
+instrument = "Voix"
+ampli = "Micro chant sur grand pied — fourni par la salle"
+
+[[lineup]]
+poste = "Guitare"
+musicien = "thomas"
+instrument = "Guitare électrique + pédalier"
+ampli = "Ampli guitare type Twin Reverb — fourni par la salle (backline)"
+notes = "Le groupe apporte sa guitare et son pédalier"
+
+[[lineup]]
+poste = "Basse"
+musicien = "aurelien"
+instrument = "Basse électrique"
+ampli = "Ampli basse type Ampeg (backline salle) + DI"
+notes = "Le groupe apporte sa basse — repiquage DI + micro devant l'ampli"
+
+[[lineup]]
+poste = "Batterie"
+musicien = "jf"
+instrument = "Batterie acoustique complète"
+ampli = "Kit standard fourni par la salle + micro chant"
+notes = "Gr. caisse, caisse claire, 2 toms, charley, 2 cymbales + micros standards. JF chante : micro sur perche courte"
+
+[[lineup]]
+poste = "Clavier 1"
+musicien = "stephane"
+instrument = "Clavier / synthé (sortie stéréo)"
+ampli = "Sortie ligne — DI fournie par la salle"
+
+[[lineup]]
+poste = "Clavier 2"
+musicien = "julien"
+instrument = "Clavier / synthé (sortie stéréo)"
+ampli = "Sortie ligne — DI fournie par la salle + micro chant"
+notes = "Julien chante : micro sur perche courte"
+
+[[lineup]]
+poste = "Sampler"
+musicien = "julien"
+instrument = "Sampler stéréo"
+ampli = "Sortie ligne — DI fournie par la salle"
+
+[[lineup]]
+poste = "Mélodica"
+musicien = "julien"
+instrument = "Mélodica"
+ampli = "Micro instrument (SM57) — fourni par la salle"
+
+# ---------- Matériel demandé à la salle ----------
+# quantite : un nombre, ou "auto" pour les éléments comptés à partir de la patch list / des retours
+[[backline]]
+element = "Batterie complète"
+quantite = "1"
+detail = "Gr. caisse, caisse claire, 2 toms, charley, 2 cymbales + pieds + tabouret"
+
+[[backline]]
+element = "Ampli guitare"
+quantite = "1"
+detail = "Type Fender Twin Reverb (ou équivalent combo lampes)"
+
+[[backline]]
+element = "Ampli basse"
+quantite = "1"
+detail = "Type Ampeg (tête + baffle ou combo, ex : SVT / Rocket Bass)"
+
+[[backline]]
+element = "Boîtes de direct (DI)"
+quantite = "auto"
+compter = "di"
+detail = "Claviers (x2 stéréo), sampler stéréo, basse"
+
+[[backline]]
+element = "Grands pieds de micro (perche)"
+quantite = "auto"
+compter = "grand_pied"
+detail = "Chant lead, chant clavier 2 (Julien), mélodica, overheads batterie (x2)"
+
+[[backline]]
+element = "Petits pieds de micro (perche courte)"
+quantite = "auto"
+compter = "petit_pied"
+detail = "Grosse caisse, charley, caisse claire (si pas de pince), ampli guitare, ampli basse, chant batteur (JF)"
+
+[[backline]]
+element = "Retours de scène (wedges)"
+quantite = "auto"
+compter = "retours"
+detail = "1 wedge par musicien : Thomas (chant/guitare), Aurélien, JF, Stéphane, Julien"
+notes = "5 circuits indépendants si possible"
+
+[[backline]]
+element = "Alimentation électrique au plateau"
+quantite = "5"
+detail = "5 points 230 V : guitare (ampli + pédalier), basse (ampli), clavier 1, clavier 2, sampler — rien côté batterie"
+notes = "Multiprises + rallonges souhaitées. Aucune alimentation nécessaire à la batterie."
+
+# ---------- Patch list (liste des entrées) ----------
+[[patch]]
+source = "Batterie — Grosse caisse"
+instrument = "Kick"
+micro = "Micro grosse caisse"
+support = "Petit pied (perche courte)"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Caisse claire (top)"
+instrument = "Snare (dessus)"
+micro = "Micro dynamique"
+support = "Pince ou petit pied"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Caisse claire (bottom)"
+instrument = "Snare (dessous / timbre)"
+micro = "Micro dynamique ou statique"
+support = "Pince ou petit pied"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Charley"
+instrument = "Hi-hat"
+micro = "Micro dynamique ou statique"
+support = "Petit pied (perche courte)"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Tom 1"
+instrument = "Tom aigu"
+micro = "Micro dynamique"
+support = "Pince / clamp"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Tom 2"
+instrument = "Tom médium/basse"
+micro = "Micro dynamique"
+support = "Pince / clamp"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Overhead G"
+instrument = "Cymbales / ensemble"
+micro = "Micro statique"
+support = "Grand pied (perche)"
+musicien = "jf"
+
+[[patch]]
+source = "Batterie — Overhead D"
+instrument = "Cymbales / ensemble"
+micro = "Micro statique"
+support = "Grand pied (perche)"
+musicien = "jf"
+
+[[patch]]
+source = "Basse — DI"
+instrument = "Sortie DI / ampli"
+micro = "DI (boîtier de direct)"
+support = "—"
+notes = "Signal direct"
+musicien = "aurelien"
+
+[[patch]]
+source = "Basse — Micro ampli"
+instrument = "Ampli basse"
+micro = "Micro dynamique (MD421)"
+support = "Petit pied (perche courte)"
+notes = "Micro devant le HP"
+musicien = "aurelien"
+
+[[patch]]
+source = "Guitare"
+instrument = "Ampli guitare"
+micro = "Micro instrument (SM57)"
+support = "Petit pied (perche courte)"
+notes = "Micro devant le HP"
+musicien = "thomas"
+
+[[patch]]
+source = "Clavier 1 — L"
+instrument = "Sortie ligne gauche"
+micro = "DI"
+support = "—"
+musicien = "stephane"
+
+[[patch]]
+source = "Clavier 1 — R"
+instrument = "Sortie ligne droite"
+micro = "DI"
+support = "—"
+musicien = "stephane"
+
+[[patch]]
+source = "Clavier 2 — L"
+instrument = "Sortie ligne gauche"
+micro = "DI"
+support = "—"
+musicien = "julien"
+
+[[patch]]
+source = "Clavier 2 — R"
+instrument = "Sortie ligne droite"
+micro = "DI"
+support = "—"
+musicien = "julien"
+
+[[patch]]
+source = "Sampler — L"
+instrument = "Sortie ligne gauche"
+micro = "DI"
+support = "—"
+musicien = "julien"
+
+[[patch]]
+source = "Sampler — R"
+instrument = "Sortie ligne droite"
+micro = "DI"
+support = "—"
+musicien = "julien"
+
+[[patch]]
+source = "Mélodica"
+instrument = "Micro"
+micro = "Micro dynamique (SM57)"
+support = "Grand pied (perche)"
+musicien = "julien"
+
+[[patch]]
+source = "Chant lead"
+instrument = "Voix"
+micro = "Micro dynamique (SM58)"
+support = "Grand pied (perche)"
+musicien = "thomas"
+
+[[patch]]
+source = "Chant batteur (JF)"
+instrument = "Voix"
+micro = "BETA58"
+support = "Petit pied (perche courte)"
+musicien = "jf"
+
+[[patch]]
+source = "Chant clavier 2 (Julien)"
+instrument = "Voix"
+micro = "SM58"
+support = "Grand pied (perche)"
+musicien = "julien"
+
+# ---------- Retours de scène ----------
+[[retours]]
+destinataire = "Chant lead + Guitare (Thomas)"
+type = "Wedge"
+musicien = "thomas"
+
+[[retours]]
+destinataire = "Basse (Aurélien)"
+type = "Wedge"
+musicien = "aurelien"
+
+[[retours]]
+destinataire = "Batterie (JF)"
+type = "Wedge"
+musicien = "jf"
+
+[[retours]]
+destinataire = "Clavier 1 (Stéphane)"
+type = "Wedge"
+musicien = "stephane"
+
+[[retours]]
+destinataire = "Clavier 2 / Sampler / Mélodica (Julien)"
+type = "Wedge"
+musicien = "julien"
+
+# ---------- Plan de scène (vue depuis le public) ----------
+# rang : fond | milieu | bord — colonne : 1 (jardin, gauche public) à 5 (cour, droite public)
+[[plan]]
+nom = "Basse"
+musicien = "aurelien"
+rang = "fond"
+colonne = 2
+alim = "230 V (ampli basse)"
+
+[[plan]]
+nom = "Batterie"
+musicien = "jf"
+rang = "fond"
+colonne = 4
+
+[[plan]]
+nom = "Clavier 1"
+musicien = "stephane"
+rang = "milieu"
+colonne = 1
+alim = "230 V"
+
+[[plan]]
+nom = "Clavier 2 + Sampler + Mélodica"
+musicien = "julien"
+rang = "milieu"
+colonne = 5
+alim = "230 V (×2)"
+
+[[plan]]
+nom = "Chant lead + Guitare"
+musicien = "thomas"
+rang = "bord"
+colonne = 3
+alim = "230 V (ampli guitare)"

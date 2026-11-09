@@ -1,0 +1,189 @@
+{{ define "main" }}
+{{ $ft := site.Data.fiche_technique }}
+{{ $mus := dict }}{{ range $ft.musiciens }}{{ $mus = merge $mus (dict .id .) }}{{ end }}
+
+{{/* Quantités calculées à partir de la patch list et des retours */}}
+{{ $di := 0 }}{{ $grand := 0 }}{{ $petit := 0 }}
+{{ range $ft.patch }}
+  {{ if strings.Contains .micro "DI" }}{{ $di = add $di 1 }}{{ end }}
+  {{ if strings.Contains .support "Grand pied" }}{{ $grand = add $grand 1 }}{{ end }}
+  {{ if strings.Contains .support "etit pied" }}{{ $petit = add $petit 1 }}{{ end }}
+{{ end }}
+{{ $auto := dict "di" $di "grand_pied" $grand "petit_pied" $petit "retours" (len $ft.retours) }}
+
+<article class="ft max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-20 flex flex-col gap-12">
+
+  {{/* ---------- En-tête ---------- */}}
+  <header class="flex flex-wrap gap-6 items-end justify-between">
+    <div class="flex flex-col gap-3 flex-[999_1_480px] min-w-0">
+      <p class="eyebrow">Pour les salles et les ingés son</p>
+      <h1 class="text-5xl sm:text-7xl leading-[0.95] tracking-tight">{{ .Title }}</h1>
+      <div class="flex flex-wrap gap-2 mt-1">
+        {{ with $ft.groupe }}
+        <span class="ft-chip">{{ .style }}</span>
+        <span class="ft-chip">{{ .musiciens }} musiciens</span>
+        <span class="ft-chip">Set de {{ .duree_set }}</span>
+        {{ end }}
+        <span class="ft-chip">{{ len $ft.patch }} voies</span>
+        <span class="ft-chip">{{ len $ft.retours }} retours</span>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-3 no-print">
+      {{ with $ft.fichier_excel }}
+      <a href="{{ . | relURL }}" download class="btn btn-accent !min-h-14 !px-6 !text-base">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        Télécharger la fiche (Excel)
+      </a>
+      {{ end }}
+      <button type="button" onclick="window.print()" class="btn btn-ghost !min-h-14 !px-5 !text-base">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
+        Imprimer
+      </button>
+    </div>
+  </header>
+
+  {{/* ---------- Contact + groupe ---------- */}}
+  <section class="grid md:grid-cols-[1.2fr_1fr] gap-5" aria-labelledby="ft-contact">
+    <div class="section-card flex flex-col gap-4">
+      <h2 id="ft-contact" class="text-2xl">Contact régisseur / tour manager</h2>
+      {{ with $ft.contact.nom }}<p class="text-lg font-semibold m-0">{{ . }}</p>{{ end }}
+      <p class="text-soft m-0">Téléphones et email du régisseur sont dans la fiche technique à télécharger.</p>
+      {{ with $ft.fichier_excel }}
+      <a href="{{ . | relURL }}" download class="inline-flex items-center gap-2 min-h-11 self-start text-accent font-semibold no-print">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        Télécharger la fiche (Excel)
+      </a>
+      {{ end }}
+    </div>
+    <div class="section-card flex flex-col gap-4">
+      <h2 class="text-2xl">Le groupe</h2>
+      <ul class="flex flex-col gap-2.5 list-none m-0 p-0">
+        {{ range $ft.musiciens }}
+        <li class="flex items-center gap-3">
+          <span class="ft-dot" style="background: {{ .couleur | safeCSS }}" aria-hidden="true"></span>
+          <span class="font-semibold">{{ .nom }}</span>
+          <span class="text-muted">{{ .role }}</span>
+        </li>
+        {{ end }}
+      </ul>
+    </div>
+  </section>
+
+  {{ with $ft.groupe.note }}
+  <p class="ft-note">{{ . }}</p>
+  {{ end }}
+
+  {{/* ---------- Line-up ---------- */}}
+  <section class="flex flex-col gap-4" aria-labelledby="ft-lineup">
+    <h2 id="ft-lineup">Line-up sur scène</h2>
+    <div class="ft-table-wrap">
+      <table class="ft-table">
+        <thead><tr><th>Poste</th><th>Musicien</th><th>Instrument / matériel</th><th>Amplification demandée</th><th>Notes</th></tr></thead>
+        <tbody>
+          {{ range $ft.lineup }}{{ $m := index $mus .musicien }}
+          <tr>
+            <td class="font-semibold"><span class="ft-row-color" style="background: {{ ($m.couleur | default "transparent") | safeCSS }}" aria-hidden="true"></span>{{ .poste }}</td>
+            <td>{{ with $m }}<span class="ft-tag" style="background: {{ .couleur | safeCSS }}">{{ .nom }}</span>{{ end }}</td>
+            <td>{{ .instrument }}</td>
+            <td>{{ .ampli }}</td>
+            <td class="text-muted">{{ .notes }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {{/* ---------- Backline ---------- */}}
+  <section class="flex flex-col gap-4" aria-labelledby="ft-backline">
+    <h2 id="ft-backline">Matériel demandé à la salle</h2>
+    <div class="ft-table-wrap">
+      <table class="ft-table">
+        <thead><tr><th>Élément</th><th class="text-right">Qté</th><th>Détail</th><th>Notes</th></tr></thead>
+        <tbody>
+          {{ range $ft.backline }}
+          {{ $q := .quantite }}{{ if and (eq (string .quantite) "auto") .compter }}{{ $q = index $auto .compter }}{{ end }}
+          <tr>
+            <td class="font-semibold">{{ .element }}</td>
+            <td class="text-right"><span class="ft-qty">{{ $q }}</span></td>
+            <td>{{ .detail }}</td>
+            <td class="text-muted">{{ .notes }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {{/* ---------- Patch list ---------- */}}
+  <section class="flex flex-col gap-4" aria-labelledby="ft-patch">
+    <div class="flex flex-wrap items-baseline justify-between gap-3">
+      <h2 id="ft-patch">Patch list</h2>
+      <span class="font-mono text-sm text-soft">{{ len $ft.patch }} entrées</span>
+    </div>
+    <div class="ft-table-wrap">
+      <table class="ft-table ft-patch">
+        <thead><tr><th class="text-center">Voie</th><th>Source</th><th>Instrument</th><th>Micro / DI</th><th>Support</th><th>Notes</th></tr></thead>
+        <tbody>
+          {{ range $i, $p := $ft.patch }}{{ $m := index $mus $p.musicien }}
+          <tr>
+            <td class="text-center"><span class="ft-voie" style="background: {{ ($m.couleur | default "var(--t-surface-2)") | safeCSS }}">{{ add $i 1 }}</span></td>
+            <td class="font-semibold">{{ $p.source }}</td>
+            <td>{{ $p.instrument }}</td>
+            <td class="font-mono text-[13px]">{{ $p.micro }}</td>
+            <td>{{ $p.support }}</td>
+            <td class="text-muted">{{ $p.notes }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-muted">Les voies, micros et supports sont indicatifs : nous nous adaptons volontiers au parc de la salle et aux choix de l'ingénieur son.</p>
+  </section>
+
+  {{/* ---------- Retours + plan ---------- */}}
+  <section class="grid lg:grid-cols-[1fr_1.6fr] gap-8 items-start">
+    <div class="flex flex-col gap-4" aria-labelledby="ft-retours">
+      <h2 id="ft-retours">Retours de scène</h2>
+      <ol class="flex flex-col gap-2 list-none m-0 p-0">
+        {{ range $i, $r := $ft.retours }}{{ $m := index $mus $r.musicien }}
+        <li class="section-card !p-3 !pl-4 flex items-center gap-3">
+          <span class="ft-voie" style="background: {{ ($m.couleur | default "var(--t-surface-2)") | safeCSS }}">{{ add $i 1 }}</span>
+          <span class="flex-1 font-semibold">{{ $r.destinataire }}</span>
+          <span class="text-sm text-muted">{{ $r.type }}</span>
+        </li>
+        {{ end }}
+      </ol>
+      <p class="text-sm text-muted">Circuits indépendants si possible.</p>
+    </div>
+
+    <div class="flex flex-col gap-4" aria-labelledby="ft-plan">
+      <h2 id="ft-plan">Plan de scène</h2>
+      <div class="ft-stage" role="img" aria-label="Plan de scène vu depuis le public : {{ range $i, $z := $ft.plan }}{{ if $i }}, {{ end }}{{ $z.nom }} ({{ $z.rang }}){{ end }}">
+        {{ range $rang := slice "fond" "milieu" "bord" }}
+        <div class="ft-stage-label">{{ if eq $rang "fond" }}Fond de scène{{ else if eq $rang "milieu" }}Milieu{{ else }}Bord de scène{{ end }}</div>
+        <div class="ft-stage-row">
+          {{ range $ft.plan }}{{ if eq .rang $rang }}{{ $m := index $mus .musicien }}
+          <div class="ft-zone" style="grid-column: {{ .colonne }}; background: {{ ($m.couleur | default "var(--t-surface-2)") | safeCSS }}">
+            <strong>{{ .nom }}</strong>
+            {{ with $m }}<span>{{ .nom }}</span>{{ end }}
+            {{ with .alim }}<span class="ft-alim">⚡ {{ . }}</span>{{ end }}
+          </div>
+          {{ end }}{{ end }}
+        </div>
+        {{ end }}
+        <div class="ft-stage-public">
+          <span>← Jardin</span>
+          <span class="font-semibold">Public</span>
+          <span>Cour →</span>
+        </div>
+      </div>
+      <p class="text-sm text-muted">Vue depuis le public. Implantation optimale — nous nous adaptons aux dimensions et contraintes du plateau.</p>
+    </div>
+  </section>
+
+  {{ with $ft.mise_a_jour }}
+  <p class="text-xs text-muted">Fiche mise à jour le {{ time.Format "2 January 2006" . }}.</p>
+  {{ end }}
+</article>
+{{ end }}

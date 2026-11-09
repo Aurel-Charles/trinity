@@ -31,6 +31,12 @@ html.dark {
   --t-idea-bg: #2A2233;
   --t-danger: #F2795E;
   --t-header: rgba(26, 15, 12, 0.88);
+  --t-dot1: #FF8A3D;        /* logo : point du haut (orange) */
+  --t-dot2: #F2C14E;        /* logo : point gauche (or) */
+  --t-dot3: #E7704E;        /* logo : point droit (terre) */
+  --t-glitch1: #FF8A3D;     /* logo glitch : décalage gauche */
+  --t-glitch2: #F2C14E;     /* logo glitch : décalage droit */
+  --t-glitch-top: #F7EBDD;  /* logo glitch : dessin principal */
   color-scheme: dark;
 }
 
@@ -55,6 +61,12 @@ html.light {
   --t-idea-bg: #ECE6F7;
   --t-danger: #B3361B;
   --t-header: rgba(251, 244, 234, 0.9);
+  --t-dot1: #B8500F;
+  --t-dot2: #9A6A06;
+  --t-dot3: #C2410C;
+  --t-glitch1: #D9601A;
+  --t-glitch2: #C99A1E;
+  --t-glitch-top: #2A1710;
   color-scheme: light;
 }
 
@@ -705,6 +717,106 @@ html.dark .concert-mode { background: #140A07; }
 }
 
 /* =============================================================================
+   ACCUEIL — grand visuel plein écran (photo + nom en très grand)
+   ============================================================================= */
+.hero-full {
+  position: relative;
+  min-height: 100svh;
+  min-height: max(100svh, 560px);
+  display: flex;
+  overflow: hidden;
+  background: #1A0F0C;
+  color: #F7EBDD;
+}
+.hero-full picture, .hero-full-img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-full-img { object-fit: cover; object-position: 50% 35%; filter: sepia(0.35) contrast(1.08) brightness(0.78); }
+.hero-full-shade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(20,10,7,0.55) 0%, rgba(20,10,7,0) 22%, rgba(20,10,7,0) 45%, rgba(20,10,7,0.7) 100%),
+    rgba(120, 50, 10, 0.18);
+  mix-blend-mode: normal;
+}
+.hero-full-content {
+  position: relative;
+  width: 100%;
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: 7rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+.hero-tag {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #F2C14E;
+}
+.hero-tag-link { min-height: 2.75rem; display: inline-flex; align-items: center; }
+.hero-tag-link:hover { color: #FFFFFF; }
+.hero-name {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-body);   /* même police que le logo : Inter fin */
+  font-weight: 300;
+  text-transform: uppercase;
+  line-height: 1;
+  color: #F2C14E;
+}
+.hero-name-the { font-size: clamp(0.875rem, 2.2vw, 1.75rem); letter-spacing: 0.6em; padding-left: 0.6em; margin-bottom: 0.5em; }
+.hero-name-main { font-size: clamp(2.5rem, 11.5vw, 10.5rem); letter-spacing: 0.2em; padding-left: 0.2em; white-space: nowrap; }
+.hero-bottom {
+  width: 100%;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+}
+/* Téléphone : photo entière en haut (les 5 musiciens visibles), nom qui la chevauche */
+@media (max-width: 767px) {
+  .hero-full { min-height: 0; flex-direction: column; }
+  .hero-full picture { position: relative; display: block; height: auto; margin-top: 4.75rem; }
+  .hero-full-img { position: static; display: block; height: auto; aspect-ratio: 1445 / 801; }
+  .hero-full-shade { top: 4.75rem; bottom: auto; height: calc((100vw) * 801 / 1445); background: linear-gradient(180deg, rgba(20,10,7,0.1) 0%, rgba(20,10,7,0) 40%, rgba(20,10,7,0.9) 100%), rgba(120,50,10,0.18); }
+  .hero-full-content { margin-top: -2.75rem; padding: 0 1rem 2.5rem; }
+  html.light .hero-full { border-radius: 0 0 1.5rem 1.5rem; }
+  .hero-tag { font-size: 0.6875rem; letter-spacing: 0.14em; }
+  .hero-bottom { flex-direction: column; justify-content: center; margin-top: 1rem; }
+}
+
+/* En-tête posé sur la photo (uniquement sur la page qui a le grand visuel) */
+body:has(.hero-full) .site-header {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  background: transparent;
+  border-bottom-color: rgba(247, 235, 221, 0.18);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  --t-text: #F7EBDD;
+  --t-soft: #EADCC9;
+  --t-accent: #F2C14E;
+  --t-line-3: rgba(247, 235, 221, 0.35);
+  --t-glitch-top: #F7EBDD;
+  --t-glitch1: #FF8A3D;
+  --t-glitch2: #F2C14E;
+}
+/* Accueil : le nom est déjà en grand sur la photo, l'en-tête garde seulement le triangle + le menu */
+body:has(.hero-full) .site-header .brand-sep,
+body:has(.hero-full) .site-header .brand-name { display: none; }
+body:has(.hero-full) #mobile-menu { background: rgba(20, 10, 7, 0.94); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; border-radius: 0 0 1rem 1rem; }
+
+/* =============================================================================
    EN-TÊTE
    ============================================================================= */
 
@@ -717,18 +829,23 @@ html.dark .concert-mode { background: #140A07; }
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--t-line);
 }
-.nav-link {
+.nav-link, .nav-caps {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   min-height: 2.75rem;
-  padding: 0 1rem;
+  padding: 0 0.875rem;
   color: var(--t-soft);
-  font-weight: 500;
-  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
-.nav-link:hover { color: var(--t-text); background: var(--t-surface); }
-.nav-link.active { color: var(--t-text); background: var(--t-surface-2); font-weight: 600; }
+.nav-caps { padding: 0; color: var(--t-accent); }
+.nav-link:hover { color: var(--t-text); }
+/* Page active : texte plein + soulignement orange */
+.nav-link.active { color: var(--t-text); text-decoration: underline; text-decoration-color: var(--t-accent); text-decoration-thickness: 2px; text-underline-offset: 0.6em; }
+#mobile-menu .nav-link { font-size: 0.8125rem; min-height: 3rem; }
 
 .dropdown-menu {
   background: var(--t-surface);
@@ -738,6 +855,36 @@ html.dark .concert-mode { background: #140A07; }
 }
 .dropdown-menu a { display: block; padding: 0.625rem 1rem; color: var(--t-soft); }
 .dropdown-menu a:hover { color: var(--t-text); background: var(--t-surface-2); }
+
+/* Accueil épuré : photo calée à gauche, prochain concert discret à côté */
+.home-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; align-items: end; }
+@media (min-width: 768px) { .home-hero { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 3rem; } }
+@media (min-width: 1100px) { .home-hero { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 4rem; } }
+.group-photo { margin: 0; overflow: hidden; background: var(--t-surface); }
+.group-photo img { display: block; width: 100%; height: auto; aspect-ratio: 1445 / 801; object-fit: cover; }
+.home-next { display: flex; flex-direction: column; gap: 0.625rem; padding-bottom: 0.25rem; }
+.home-next-title { font-family: var(--font-display); font-weight: 700; font-size: 1.75rem; line-height: 1.1; letter-spacing: -0.01em; }
+.home-next-title:hover { color: var(--t-accent); }
+.home-next-meta { margin: 0; color: var(--t-soft); font-size: 0.9375rem; line-height: 1.55; }
+.home-next-link { margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; align-self: flex-start; color: var(--t-accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; border-bottom: 1px solid currentColor; }
+
+/* Logo Constellation dans l'en-tête */
+.brand { display: inline-flex; align-items: center; gap: 0.875rem; color: var(--t-text); min-height: 2.75rem; }
+.brand-icon { flex: 0 0 auto; display: block; }
+.brand-sep { width: 1px; height: 2.125rem; background: currentColor; opacity: 0.25; }
+.brand-name { display: flex; flex-direction: column; gap: 0.125rem; font-family: var(--font-body); font-weight: 300; line-height: 1; }
+.brand-the { font-size: 0.625rem; letter-spacing: 0.6em; }
+.brand-main { font-size: 1.25rem; letter-spacing: 0.26em; white-space: nowrap; }
+@media (max-width: 400px) {
+  .brand { gap: 0.625rem; }
+  .brand-icon { width: 32px; height: 29px; }
+  .brand-main { font-size: 1.0625rem; letter-spacing: 0.2em; }
+}
+
+/* Version glitch : effet seulement sur l'icône (le nom reste net) */
+
+.site-header .icon-btn { border-color: transparent; }
+.site-header .icon-btn:hover { border-color: var(--t-line-3); }
 
 /* Icônes soleil / lune du bouton de thème */
 .theme-icon-sun { display: none; }
@@ -824,3 +971,69 @@ input[type="range"] { accent-color: var(--t-accent); }
   .ft h2 { break-after: avoid; }
   .ft section { break-inside: avoid; }
 }
+
+/* =============================================================================
+   ACCUEIL — tableau de bord (tuiles)
+   ============================================================================= */
+.dash { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 1rem; }
+.dash-5 { grid-column: span 5; } .dash-6 { grid-column: span 6; } .dash-7 { grid-column: span 7; } .dash-12 { grid-column: span 12; }
+@media (max-width: 960px) { .dash-5, .dash-7 { grid-column: span 12; } .tile-concert { grid-row: auto; } }
+@media (max-width: 600px) { .dash-6 { grid-column: span 12; } }
+
+.tile { position: relative; display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border-radius: 1.25rem; background: var(--t-surface); border: 1px solid var(--t-line); min-width: 0; }
+.tile-label { margin: 0; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-muted); }
+
+/* Concert */
+.tile-concert { background: var(--t-accent); border-color: var(--t-accent); color: var(--t-on-accent); grid-row: span 2; }
+.tile-concert .tile-label { color: inherit; opacity: 0.75; }
+.countdown { margin: 0; padding: 0.25rem 0.625rem; border-radius: 999px; background: var(--t-on-accent); color: var(--t-accent); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.countdown:empty { display: none; }
+.tile-concert-title { margin: 0; font-size: clamp(2.25rem, 4.5vw, 3.5rem); line-height: 0.95; letter-spacing: -0.03em; }
+.tile-concert-meta { margin: 0; font-size: 0.9375rem; font-weight: 500; line-height: 1.5; }
+.mini-setlist { list-style: none; margin: 0.25rem 0 0; padding: 0.875rem 0 0; border-top: 1px solid currentColor; border-top-color: color-mix(in srgb, currentColor 25%, transparent); columns: 2; column-gap: 1.5rem; font-size: 0.9375rem; font-weight: 500; }
+.mini-setlist li { display: flex; gap: 0.625rem; padding: 0.2rem 0; break-inside: avoid; }
+.mini-setlist li span { font-family: var(--font-mono); opacity: 0.6; min-width: 1.25rem; }
+.tile-btn { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1.125rem; border-radius: 0.875rem; background: var(--t-on-accent); color: var(--t-accent); font-weight: 700; font-size: 0.9375rem; }
+.tile-btn:hover { filter: brightness(1.15); }
+.tile-concert-sum { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 500; }
+@media (max-width: 480px) { .mini-setlist { columns: 1; } }
+
+/* Chiffres */
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 1rem; margin: 0; }
+.stats div { display: flex; flex-direction: column-reverse; gap: 0.25rem; }
+.stats dt { font-size: 0.8125rem; color: var(--t-muted); }
+.stats dd { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 2.25rem; line-height: 1; }
+
+/* Dernière répète */
+.tracks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tracks li { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; padding: 0.375rem 0; border-bottom: 1px solid var(--t-line-2); }
+.tracks li:last-child { border-bottom: 0; }
+.track-btn { width: 2.25rem; height: 2.25rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--t-line-3); background: transparent; color: var(--t-text); cursor: pointer; }
+.track-btn:hover, .playing .track-btn { background: var(--t-accent); border-color: var(--t-accent); color: var(--t-on-accent); }
+.track-btn .i-pause, .track-btn[aria-pressed="true"] .i-play { display: none; }
+.track-btn[aria-pressed="true"] .i-pause { display: block; }
+.track-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 2.75rem; display: flex; align-items: center; }
+.track-title:hover, .playing .track-title { color: var(--t-accent); }
+.track-time { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--t-muted); }
+.track-bar { position: absolute; left: 3rem; right: 0; bottom: -1px; height: 2px; }
+.track-bar span { display: block; width: 0; height: 100%; background: var(--t-accent); }
+
+/* Répertoire compact */
+.rep-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.rep-list a { display: grid; grid-template-columns: minmax(0, 1fr) auto 7.5rem auto; align-items: center; gap: 0.875rem; min-height: 3.5rem; border-bottom: 1px solid var(--t-line-2); }
+.rep-list li:last-child a { border-bottom: 0; }
+.rep-list a:hover .rep-title { color: var(--t-accent); }
+.rep-title { font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rep-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--t-muted); white-space: nowrap; text-align: right; }
+.rep-list .chord-box { min-width: 2.5rem; padding: 0.25rem 0.5rem; font-size: 0.8125rem; }
+.rep-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; padding: 0; }
+.rep-dot.badge-validee { background: var(--t-ok); } .rep-dot.badge-en_cours { background: var(--t-accent); } .rep-dot.badge-idee { background: var(--t-idea); }
+@media (max-width: 480px) { .rep-list a { grid-template-columns: minmax(0, 1fr) auto auto; } .rep-meta { display: none; } }
+
+/* Accès rapides */
+.tile-link { gap: 0.5rem; padding-right: 3.5rem; transition: border-color 0.15s, background-color 0.15s; }
+.tile-link:hover { border-color: var(--t-accent); }
+.tile-link-title { font-family: var(--font-display); font-weight: 700; font-size: 1.375rem; line-height: 1.15; }
+.tile-link-sub { font-size: 0.875rem; color: var(--t-soft); line-height: 1.45; }
+.tile-arrow { position: absolute; right: 1.5rem; top: 1.5rem; font-size: 1.25rem; color: var(--t-accent); transition: transform 0.15s; }
+.tile-link:hover .tile-arrow { transform: translateX(3px); }

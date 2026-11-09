@@ -30,3 +30,6 @@ Thumbs.db
 # Fichiers audio originaux (WAV), trop lourds pour le site
 _audio-sources/
 _avant-design/
+
+# Fichiers déposés par Claude (zip du logo, etc.)
+Claude outputs/

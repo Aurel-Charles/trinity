@@ -1062,3 +1062,8 @@ input[type="range"] { accent-color: var(--t-accent); }
 .tile-concert-place .adresse { font-weight: 500; }
 .tile-concert-place .adresse-lien { color: inherit; }
 .setlist-adresse { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.25rem 1.5rem; padding-left: 1.625rem; color: var(--t-soft); }
+
+/* Carte Google Maps (page setlist) */
+.map-card { border-radius: 0.875rem; overflow: hidden; aspect-ratio: 4 / 3; background: var(--t-surface-2); }
+.map-card iframe { display: block; width: 100%; height: 100%; border: 0; }
+html.dark .map-card iframe { filter: saturate(0.85) brightness(0.92); }

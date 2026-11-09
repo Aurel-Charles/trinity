@@ -76,6 +76,13 @@
       </div>
       {{ end }}
     </div>
+    {{ with .Params.carte }}
+    <div class="section-card !p-3 flex flex-col gap-2">
+      {{ partial "trinity/carte.html" $ }}
+      {{ with $.Params.lieu }}<p class="text-sm font-semibold px-2 pt-1 m-0">{{ . }}</p>{{ end }}
+      {{ with $.Params.adresse }}<p class="text-sm text-soft px-2 m-0">{{ replace (trim . "\n ") "\n" ", " }}</p>{{ end }}
+    </div>
+    {{ end }}
     <button type="button" onclick="enterConcertMode()" class="btn btn-accent !min-h-14 !text-base">
       <i data-lucide="smartphone" class="w-5 h-5"></i> Mode scène
     </button>

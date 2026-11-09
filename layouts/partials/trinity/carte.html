@@ -1,0 +1,11 @@
+{{- /* Carte Google Maps d'une setlist.
+       Le champ "carte" peut contenir le lien d'intégration ou tout le code <iframe> copié depuis Google Maps :
+       on n'en garde que l'adresse https://www.google.com/maps/embed?... (rien d'autre n'est accepté). */ -}}
+{{- with .Params.carte -}}
+  {{- $src := index (findRE `https://www\.google\.com/maps/embed\?[^"'\s<>]+` .) 0 -}}
+  {{- with $src -}}
+  <div class="map-card">
+    <iframe src="{{ . | safeURL }}" title="Plan d'accès{{ with $.Params.lieu }} : {{ . }}{{ end }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </div>
+  {{- end -}}
+{{- end -}}

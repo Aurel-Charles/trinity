@@ -737,12 +737,25 @@ html.dark .concert-mode { background: #140A07; }
     rgba(120, 50, 10, 0.18);
   mix-blend-mode: normal;
 }
+/* Fondu en bas : la photo se fond dans la couleur de fond du site (sombre ou clair) */
+.hero-full::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 10rem;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--t-bg) 0%, transparent) 0%,
+    color-mix(in srgb, var(--t-bg) 35%, transparent) 35%,
+    color-mix(in srgb, var(--t-bg) 75%, transparent) 65%,
+    var(--t-bg) 100%);
+}
 .hero-full-content {
   position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 88rem;
   margin: 0 auto;
-  padding: 7rem 1.25rem 1.5rem;
+  padding: 7rem 1.25rem 6.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -789,8 +802,8 @@ html.dark .concert-mode { background: #140A07; }
   .hero-full picture { position: relative; display: block; height: auto; margin-top: 4.75rem; }
   .hero-full-img { position: static; display: block; height: auto; aspect-ratio: 1445 / 801; }
   .hero-full-shade { top: 4.75rem; bottom: auto; height: calc((100vw) * 801 / 1445); background: linear-gradient(180deg, rgba(20,10,7,0.1) 0%, rgba(20,10,7,0) 40%, rgba(20,10,7,0.9) 100%), rgba(120,50,10,0.18); }
-  .hero-full-content { margin-top: -2.75rem; padding: 0 1rem 2.5rem; }
-  html.light .hero-full { border-radius: 0 0 1.5rem 1.5rem; }
+  .hero-full-content { margin-top: -2.75rem; padding: 0 1rem 5.5rem; }
+  .hero-full::after { height: 7rem; }
   .hero-tag { font-size: 0.6875rem; letter-spacing: 0.14em; }
   .hero-bottom { flex-direction: column; justify-content: center; margin-top: 1rem; }
 }

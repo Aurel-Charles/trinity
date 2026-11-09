@@ -1,5 +1,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{/* Site privé du groupe : ne pas indexer, ne pas suivre les liens, pas d'aperçu en cache */}}
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
 

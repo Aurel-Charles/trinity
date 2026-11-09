@@ -5,6 +5,8 @@
 
 # Security Headers for all pages
 /*
+  # Site privé du groupe : aucune page ni fichier (MP3, Excel, images) dans les moteurs de recherche
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
@@ -31,13 +33,6 @@
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
-
-# Sitemap and feeds
-/sitemap.xml
-  Cache-Control: public, max-age=3600
-
-/feed.xml
-  Cache-Control: public, max-age=3600
 
 # Manifest
 /manifest.json

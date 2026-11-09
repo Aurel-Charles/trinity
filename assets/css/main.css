@@ -733,7 +733,7 @@ html.dark .concert-mode { background: #140A07; }
 .hero-full-shade {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, rgba(20,10,7,0.55) 0%, rgba(20,10,7,0) 22%, rgba(20,10,7,0) 45%, rgba(20,10,7,0.7) 100%),
+    linear-gradient(180deg, rgba(20,10,7,0.75) 0%, rgba(20,10,7,0.35) 12%, rgba(20,10,7,0) 26%, rgba(20,10,7,0) 45%, rgba(20,10,7,0.7) 100%),
     rgba(120, 50, 10, 0.18);
   mix-blend-mode: normal;
 }
@@ -811,6 +811,21 @@ body:has(.hero-full) .site-header {
   --t-glitch1: #FF8A3D;
   --t-glitch2: #F2C14E;
 }
+/* Accueil : liens du menu lisibles sur la photo */
+body:has(.hero-full) .site-header .nav-link,
+body:has(.hero-full) .site-header .brand { text-shadow: 0 1px 8px rgba(20, 10, 7, 0.7); }
+body:has(.hero-full) .site-header .nav-link { color: #F7EBDD; }
+
+/* Accueil : menu déroulant sombre (les textes du menu sont crème sur la photo) */
+body:has(.hero-full) .site-header .dropdown-menu {
+  background: rgba(26, 15, 12, 0.96);
+  border-color: rgba(247, 235, 221, 0.18);
+  --t-surface: #26170F;
+  --t-surface-2: #3D2515;
+}
+body:has(.hero-full) .site-header .dropdown-menu a { color: #EADCC9; }
+body:has(.hero-full) .site-header .dropdown-menu a:hover { color: #FFFFFF; background: rgba(247, 235, 221, 0.1); }
+
 /* Accueil : le nom est déjà en grand sur la photo, l'en-tête garde seulement le triangle + le menu */
 body:has(.hero-full) .site-header .brand-sep,
 body:has(.hero-full) .site-header .brand-name { display: none; }

@@ -105,10 +105,11 @@
     <section class="tile {{ if $pistes }}dash-7{{ else }}dash-12{{ end }}" aria-labelledby="dash-rep">
       <div class="flex items-baseline justify-between gap-3">
         <h2 id="dash-rep" class="tile-label">Répertoire</h2>
-        <a href="{{ "chansons" | relURL }}/" class="nav-caps">Tout voir →</a>
+        <a href="{{ "chansons" | relURL }}/" class="nav-caps">Tout voir ({{ len $chansons }}) →</a>
       </div>
       <ul class="rep-list">
-        {{ range $chansons }}
+        {{/* Les 5 derniers morceaux ajoutés */}}
+        {{ range first 5 (sort $chansons "Date" "desc") }}
         <li>
           <a href="{{ .RelPermalink }}">
             <span class="rep-title">{{ .Title }}</span>

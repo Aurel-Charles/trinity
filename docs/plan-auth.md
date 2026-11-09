@@ -90,5 +90,5 @@ Le « petit serveur » est découpé en deux morceaux que Netlify exécute :
 
 ## 5. Décisions à prendre
 
-1. Option A (Netlify) ou B (Express sur Render) ?
+1. ~~Option A (Netlify) ou B (Express sur Render) ?~~ → **A, Netlify** (décidé le 9 nov. 2026)
 2. Mot de passe commun ou un compte par membre ?

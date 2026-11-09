@@ -1,4 +1,5 @@
 +++
+fiche = "setlist"
 title = 'Lune des Pirates'
 date = 2026-11-14
 draft = false
@@ -9,7 +10,7 @@ notes_generales = 'Concert du 14 novembre'
 
 [[chansons]]
 slug = 'sweet-love'
-notes = 'Ouverture en douceur'
+notes = 'Ouverture'
 
 [[chansons]]
 slug = 'rise-up'
@@ -21,15 +22,15 @@ notes = ''
 
 [[chansons]]
 slug = 'good-feelings'
-notes = ''
+notes = 'Dub'
 
 [[chansons]]
 slug = 'dreams'
-notes = 'Morceau jazz'
+notes = 'Intro Jul'
 
 [[chansons]]
 slug = 'slow-down'
-notes = ''
+notes = 'Dub'
 
 [[chansons]]
 slug = 'another-pray'
@@ -37,5 +38,5 @@ notes = ''
 
 [[chansons]]
 slug = 'wait-and-see'
-notes = 'Final énergique'
+notes = 'Final - Dub'
 +++

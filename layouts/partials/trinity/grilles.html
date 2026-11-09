@@ -1,0 +1,29 @@
+{{- /* Grilles d'accords d'une chanson, sous une forme unique :
+       liste de { nom, mesures: [{accord, nombre}], cases: [accord par mesure], total, pattern, notes }
+       Accepte le format actuel (liste [[grilles]]) et l'ancien (table [grilles.xxx]). */ -}}
+{{- $out := slice -}}
+{{- $g := .Params.grilles -}}
+{{- if reflect.IsSlice $g -}}
+  {{- range $g -}}
+    {{- $mes := slice -}}
+    {{- range $m := .mesures -}}{{- if $m.accord -}}{{- $mes = $mes | append (dict "accord" $m.accord "nombre" (int ($m.nombre | default 1))) -}}{{- end -}}{{- end -}}
+    {{- $out = $out | append (dict "nom" (.nom | default "Grille") "mesures" $mes "pattern" (.pattern | default "") "notes" (.notes | default "")) -}}
+  {{- end -}}
+{{- else if reflect.IsMap $g -}}
+  {{- range $nom, $gr := $g -}}
+    {{- $mes := slice -}}
+    {{- range $i, $a := $gr.accords -}}
+      {{- $n := 1 -}}{{- with $gr.mesures_par_accord -}}{{- $n = index . $i | default 1 -}}{{- end -}}
+      {{- $mes = $mes | append (dict "accord" $a "nombre" (int $n)) -}}
+    {{- end -}}
+    {{- $out = $out | append (dict "nom" (replace $nom "_" " " | strings.FirstUpper) "mesures" $mes "pattern" ($gr.pattern | default "") "notes" ($gr.notes | default "")) -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Ajoute les cases (un accord par mesure) et le total */ -}}
+{{- $final := slice -}}
+{{- range $out -}}
+  {{- $cases := slice -}}
+  {{- range .mesures -}}{{- $a := .accord -}}{{- range seq (.nombre | default 1) -}}{{- $cases = $cases | append $a -}}{{- end -}}{{- end -}}
+  {{- $final = $final | append (merge . (dict "cases" $cases "total" (len $cases))) -}}
+{{- end -}}
+{{- return $final -}}

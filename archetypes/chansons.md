@@ -1,97 +1,49 @@
 +++
+fiche = "chanson"
 title = '{{ replace .Name "-" " " | title }}'
-date = {{ .Date }}
+date = {{ .Date.Format "2006-01-02" }}
 draft = true
+artiste = 'Original'
+statut = 'idee'       # validee | en_cours | idee
+tonalite = 'C'
+tempo = 80
+capo = 0
+duree = '3:30'        # estimation, remplacée par la durée du dernier enregistrement
+difficulte = 2
+tags = []
 
-# Informations générales
-artiste = ''
-statut = 'idee'  # validee | idee | en_cours
-tonalite = 'C'   # C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B (ou mineur: Am, Bm, etc.)
-tempo = 80       # BPM
-capo = 0         # Position du capo (0 = pas de capo)
-duree = '3:30'   # Durée au format M:SS
-difficulte = 2   # 1 (facile) à 5 (difficile)
-tags = []        # Ex: ['roots', 'one drop', 'cover']
+structure = ['Couplet', 'Refrain', 'Couplet', 'Refrain']
 
-# IMPORTANT: La structure DOIT être AVANT les blocs [grilles.*]
-structure = ['intro', 'couplet', 'refrain', 'couplet', 'refrain', 'pont', 'refrain', 'outro']
-
-# Grilles d'accords
-[grilles.intro]
-accords = ['Am', 'G', 'F', 'E']
-mesures = 4
+[[grilles]]
+nom = 'Couplet'
 pattern = '↓ ↓↑ ↓↑ ↓↑'
-notes = ''
 
-[grilles.couplet]
-accords = ['Am', 'G', 'F', 'E']
-mesures = 8
+  [[grilles.mesures]]
+  accord = 'Am'
+  nombre = 2
+
+  [[grilles.mesures]]
+  accord = 'G'
+  nombre = 2
+
+[[grilles]]
+nom = 'Refrain'
 pattern = '↓ ↓↑ ↓↑ ↓↑'
-notes = ''
 
-[grilles.refrain]
-accords = ['C', 'G', 'Am', 'F']
-mesures = 8
-pattern = '↓ ↓↑ ↓↑ ↓↑'
-notes = ''
+  [[grilles.mesures]]
+  accord = 'C'
+  nombre = 2
 
-[grilles.pont]
-accords = ['Dm', 'Am', 'E', 'Am']
-mesures = 4
-pattern = '↓ ↓↑ ↓↑ ↓↑'
-notes = ''
+  [[grilles.mesures]]
+  accord = 'F'
+  nombre = 2
 
-[grilles.outro]
-accords = ['Am', 'G', 'F', 'E']
-mesures = 4
-pattern = 'Fade out'
-notes = ''
-
-# Paroles
-[paroles]
-couplet_1 = """
-Première ligne du couplet 1
-Deuxième ligne du couplet 1
+[[paroles]]
+section = 'Couplet 1'
+texte = """
 """
 
-refrain = """
-Première ligne du refrain
-Deuxième ligne du refrain
-"""
-
-couplet_2 = """
-Première ligne du couplet 2
-Deuxième ligne du couplet 2
-"""
-
-pont = """
-Paroles du pont
-"""
-
-# Notes par instrument
-[instruments.guitare]
-role = 'Rythmique reggae'
-notes = """
-- Jouer sur les temps faibles (offbeat)
-"""
-
-[instruments.basse]
-role = 'Ligne mélodique'
-notes = """
-- Suivre la fondamentale des accords
-"""
-
-[instruments.piano]
-role = 'Accompagnement'
-notes = """
-- Bubble pattern classique
-"""
-
-# Enregistrements (optionnel - DOIT être à la fin, après tous les blocs [])
-# [[enregistrements]]
-# titre = 'Répétition du 15 janvier'
-# url = '/audio/chanson-repet-2025-01-15.mp3'
-# date = '2025-01-15'
+[[instruments]]
+instrument = 'Guitare'
+role = ''
 +++
-
-<!-- Notes supplémentaires -->

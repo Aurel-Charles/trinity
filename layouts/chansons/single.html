@@ -34,54 +34,38 @@
   </header>
 
   {{/* Grilles d'accords */}}
+  {{ $grilles := partial "trinity/grilles.html" . }}
+  {{ if $grilles }}
   <section class="flex flex-col gap-4" aria-labelledby="h-grilles">
     <div class="flex flex-wrap items-baseline justify-between gap-3">
       <h2 id="h-grilles">Grilles</h2>
       {{ with .Params.structure }}<span class="font-mono text-sm text-soft">Structure : {{ delimit . " → " }}</span>{{ end }}
     </div>
     <div class="flex flex-wrap gap-5">
-      {{ $displayed := slice }}
       {{ $tonique := index (findRE `^[A-G][#b]?` ($page.Params.tonalite | default "")) 0 }}
-      {{ range .Params.structure }}
-        {{ $sectionName := . }}
-        {{ if not (in $displayed $sectionName) }}
-          {{ $displayed = $displayed | append $sectionName }}
-          {{ with index $page.Params.grilles $sectionName }}
-          {{ $nb := 0 }}{{ range .mesures_par_accord }}{{ $nb = add $nb . }}{{ end }}
-          <div class="section-card flex-[1_1_460px] min-w-0 flex flex-col gap-4">
-            <div class="flex justify-between items-center gap-3">
-              <h3 class="capitalize">{{ replace $sectionName "_" " " }}</h3>
-              {{ if gt $nb 0 }}<span class="font-mono text-sm text-muted">{{ $nb }} mesures</span>{{ end }}
-            </div>
-            {{ $accords := .accords }}
-            {{ $mpa := .mesures_par_accord }}
-            {{ if $mpa }}
-              <div class="chord-grid">
-                {{ range $i, $accord := $accords }}
-                  {{ $count := index $mpa $i | default 1 }}
-                  {{ range seq $count }}
-                  <span class="chord-cell chord{{ if and $tonique (hasPrefix $accord $tonique) }} accent{{ end }}" data-chord="{{ $accord }}">{{ $accord }}</span>
-                  {{ end }}
-                {{ end }}
-              </div>
-            {{ else }}
-              <div class="flex flex-wrap gap-2">
-                {{ range $accords }}<span class="chord-box chord !text-lg !px-4 !py-2" data-chord="{{ . }}">{{ . }}</span>{{ end }}
-              </div>
-            {{ end }}
-            {{ with .pattern }}
-            <div class="flex items-center gap-3 pt-1">
-              <span class="text-sm text-muted">Rythmique</span>
-              <span class="font-mono text-xl tracking-[0.1em]">{{ . }}</span>
-            </div>
-            {{ end }}
-            {{ with .notes }}<div class="text-sm text-muted whitespace-pre-wrap border-t border-dashed border-line-3 pt-3">{{ . }}</div>{{ end }}
-          </div>
-          {{ end }}
+      {{ range $grilles }}
+      <div class="section-card flex-[1_1_460px] min-w-0 flex flex-col gap-4">
+        <div class="flex justify-between items-center gap-3">
+          <h3>{{ .nom }}</h3>
+          {{ if gt .total 0 }}<span class="font-mono text-sm text-muted">{{ .total }} mesure{{ if gt .total 1 }}s{{ end }}</span>{{ end }}
+        </div>
+        {{ with .cases }}
+        <div class="chord-grid">
+          {{ range . }}<span class="chord-cell chord{{ if and $tonique (hasPrefix . $tonique) }} accent{{ end }}" data-chord="{{ . }}">{{ . }}</span>{{ end }}
+        </div>
         {{ end }}
+        {{ with .pattern }}
+        <div class="flex items-center gap-3 pt-1">
+          <span class="text-sm text-muted">Rythmique</span>
+          <span class="font-mono text-xl tracking-[0.1em]">{{ . }}</span>
+        </div>
+        {{ end }}
+        {{ with .notes }}<div class="text-sm text-muted whitespace-pre-wrap border-t border-dashed border-line-3 pt-3">{{ . }}</div>{{ end }}
+      </div>
       {{ end }}
     </div>
   </section>
+  {{ end }}
 
   {{/* Paroles + instruments */}}
   <section class="flex flex-wrap gap-6 items-start">
@@ -106,53 +90,28 @@
 
       <div id="lyrics-wrapper" class="section-card max-h-[600px] overflow-y-auto">
         <div id="lyrics" class="lyrics-container">
-          {{ $coupletCount := 0 }}{{ $pontCount := 0 }}{{ $matched := 0 }}
-          {{ range .Params.structure }}
-            {{ $sectionName := . }}
-            {{ $lyricsKey := $sectionName }}
-            {{ if eq $sectionName "couplet" }}
-              {{ $coupletCount = add $coupletCount 1 }}
-              {{ $lyricsKey = printf "couplet_%d" $coupletCount }}
-            {{ else if eq $sectionName "refrain" }}
-              {{ $lyricsKey = "refrain" }}
-            {{ else if eq $sectionName "pont" }}
-              {{ $pontCount = add $pontCount 1 }}
-              {{ $lyricsKey = printf "pont_%d" $pontCount }}
-              {{ if not (index $page.Params.paroles $lyricsKey) }}{{ $lyricsKey = "pont" }}{{ end }}
-            {{ end }}
-            {{ with index $page.Params.paroles $lyricsKey }}
-            {{ $matched = add $matched 1 }}
-            <div class="mb-6">
-              <div class="eyebrow !text-accent mb-2">{{ replace $sectionName "_" " " }}</div>
-              {{ range $i, $line := split (trim . "\n") "\n" }}{{ if $line }}<div class="lyrics-line" data-line="{{ $i }}">{{ $line }}</div>{{ end }}{{ end }}
-            </div>
-            {{ end }}
-          {{ end }}
-          {{/* Paroles dont la clé n'est pas dans la structure (ex. couplet_1, refrain) */}}
-          {{ if eq $matched 0 }}
-            {{ range $key, $txt := .Params.paroles }}
-              {{ if $txt }}
-              <div class="mb-6">
-                <div class="eyebrow !text-accent mb-2">{{ replace $key "_" " " }}</div>
-                {{ range $i, $line := split (trim $txt "\n") "\n" }}{{ if $line }}<div class="lyrics-line" data-line="{{ $i }}">{{ $line }}</div>{{ end }}{{ end }}
-              </div>
-              {{ end }}
-            {{ end }}
+          {{ range partial "trinity/paroles.html" . }}
+          <div class="mb-6">
+            {{ with .section }}<div class="eyebrow !text-accent mb-2">{{ . }}</div>{{ end }}
+            {{ range $i, $line := split .texte "\n" }}{{ if $line }}<div class="lyrics-line" data-line="{{ $i }}">{{ $line }}</div>{{ end }}{{ end }}
+          </div>
+          {{ else }}
+          <p class="text-muted italic">Pas encore de paroles.</p>
           {{ end }}
         </div>
       </div>
     </div>
 
-    {{ with .Params.instruments }}
+    {{ with partial "trinity/instruments.html" . }}
     <div class="flex-[1_1_340px] min-w-0 flex flex-col gap-4">
       <h2>Par instrument</h2>
       <div class="flex flex-col gap-2.5">
-        {{ range $nom, $inst := . }}
+        {{ range . }}
         <div class="section-card !py-4 !px-5 flex gap-4 items-start">
-          <span class="flex-[0_0_88px] font-display font-bold text-lg capitalize">{{ $nom }}</span>
+          <span class="flex-[0_0_96px] font-display font-bold text-lg">{{ .instrument }}</span>
           <span class="flex flex-col gap-1 min-w-0">
-            {{ with $inst.role }}<span class="font-semibold">{{ . }}</span>{{ end }}
-            {{ with $inst.notes }}<span class="text-muted text-[15px] whitespace-pre-wrap">{{ . | markdownify }}</span>{{ end }}
+            {{ with .role }}<span class="font-semibold">{{ . }}</span>{{ end }}
+            {{ with .notes }}<span class="text-muted text-[15px] whitespace-pre-wrap">{{ . | markdownify }}</span>{{ end }}
           </span>
         </div>
         {{ end }}
@@ -169,10 +128,11 @@
   {{ end }}
 
   {{ with .Params.enregistrements }}
+  {{ $enr := sort . "date" "desc" }}
   <section class="flex flex-col gap-4">
     <h2>Enregistrements</h2>
     <div class="audio-player-container">
-      {{ range $index, $track := . }}
+      {{ range $index, $track := $enr }}
       <div class="audio-track {{ if eq $index 0 }}active{{ end }}" data-index="{{ $index }}">
         <div class="audio-track-info">
           <span class="audio-track-title">{{ .titre | default (printf "Piste %d" (add $index 1)) }}</span>

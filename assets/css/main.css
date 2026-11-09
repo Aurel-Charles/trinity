@@ -422,13 +422,38 @@ a.song-row:hover { background: var(--t-surface-2); }
   gap: 1rem;
   padding: 1.125rem 0.75rem;
   border-bottom: 1px solid var(--t-line-2);
-  cursor: grab;
   transition: background-color 0.15s;
 }
 .setlist-item:hover { background: var(--t-surface); }
-.setlist-item.dragging { opacity: 0.5; cursor: grabbing; background: var(--t-surface-2); }
-.setlist-item .drag-handle { color: var(--t-dim); cursor: grab; }
-.setlist-item:hover .drag-handle { color: var(--t-accent); }
+.setlist-item .drag-handle {
+  flex: 0 0 auto;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -0.5rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--t-muted);
+  cursor: grab;
+  touch-action: none;            /* le doigt déplace le morceau au lieu de faire défiler la page */
+  -webkit-user-select: none;
+  user-select: none;
+}
+.setlist-item .drag-handle:hover, .setlist-item .drag-handle:focus-visible { color: var(--t-accent); background: var(--t-surface-2); }
+.setlist-item.dragging {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  cursor: grabbing;
+  background: var(--t-surface-2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  border-radius: 0.75rem;
+}
+.setlist-item.dragging .drag-handle { color: var(--t-accent); cursor: grabbing; }
+body.is-dragging { -webkit-user-select: none; user-select: none; cursor: grabbing; }
 .setlist-num {
   flex: 0 0 3rem;
   font-family: var(--font-display);
@@ -440,7 +465,7 @@ a.song-row:hover { background: var(--t-surface-2); }
 }
 @media (max-width: 640px) {
   .setlist-item { gap: 0.75rem; padding: 0.875rem 0.25rem; }
-  .setlist-item .drag-handle { display: none; }
+  .setlist-item .drag-handle { margin-left: -0.25rem; }
   .setlist-num { flex-basis: 2rem; font-size: 1.75rem; }
   .setlist-item .song-title { font-size: 1.25rem !important; }
 }

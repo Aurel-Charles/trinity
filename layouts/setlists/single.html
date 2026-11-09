@@ -27,8 +27,8 @@
           {{ range where site.RegularPages "Section" "chansons" }}{{ if eq .Title $ref }}{{ $page = . }}{{ end }}{{ end }}
         {{ end }}
         {{ with $page }}
-        <li class="setlist-item" draggable="true" data-slug="{{ .File.BaseFileName }}" data-index="{{ $index }}" data-duration="{{ partial "trinity/duree-chanson.html" . }}">
-          <span class="drag-handle no-print" aria-hidden="true"><i data-lucide="grip-vertical" class="w-5 h-5"></i></span>
+        <li class="setlist-item" data-slug="{{ .File.BaseFileName }}" data-index="{{ $index }}" data-duration="{{ partial "trinity/duree-chanson.html" . }}">
+          <button type="button" class="drag-handle no-print" aria-label="Déplacer {{ .Title }} (flèches haut / bas)"><i data-lucide="grip-vertical" class="w-5 h-5"></i></button>
           <span class="setlist-num song-number">{{ add $index 1 }}</span>
           <span class="flex-1 min-w-0 flex flex-col gap-1">
             <a href="{{ .RelPermalink }}" class="song-title !text-2xl hover:text-accent">{{ .Title }}</a>
@@ -40,7 +40,7 @@
         </li>
         {{ else }}
         <li class="setlist-item opacity-60" data-slug="{{ $ref }}" data-index="{{ $index }}">
-          <span class="drag-handle no-print" aria-hidden="true"><i data-lucide="grip-vertical" class="w-5 h-5"></i></span>
+          <button type="button" class="drag-handle no-print" aria-label="Déplacer {{ $ref }} (flèches haut / bas)"><i data-lucide="grip-vertical" class="w-5 h-5"></i></button>
           <span class="setlist-num song-number">{{ add $index 1 }}</span>
           <span class="flex-1 text-danger inline-flex items-center gap-2"><i data-lucide="alert-triangle" class="w-5 h-5"></i> Chanson introuvable : {{ $ref }}</span>
         </li>
@@ -81,11 +81,8 @@
     <button type="button" onclick="window.print()" class="btn btn-ghost !min-h-14 !text-base">
       <i data-lucide="printer" class="w-5 h-5"></i> Imprimer pour la scène
     </button>
-    <div class="grid grid-cols-2 gap-3">
-      <button type="button" onclick="saveOrder()" class="btn btn-ghost"><i data-lucide="save" class="w-4 h-4"></i> Garder l'ordre</button>
-      <button type="button" onclick="resetOrder()" class="btn btn-ghost"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Réinitialiser</button>
-    </div>
-    <p class="text-xs text-muted">Glisse les morceaux pour changer l'ordre. « Garder l'ordre » le mémorise sur cet appareil.</p>
+    <button type="button" onclick="resetOrder()" class="btn btn-ghost"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Revenir à l'ordre d'origine</button>
+    <p class="text-xs text-muted">Pour changer l'ordre, maintiens la poignée <span aria-hidden="true">⋮⋮</span> à gauche d'un morceau et fais-le glisser. Le nouvel ordre est gardé sur cet appareil.</p>
   </aside>
 </article>
 
@@ -143,21 +140,8 @@
     {{- end }}
   {{- end }}
   {{- if $page }}
-    {{- $grilles := dict }}
-    {{- with $page.Params.grilles }}
-      {{- range $section, $grille := . }}
-        {{- $grilleData := dict "accords" ($grille.accords | default slice) "mesures" ($grille.mesures | default 4) "pattern" ($grille.pattern | default "") "notes" ($grille.notes | default "") }}
-        {{- $grilles = merge $grilles (dict $section $grilleData) }}
-      {{- end }}
-    {{- end }}
-    {{- $paroles := dict }}
-    {{- with $page.Params.paroles }}
-      {{- range $key, $value := . }}
-        {{- if $value }}
-          {{- $paroles = merge $paroles (dict $key $value) }}
-        {{- end }}
-      {{- end }}
-    {{- end }}
+    {{- $grilles := partial "trinity/grilles.html" $page }}
+    {{- $paroles := partial "trinity/paroles.html" $page }}
     {{- $songData := dict
       "slug" $page.File.BaseFileName
       "title" $page.Title
@@ -220,51 +204,86 @@ function calculateTotalDuration() {
 }
 calculateTotalDuration();
 
-// Drag & Drop
+// Glisser-déposer : souris + doigt (pointer events), via la poignée
 const setlist = document.getElementById('setlist');
-let draggedItem = null;
+let drag = null;
 
-setlist.addEventListener('dragstart', (e) => {
-  if (e.target.classList.contains('setlist-item')) {
-    draggedItem = e.target;
-    e.target.classList.add('dragging');
-  }
-});
-
-setlist.addEventListener('dragend', (e) => {
-  if (e.target.classList.contains('setlist-item')) {
-    e.target.classList.remove('dragging');
-    draggedItem = null;
-    updateNumbers();
-  }
-});
-
-setlist.addEventListener('dragover', (e) => {
+setlist.addEventListener('pointerdown', (e) => {
+  const handle = e.target.closest('.drag-handle');
+  if (!handle || (e.pointerType === 'mouse' && e.button !== 0)) return;
   e.preventDefault();
-  const afterElement = getDragAfterElement(setlist, e.clientY);
-  if (afterElement == null) {
-    setlist.appendChild(draggedItem);
-  } else {
-    setlist.insertBefore(draggedItem, afterElement);
-  }
+  const item = handle.closest('.setlist-item');
+  drag = { item, handle, pointerId: e.pointerId, lastY: e.clientY };
+  try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+  item.classList.add('dragging');
+  document.body.classList.add('is-dragging');
+  if (navigator.vibrate) navigator.vibrate(10);
 });
 
-function getDragAfterElement(container, y) {
-  const draggableElements = [...container.querySelectorAll('.setlist-item:not(.dragging)')];
-  return draggableElements.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) {
-      return { offset: offset, element: child };
-    } else {
-      return closest;
-    }
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
+function moveDrag(clientY) {
+  const item = drag.item;
+  // On déplace les voisins autour de l'élément tenu (lui ne quitte jamais le DOM,
+  // sinon le navigateur perd le suivi du doigt).
+  let next = item.nextElementSibling;
+  while (next && clientY > next.getBoundingClientRect().top + next.offsetHeight / 2) {
+    setlist.insertBefore(next, item);
+    next = item.nextElementSibling;
+  }
+  let prev = item.previousElementSibling;
+  while (prev && clientY < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
+    item.after(prev);
+    prev = item.previousElementSibling;
+  }
+  updateNumbers();
 }
 
+let scrollTimer = null;
+function autoScroll() {
+  if (!drag) return;
+  const y = drag.lastY, edge = 80;
+  let dy = 0;
+  if (y < edge) dy = -Math.ceil((edge - y) / 6);
+  else if (y > window.innerHeight - edge) dy = Math.ceil((y - (window.innerHeight - edge)) / 6);
+  if (dy) { window.scrollBy(0, dy); moveDrag(y); }
+  scrollTimer = requestAnimationFrame(autoScroll);
+}
+
+setlist.addEventListener('pointermove', (e) => {
+  if (!drag || e.pointerId !== drag.pointerId) return;
+  e.preventDefault();
+  drag.lastY = e.clientY;
+  moveDrag(e.clientY);
+  if (!scrollTimer) scrollTimer = requestAnimationFrame(autoScroll);
+});
+
+function endDrag() {
+  if (!drag) return;
+  drag.item.classList.remove('dragging');
+  document.body.classList.remove('is-dragging');
+  drag = null;
+  cancelAnimationFrame(scrollTimer); scrollTimer = null;
+  updateNumbers();
+  persistOrder();
+}
+setlist.addEventListener('pointerup', endDrag);
+setlist.addEventListener('pointercancel', endDrag);
+setlist.addEventListener('lostpointercapture', endDrag);
+
+// Clavier : flèches haut / bas sur la poignée
+setlist.addEventListener('keydown', (e) => {
+  const handle = e.target.closest('.drag-handle');
+  if (!handle || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+  e.preventDefault();
+  const item = handle.closest('.setlist-item');
+  if (e.key === 'ArrowUp' && item.previousElementSibling) item.after(item.previousElementSibling);
+  if (e.key === 'ArrowDown' && item.nextElementSibling) item.before(item.nextElementSibling);
+  handle.focus();
+  updateNumbers();
+  persistOrder();
+});
+
 function updateNumbers() {
-  const items = setlist.querySelectorAll('.setlist-item');
-  items.forEach((item, index) => {
+  setlist.querySelectorAll('.setlist-item').forEach((item, index) => {
     const numberEl = item.querySelector('.song-number');
     if (numberEl) numberEl.textContent = index + 1;
     item.dataset.index = index;
@@ -274,20 +293,9 @@ function updateNumbers() {
 // LocalStorage
 const setlistId = '{{ .File.BaseFileName }}';
 
-function saveOrder() {
-  const items = setlist.querySelectorAll('.setlist-item');
-  const order = Array.from(items).map(item => item.dataset.slug);
-  localStorage.setItem(`setlist-${setlistId}`, JSON.stringify(order));
-  const btn = event.target.closest('button');
-  const originalHtml = btn.innerHTML;
-  btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Sauvegardé!';
-  btn.classList.add('!border-accent', '!text-accent');
-  lucide.createIcons();
-  setTimeout(() => {
-    btn.innerHTML = originalHtml;
-    btn.classList.remove('!border-accent', '!text-accent');
-    lucide.createIcons();
-  }, 2000);
+function persistOrder() {
+  const order = Array.from(setlist.querySelectorAll('.setlist-item')).map(item => item.dataset.slug);
+  try { localStorage.setItem(`setlist-${setlistId}`, JSON.stringify(order)); } catch (_) {}
 }
 
 function resetOrder() {
@@ -377,115 +385,49 @@ function showCurrentSong() {
   renderLyrics(song);
 }
 
+function escapeHtml(t) {
+  return String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function renderGrilles(song) {
   const container = document.getElementById('concert-grilles-content');
   if (!container) return;
-
   let html = '';
-  const displayedSections = new Set();
-
-  if (song.structure && song.structure.length > 0) {
-    song.structure.forEach(section => {
-      if (displayedSections.has(section)) return;
-      displayedSections.add(section);
-
-      const grille = song.grilles[section];
-      if (grille && grille.accords && grille.accords.length > 0) {
-        html += `
-          <div class="concert-grille-section">
-            <div class="concert-grille-section-title">${section}</div>
-            <div class="concert-grille-accords">
-              ${grille.accords.map(a => `<span class="concert-grille-chord">${a}</span>`).join('')}
-            </div>
-            <div class="concert-grille-info">
-              ${grille.mesures ? `${grille.mesures} mesures` : ''}
-              ${grille.pattern ? ` • ${grille.pattern}` : ''}
-            </div>
-            ${grille.notes ? `<div class="concert-grille-info italic mt-1">${grille.notes}</div>` : ''}
-          </div>
-        `;
-      }
-    });
-  } else {
-    for (const [section, grille] of Object.entries(song.grilles || {})) {
-      if (grille && grille.accords && grille.accords.length > 0) {
-        html += `
-          <div class="concert-grille-section">
-            <div class="concert-grille-section-title">${section}</div>
-            <div class="concert-grille-accords">
-              ${grille.accords.map(a => `<span class="concert-grille-chord">${a}</span>`).join('')}
-            </div>
-            <div class="concert-grille-info">
-              ${grille.mesures ? `${grille.mesures} mesures` : ''}
-              ${grille.pattern ? ` • ${grille.pattern}` : ''}
-            </div>
-          </div>
-        `;
-      }
-    }
+  (song.grilles || []).forEach(g => {
+    if (!g.mesures || !g.mesures.length) return;
+    html += `
+      <div class="concert-grille-section">
+        <div class="concert-grille-section-title">${escapeHtml(g.nom)}</div>
+        <div class="concert-grille-accords">
+          ${g.mesures.map(m => `<span class="concert-grille-chord">${escapeHtml(m.accord)}${m.nombre > 1 ? `<small class="opacity-70 ml-1">×${m.nombre}</small>` : ''}</span>`).join('')}
+        </div>
+        <div class="concert-grille-info">
+          ${g.total ? `${g.total} mesures` : ''}${g.pattern ? ` · ${escapeHtml(g.pattern)}` : ''}
+        </div>
+      </div>`;
+  });
+  if (song.structure && song.structure.length) {
+    html = `<div class="concert-grille-info mb-3">Structure : ${song.structure.map(escapeHtml).join(' → ')}</div>` + html;
   }
-
-  if (!html) html = '<p class="text-secondary italic">Aucune grille d\'accords</p>';
+  if (!html) html = '<p class="text-muted italic">Aucune grille d\'accords</p>';
   container.innerHTML = html;
 }
 
 function renderLyrics(song) {
   const container = document.getElementById('concert-lyrics');
   if (!container) return;
-
   let html = '';
-  if (song.notes) {
-    html += `<div class="concert-notes"><i data-lucide="sticky-note" class="w-4 h-4 inline mr-2"></i>${song.notes}</div>`;
-  }
-
-  if (song.structure && song.structure.length > 0 && song.paroles) {
-    let coupletCount = 0;
-    song.structure.forEach(section => {
-      let lyricsKey = section;
-      if (section === 'couplet') {
-        coupletCount++;
-        lyricsKey = `couplet_${coupletCount}`;
-      } else if (section === 'pont') {
-        lyricsKey = song.paroles[`pont_${coupletCount}`] ? `pont_${coupletCount}` : 'pont';
-      }
-
-      const lyrics = song.paroles[lyricsKey];
-      if (lyrics) {
-        html += `
-          <div class="mb-6">
-            <div class="eyebrow !text-accent mb-2">${section}</div>
-            ${lyrics.trim().split('\n').map((line, i) =>
-              line ? `<div class="lyrics-line">${line}</div>` : ''
-            ).join('')}
-          </div>
-        `;
-      } else if (!['intro', 'outro', 'solo'].includes(section)) {
-        html += `
-          <div class="mb-6">
-            <div class="eyebrow !text-accent mb-2">${section}</div>
-            <div class="text-tertiary italic">—</div>
-          </div>
-        `;
-      }
-    });
-  } else if (song.paroles) {
-    for (const [section, lyrics] of Object.entries(song.paroles)) {
-      if (lyrics) {
-        html += `
-          <div class="mb-6">
-            <div class="eyebrow !text-accent mb-2">${section.replace('_', ' ')}</div>
-            ${lyrics.trim().split('\n').map(line =>
-              line ? `<div class="lyrics-line">${line}</div>` : ''
-            ).join('')}
-          </div>
-        `;
-      }
-    }
-  }
-
-  if (!html) html = '<p class="text-secondary italic text-center">Aucune parole disponible</p>';
+  if (song.notes) html += `<div class="concert-notes">${escapeHtml(song.notes)}</div>`;
+  (song.paroles || []).forEach(p => {
+    html += `
+      <div class="mb-6">
+        ${p.section ? `<div class="eyebrow !text-accent mb-2">${escapeHtml(p.section)}</div>` : ''}
+        ${p.texte.split('\n').map(line => line ? `<div class="lyrics-line">${escapeHtml(line)}</div>` : '').join('')}
+      </div>`;
+  });
+  if (!html) html = '<p class="text-muted italic text-center">Aucune parole disponible</p>';
   container.innerHTML = html;
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 }
 
 function nextSong() {

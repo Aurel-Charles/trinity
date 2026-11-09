@@ -1,0 +1,10 @@
+{{- /* Paroles d'une chanson : liste de { section, texte }, dans l'ordre.
+       Accepte le format actuel (liste [[paroles]]) et l'ancien (table [paroles]). */ -}}
+{{- $out := slice -}}
+{{- $p := .Params.paroles -}}
+{{- if reflect.IsSlice $p -}}
+  {{- range $x := $p -}}{{- if and $x.texte (trim $x.texte " \n") -}}{{- $out = $out | append (dict "section" ($x.section | default "") "texte" (trim $x.texte "\n")) -}}{{- end -}}{{- end -}}
+{{- else if reflect.IsMap $p -}}
+  {{- range $k, $v := $p -}}{{- if $v -}}{{- $out = $out | append (dict "section" (replace $k "_" " " | strings.FirstUpper) "texte" (trim $v "\n")) -}}{{- end -}}{{- end -}}
+{{- end -}}
+{{- return $out -}}

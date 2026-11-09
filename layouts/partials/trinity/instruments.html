@@ -1,0 +1,10 @@
+{{- /* Notes par instrument : liste de { instrument, role, notes }.
+       Accepte le format actuel (liste [[instruments]]) et l'ancien (table [instruments.xxx]). */ -}}
+{{- $out := slice -}}
+{{- $i := .Params.instruments -}}
+{{- if reflect.IsSlice $i -}}
+  {{- range $i -}}{{- $out = $out | append (dict "instrument" (.instrument | default "Instrument") "role" (.role | default "") "notes" (.notes | default "")) -}}{{- end -}}
+{{- else if reflect.IsMap $i -}}
+  {{- range $k, $v := $i -}}{{- $out = $out | append (dict "instrument" (strings.FirstUpper $k) "role" ($v.role | default "") "notes" ($v.notes | default "")) -}}{{- end -}}
+{{- end -}}
+{{- return $out -}}

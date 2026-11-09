@@ -6,6 +6,10 @@ url = "/songs/SLOWDOWN.mp3"
 secondes = 194
 
 [[fichiers]]
+url = "/songs/around-the-world-2026-11-09.mp3"
+secondes = 319
+
+[[fichiers]]
 url = "/songs/repete-2026-11-02/another-pray.mp3"
 secondes = 282
 

@@ -40,12 +40,12 @@
   </div>
 </section>
 
-{{/* Dernière répète : la date d'enregistrement la plus récente, et les morceaux enregistrés ce jour-là */}}
+{{/* Dernière répète : la date d'enregistrement la plus récente (hors maquettes), et les morceaux enregistrés ce jour-là */}}
 {{ $dates := slice }}
-{{ range $chansons }}{{ range .Params.enregistrements }}{{ with .date }}{{ $dates = $dates | append (string .) }}{{ end }}{{ end }}{{ end }}
+{{ range $chansons }}{{ range .Params.enregistrements }}{{ if ne .type "maquette" }}{{ with .date }}{{ $dates = $dates | append (string .) }}{{ end }}{{ end }}{{ end }}{{ end }}
 {{ $derniere := "" }}{{ with $dates }}{{ $derniere = index (sort . "value" "desc") 0 }}{{ end }}
 {{ $pistes := slice }}
-{{ range $chansons }}{{ $p := . }}{{ range .Params.enregistrements }}{{ if eq (string .date) $derniere }}
+{{ range $chansons }}{{ $p := . }}{{ range .Params.enregistrements }}{{ if and (eq (string .date) $derniere) (ne .type "maquette") }}
   {{ $sec := 0 }}{{ with index (where (site.Data.audio.fichiers | default slice) "url" .url) 0 }}{{ $sec = int .secondes }}{{ end }}
   {{ $pistes = $pistes | append (dict "titre" $p.Title "lien" $p.RelPermalink "url" .url "duree" (cond (gt $sec 0) (printf "%d:%02d" (div $sec 60) (mod $sec 60)) "")) }}
 {{ end }}{{ end }}{{ end }}

@@ -247,6 +247,7 @@ collections:
           - {label: "Titre", name: "titre", widget: "string", default: "Répète"}
           - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, picker_utc: true}
           - {label: "Fichier audio (MP3 de préférence)", name: "url", widget: "file", media_folder: "/static/songs", public_folder: "/songs", choose_url: false}
+          - {label: "Type", name: "type", widget: "select", required: false, default: "repete", options: [{label: "Répète", value: "repete"}, {label: "Maquette / démo", value: "maquette"}, {label: "Live", value: "live"}], hint: "Les maquettes n'apparaissent pas dans la tuile « Dernière répète » de l'accueil."}
 
       # ---------- Divers ----------
       - label: "Notes libres"

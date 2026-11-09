@@ -91,4 +91,29 @@ Le « petit serveur » est découpé en deux morceaux que Netlify exécute :
 ## 5. Décisions à prendre
 
 1. ~~Option A (Netlify) ou B (Express sur Render) ?~~ → **A, Netlify** (décidé le 9 nov. 2026)
-2. Mot de passe commun ou un compte par membre ?
+2. ~~Mot de passe commun ou un compte par membre ?~~ → **mot de passe commun** (décidé le 9 nov. 2026)
+
+---
+
+## 6. Ce qui est construit (branche `auth`)
+
+| Fichier | Rôle |
+|---|---|
+| `netlify/lib/session.mjs` | Code partagé : hash du mot de passe (PBKDF2-SHA256), JWT HS256, cookies — Web Crypto uniquement, aucune dépendance |
+| `netlify/functions/connexion.mjs` | `POST /api/connexion` |
+| `netlify/functions/deconnexion.mjs` | `POST /api/deconnexion` (bouton dans l'en-tête) |
+| `netlify/edge-functions/garde.mjs` | Gardien sur `/*` |
+| `content/connexion.md` + `layouts/connexion.html` | Page `/connexion/` |
+| `scripts/hash-mot-de-passe.mjs` | Génère `MOT_DE_PASSE_HASH` et `AUTH_SECRET` |
+
+Le JWT est signé avec `AUTH_SECRET` + `MOT_DE_PASSE_HASH` : changer le mot de passe déconnecte tout le monde.
+
+## 7. Mise en route
+
+1. `node scripts/hash-mot-de-passe.mjs` → taper le mot de passe du groupe deux fois.
+2. Netlify → *Site configuration* → *Environment variables* → ajouter `MOT_DE_PASSE_HASH` et `AUTH_SECRET` (valeurs affichées par le script).
+3. `git push -u origin auth` → Netlify construit un aperçu de la branche (*Deploys* → *Branch deploys*, à activer si besoin).
+4. Tester sur l'adresse d'aperçu (liste de la section 3, étape 6).
+5. Fusionner : `git switch main && git merge auth && git push`.
+
+Tant que les deux variables ne sont pas sur Netlify, le gardien refuse tout le monde (le site reste fermé, pas ouvert).

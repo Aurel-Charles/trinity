@@ -1,0 +1,37 @@
+{{- /* Page de connexion : seule page du site accessible sans être connecté
+       (voir netlify/edge-functions/garde.mjs). Page autonome, sans menu. */ -}}
+<!DOCTYPE html>
+<html class="dark" lang="{{ site.Language.LanguageCode }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body class="login-body">
+  <main class="login">
+    <form class="login-card" method="post" action="/api/connexion">
+      <img src="{{ "images/logo/trinities-icone-couleur-fond-sombre.svg" | relURL }}" alt="" class="login-logo login-logo-dark" width="88" height="88">
+      <img src="{{ "images/logo/trinities-icone-couleur-fond-clair.svg" | relURL }}" alt="" class="login-logo login-logo-light" width="88" height="88">
+      <h1 class="login-title"><span>The</span> Trinities</h1>
+      <p class="login-sub">Espace réservé au groupe</p>
+
+      <p class="login-error" id="login-error" role="alert" hidden>Mot de passe incorrect.</p>
+
+      <label for="mot_de_passe" class="login-label">Mot de passe du groupe</label>
+      <input type="password" id="mot_de_passe" name="mot_de_passe" class="login-input" autocomplete="current-password" required autofocus>
+      <input type="hidden" name="retour" id="retour" value="/">
+
+      <button type="submit" class="btn btn-accent login-btn">Entrer</button>
+    </form>
+  </main>
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var r = q.get('retour');
+      if (r && r.charAt(0) === '/' && r.charAt(1) !== '/') document.getElementById('retour').value = r;
+      if (q.get('erreur')) document.getElementById('login-error').hidden = false;
+      document.querySelector('.login-card').addEventListener('submit', function () {
+        var b = this.querySelector('button'); b.disabled = true; b.textContent = 'Connexion…';
+      });
+    })();
+  </script>
+</body>
+</html>

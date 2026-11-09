@@ -295,6 +295,7 @@ collections:
       - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false, picker_utc: true}
       - {label: "Heure de début", name: "heure_debut", widget: "string", required: false, pattern: ['^\d{1,2}[:h]\d{2}$', "Format 20:00"], hint: "Ex. 20:00"}
       - {label: "Lieu", name: "lieu", widget: "string", required: false, hint: "Ex. La Lune des Pirates, Amiens"}
+      - {label: "Adresse", name: "adresse", widget: "text", required: false, hint: "Une ligne par élément : salle, rue, code postal et ville. Un lien « Itinéraire » est ajouté automatiquement."}
 
       - label: "Programme"
         name: "chansons"

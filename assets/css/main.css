@@ -1052,3 +1052,13 @@ input[type="range"] { accent-color: var(--t-accent); }
 .tile-link-sub { font-size: 0.875rem; color: var(--t-soft); line-height: 1.45; }
 .tile-arrow { position: absolute; right: 1.5rem; top: 1.5rem; font-size: 1.25rem; color: var(--t-accent); transition: transform 0.15s; }
 .tile-link:hover .tile-arrow { transform: translateX(3px); }
+
+/* Adresse de la salle */
+.adresse { font-style: normal; display: flex; flex-direction: column; line-height: 1.5; }
+.adresse-lien { display: inline-flex; align-items: center; gap: 0.375rem; min-height: 2.75rem; align-self: flex-start; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--t-accent); }
+.adresse-lien:hover { text-decoration: underline; text-underline-offset: 0.3em; }
+.tile-concert-place { display: flex; flex-direction: column; gap: 0.25rem; padding-top: 1rem; border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent); font-size: 0.9375rem; }
+.tile-concert-lieu { margin: 0; font-weight: 700; }
+.tile-concert-place .adresse { font-weight: 500; }
+.tile-concert-place .adresse-lien { color: inherit; }
+.setlist-adresse { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.25rem 1.5rem; padding-left: 1.625rem; color: var(--t-soft); }

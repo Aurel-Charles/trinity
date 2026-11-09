@@ -5,6 +5,11 @@ date = 2026-11-14
 draft = false
 
 lieu = 'La Lune des Pirates, Amiens'
+adresse = """
+La Grande Salle
+58-bis rue St Leu
+80000 Amiens
+"""
 heure_debut = '20:00'
 notes_generales = 'Concert du 14 novembre'
 

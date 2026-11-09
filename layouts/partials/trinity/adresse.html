@@ -1,0 +1,9 @@
+{{- /* Adresse d'une setlist (champ "adresse", plusieurs lignes) + lien itinéraire */ -}}
+{{- with .Params.adresse -}}
+{{- $lignes := split (trim . "\n ") "\n" -}}
+{{- $requete := printf "%s, %s" ($.Params.lieu | default "") (delimit $lignes ", ") -}}
+<address class="adresse">
+  {{- range $lignes }}<span>{{ . }}</span>{{ end -}}
+</address>
+<a class="adresse-lien" href="https://www.google.com/maps/search/?api=1&query={{ $requete | urlquery }}" target="_blank" rel="noopener">Itinéraire <span aria-hidden="true">↗</span></a>
+{{- end -}}

@@ -63,10 +63,11 @@
         {{ if $aVenir }}<p class="countdown" data-date="{{ .Date.Format "2006-01-02" }}"></p>{{ end }}
       </div>
       <h2 id="dash-concert" class="tile-concert-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-      <p class="tile-concert-meta">{{ .Date | time.Format ":date_full" }}{{ with .Params.heure_debut }} · {{ . }}{{ end }}{{ with .Params.lieu }}<br>{{ . }}{{ end }}</p>
-      <ol class="mini-setlist">
-        {{ range $i, $p := $pages }}<li><span>{{ add $i 1 }}</span>{{ $p.Title }}</li>{{ end }}
-      </ol>
+      <p class="tile-concert-meta">{{ .Date | time.Format ":date_full" }}{{ with .Params.heure_debut }} · {{ . }}{{ end }}</p>
+      <div class="tile-concert-place">
+        {{ with .Params.lieu }}<p class="tile-concert-lieu">{{ . }}</p>{{ end }}
+        {{ partial "trinity/adresse.html" . }}
+      </div>
       <div class="flex flex-wrap items-center gap-3 mt-auto pt-2">
         <a href="{{ .RelPermalink }}" class="tile-btn">Voir la setlist</a>
         <span class="tile-concert-sum">{{ len $pages }} morceaux{{ with partial "trinity/duree-totale.html" $d }} · {{ . }}{{ end }}</span>

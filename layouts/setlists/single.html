@@ -17,6 +17,7 @@
         {{ with .Params.heure_debut }}<span class="inline-flex items-center gap-2"><i data-lucide="clock" class="w-[18px] h-[18px] text-muted"></i>{{ . }}</span>{{ end }}
         {{ with .Params.lieu }}<span class="inline-flex items-center gap-2"><i data-lucide="map-pin" class="w-[18px] h-[18px] text-muted"></i>{{ . }}</span>{{ end }}
       </div>
+      {{ with .Params.adresse }}<div class="setlist-adresse">{{ partial "trinity/adresse.html" $ }}</div>{{ end }}
     </header>
 
     <ol id="setlist" class="list-none m-0 p-0 border-t border-line">

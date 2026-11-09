@@ -50,6 +50,14 @@
   {{ $pistes = $pistes | append (dict "titre" $p.Title "lien" $p.RelPermalink "url" .url "duree" (cond (gt $sec 0) (printf "%d:%02d" (div $sec 60) (mod $sec 60)) "")) }}
 {{ end }}{{ end }}{{ end }}
 
+{{/* Maquettes : tous les enregistrements de type « maquette », du plus récent au plus ancien */}}
+{{ $maquettes := slice }}
+{{ range $chansons }}{{ $p := . }}{{ range .Params.enregistrements }}{{ if eq .type "maquette" }}
+  {{ $sec := 0 }}{{ with index (where (site.Data.audio.fichiers | default slice) "url" .url) 0 }}{{ $sec = int .secondes }}{{ end }}
+  {{ $maquettes = $maquettes | append (dict "titre" $p.Title "lien" $p.RelPermalink "url" .url "date" (string .date) "statut" $p.Params.statut "duree" (cond (gt $sec 0) (printf "%d:%02d" (div $sec 60) (mod $sec 60)) "")) }}
+{{ end }}{{ end }}{{ end }}
+{{ $maquettes = sort $maquettes "date" "desc" }}
+
 <div id="repertoire" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-24 scroll-mt-6">
   <div class="dash">
 
@@ -136,6 +144,47 @@
     </section>
     {{ end }}
 
+    {{/* ---------- Maquettes ---------- */}}
+    {{ if $maquettes }}
+    <section class="tile tile-maquettes dash-7" aria-labelledby="dash-maquettes">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 id="dash-maquettes" class="tile-label">Maquettes</h2>
+        <span class="font-mono text-xs text-muted">À valider</span>
+      </div>
+      <ul class="tracks">
+        {{ range $maquettes }}
+        <li>
+          <button type="button" class="track-btn" data-src="{{ .url }}" aria-pressed="false" aria-label="Écouter la maquette de {{ .titre }}">
+            <svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+            <svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>
+          </button>
+          <span class="track-main">
+            <a href="{{ .lien }}" class="track-title">{{ .titre }}</a>
+            <span class="track-meta">{{ partial "trinity/statut-label.html" .statut }}{{ with .date }} · {{ time.Format "2 Jan 2006" . }}{{ end }}</span>
+          </span>
+          <span class="track-time">{{ .duree }}</span>
+          <span class="track-bar" aria-hidden="true"><span></span></span>
+        </li>
+        {{ end }}
+      </ul>
+      <a href="/admin/#/collections/chansons" class="tile-foot">Ajouter une maquette : dans la chanson, un enregistrement de type « Maquette » →</a>
+    </section>
+    <div class="dash-5 dash-stack">
+    <a href="{{ "setlists" | relURL }}/" class="tile tile-link dash-stack-item">
+      <span class="tile-label">Concerts</span>
+      <span class="tile-link-title">Toutes les setlists</span>
+      <span class="tile-link-sub">{{ len $setlists }} setlist{{ if gt (len $setlists) 1 }}s{{ end }} · mode scène sur téléphone</span>
+      <span class="tile-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/admin/" class="tile tile-link dash-stack-item">
+      <span class="tile-label">Pour le groupe</span>
+      <span class="tile-link-title">Modifier le site</span>
+      <span class="tile-link-sub">Ajouter une chanson, une répète, une setlist</span>
+      <span class="tile-arrow" aria-hidden="true">→</span>
+    </a>
+
+    </div>
+    {{ else }}
     {{/* ---------- Accès rapides ---------- */}}
     <a href="{{ "setlists" | relURL }}/" class="tile tile-link dash-6">
       <span class="tile-label">Concerts</span>
@@ -150,6 +199,8 @@
       <span class="tile-arrow" aria-hidden="true">→</span>
     </a>
 
+    {{ end }}
+
   </div>
 </div>
 
@@ -160,7 +211,7 @@ document.querySelectorAll('.countdown[data-date]').forEach(function (el) {
   var n = Math.round((d - t) / 86400000);
   el.textContent = n > 1 ? 'Dans ' + n + ' jours' : n === 1 ? 'Demain' : n === 0 ? "Aujourd'hui" : '';
 });
-/* Lecteur des enregistrements de la dernière répète */
+/* Lecteur des enregistrements (dernière répète et maquettes) */
 (function () {
   var audio = new Audio(), current = null;
   audio.preload = 'none';

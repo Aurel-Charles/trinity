@@ -1031,6 +1031,14 @@ input[type="range"] { accent-color: var(--t-accent); }
 .track-title:hover, .playing .track-title { color: var(--t-accent); }
 .track-time { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--t-muted); }
 .track-bar { position: absolute; left: 3rem; right: 0; bottom: -1px; height: 2px; }
+.tile-maquettes { display: flex; flex-direction: column; }
+.tile-foot { margin-top: auto; padding-top: 1.25rem; font-size: 0.8125rem; color: var(--t-muted); }
+.tile-foot:hover { color: var(--t-accent); }
+.dash-stack { display: flex; flex-direction: column; gap: 1rem; }
+.dash-stack > .tile { flex: 1; }
+.track-main { min-width: 0; display: flex; flex-direction: column; justify-content: center; min-height: 2.75rem; }
+.track-main .track-title { min-height: 0; }
+.track-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--t-muted); }
 .track-bar span { display: block; width: 0; height: 100%; background: var(--t-accent); }
 
 /* Répertoire compact */

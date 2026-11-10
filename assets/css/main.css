@@ -574,8 +574,7 @@ body.is-dragging { -webkit-user-select: none; user-select: none; cursor: grabbin
 .audio-select-chevron { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--t-muted); }
 .audio-version-count { font-family: var(--font-mono); font-size: 0.75rem; color: var(--t-muted); }
 .audio-transport { display: flex; align-items: center; gap: 0.75rem; }
-.audio-skip { position: relative; }
-.audio-skip span { position: absolute; font-family: var(--font-mono); font-size: 0.5625rem; font-weight: 700; line-height: 1; top: 50%; left: 50%; transform: translate(-50%, -38%); }
+.audio-skip .material-symbols-outlined { font-size: 1.625rem; line-height: 1; }
 .audio-element { display: none; }
 .audio-controls {
   display: flex;

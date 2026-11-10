@@ -357,7 +357,7 @@ function selectTrack(index) {
   }
 }
 
-/* Avancer / reculer de N secondes (+15 / −15) */
+/* Avancer / reculer de N secondes (−10 / +30) */
 function seekBy(seconds) {
   const audio = audioElements[currentTrackIndex];
   if (!audio) return;
@@ -426,7 +426,7 @@ document.addEventListener('keydown', function(e) {
 
   if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && e.target === document.body && !isInConcertMode && audioElements.length) {
     e.preventDefault();
-    seekBy(e.key === 'ArrowLeft' ? -15 : 15);
+    seekBy(e.key === 'ArrowLeft' ? -10 : 30);
   }
 
   if (e.key === ' ' && e.target === document.body) {

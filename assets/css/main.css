@@ -843,7 +843,6 @@ body:has(.hero-full) .site-header .dropdown-menu a:hover { color: #FFFFFF; backg
 /* Accueil : le nom est déjà en grand sur la photo, l'en-tête garde seulement le triangle + le menu */
 body:has(.hero-full) .site-header .brand-sep,
 body:has(.hero-full) .site-header .brand-name { display: none; }
-body:has(.hero-full) #mobile-menu { background: rgba(20, 10, 7, 0.94); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; border-radius: 0 0 1rem 1rem; }
 
 /* =============================================================================
    EN-TÊTE
@@ -874,7 +873,34 @@ body:has(.hero-full) #mobile-menu { background: rgba(20, 10, 7, 0.94); margin: 0
 .nav-link:hover { color: var(--t-text); }
 /* Page active : texte plein + soulignement orange */
 .nav-link.active { color: var(--t-text); text-decoration: underline; text-decoration-color: var(--t-accent); text-decoration-thickness: 2px; text-underline-offset: 0.6em; }
-#mobile-menu .nav-link { font-size: 0.8125rem; min-height: 3rem; }
+/* --- Menu mobile plein écran --- */
+.mobile-menu {
+  position: fixed; inset: 0; z-index: 1;
+  padding: 5.5rem 1.25rem 2rem;
+  background: var(--t-bg);
+  overflow-y: auto; overscroll-behavior: contain;
+}
+.mobile-menu[hidden] { display: none; }
+/* Le flou de l'en-tête enfermerait le menu dans l'en-tête : on l'enlève quand le menu est ouvert */
+body.menu-open { overflow: hidden; }
+body.menu-open .site-header { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--t-bg); }
+body.menu-open .site-header nav { position: relative; z-index: 2; }
+.mm-list, .mm-sub { list-style: none; margin: 0; padding: 0; }
+.mm-item { border-bottom: 1px solid var(--t-line); }
+.mm-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.mm-link { flex: 1; display: flex; align-items: center; min-height: 3.75rem; font-size: 1rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--t-text); }
+.mm-link.active { color: var(--t-accent); }
+.mm-toggle { width: 2.75rem; height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--t-line-3); background: transparent; color: var(--t-text); cursor: pointer; }
+.mm-toggle svg { transition: transform 0.2s; }
+.mm-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.mm-toggle[aria-expanded="true"] { border-color: var(--t-accent); color: var(--t-accent); }
+.mm-sub { margin: -0.25rem 0 0.875rem 0.25rem; padding-left: 1rem; border-left: 2px solid var(--t-accent); }
+.mm-sublink { display: flex; align-items: center; min-height: 2.75rem; font-size: 0.9375rem; color: var(--t-soft); }
+.mm-sublink.active, .mm-sublink:hover, .mm-link:hover { color: var(--t-accent); }
+/* Accueil : l'en-tête est posé sur la photo ; menu ouvert = fond sombre opaque */
+body.menu-open:has(.hero-full) .site-header { background: #1A0F0C; }
+body:has(.hero-full) .mobile-menu { background: #1A0F0C; --t-text: #F7EBDD; --t-soft: #EADCC9; --t-line: rgba(247,235,221,0.14); --t-line-3: rgba(247,235,221,0.3); }
+body.menu-open:has(.hero-full) .site-header .brand-sep, body.menu-open:has(.hero-full) .site-header .brand-name { display: flex; }
 
 .dropdown-menu {
   background: var(--t-surface);

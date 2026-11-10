@@ -64,31 +64,67 @@
 
         {{/* Menu mobile */}}
         <button type="button" id="mobile-menu-toggle" class="icon-btn md:hidden" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
-          <i data-lucide="menu" class="w-5 h-5"></i>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
     </nav>
 
-    <div id="mobile-menu" class="hidden md:hidden pb-4">
-      <div class="flex flex-col gap-1 pt-2 border-t border-line">
-        {{ range .Site.Menus.main }}
-        <a href="{{ .URL }}" class="nav-link">{{ .Name }}</a>
-          {{ range .Children }}
-          <a href="{{ .URL }}" class="nav-link pl-8 text-sm">{{ .Name }}</a>
+    {{/* Menu mobile : plein écran, opaque. Les sous-menus (Chansons) se déplient avec la flèche. */}}
+    <div id="mobile-menu" class="mobile-menu md:hidden" hidden>
+      <ul class="mm-list">
+        {{ range $i, $m := .Site.Menus.main }}
+        {{ $active := or ($current.IsMenuCurrent "main" $m) ($current.HasMenuCurrent "main" $m) }}
+        <li class="mm-item">
+          <div class="mm-row">
+            <a href="{{ $m.URL }}" class="mm-link{{ if $active }} active{{ end }}"{{ if $current.IsMenuCurrent "main" $m }} aria-current="page"{{ end }}>{{ $m.Name }}</a>
+            {{ if $m.HasChildren }}
+            <button type="button" class="mm-toggle" aria-expanded="{{ if $active }}true{{ else }}false{{ end }}" aria-controls="mm-sub-{{ $i }}" aria-label="Sous-menu {{ $m.Name }}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            {{ end }}
+          </div>
+          {{ if $m.HasChildren }}
+          <ul class="mm-sub" id="mm-sub-{{ $i }}"{{ if not $active }} hidden{{ end }}>
+            {{ range $m.Children }}
+            <li><a href="{{ .URL }}" class="mm-sublink{{ if $current.IsMenuCurrent "main" . }} active{{ end }}">{{ .Name }}</a></li>
+            {{ end }}
+          </ul>
           {{ end }}
+        </li>
         {{ end }}
-      </div>
+      </ul>
     </div>
   </div>
 </header>
 
 <script>
-document.getElementById('mobile-menu-toggle')?.addEventListener('click', function () {
-  const menu = document.getElementById('mobile-menu');
-  const open = menu.classList.toggle('hidden') === false;
-  this.setAttribute('aria-expanded', open ? 'true' : 'false');
-  this.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
-  this.innerHTML = '<i data-lucide="' + (open ? 'x' : 'menu') + '" class="w-5 h-5"></i>';
-  lucide.createIcons();
-});
+(function () {
+  var btn = document.getElementById('mobile-menu-toggle');
+  var menu = document.getElementById('mobile-menu');
+  if (!btn || !menu) return;
+  var iconMenu = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
+  var iconClose = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  function setOpen(open) {
+    menu.hidden = !open;
+    document.body.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    btn.innerHTML = open ? iconClose : iconMenu;
+  }
+  btn.addEventListener('click', function () { setOpen(menu.hidden); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { setOpen(false); btn.focus(); } });
+  /* Un lien vers une ancre de la même page (#repertoire) ferme le menu */
+  menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+  /* Sous-menus */
+  menu.querySelectorAll('.mm-toggle').forEach(function (t) {
+    t.addEventListener('click', function () {
+      var sub = document.getElementById(t.getAttribute('aria-controls'));
+      var open = t.getAttribute('aria-expanded') !== 'true';
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      sub.hidden = !open;
+    });
+  });
+  /* Passage en grand écran : on referme */
+  window.matchMedia('(min-width: 768px)').addEventListener('change', function (m) { if (m.matches) setOpen(false); });
+})();
 </script>

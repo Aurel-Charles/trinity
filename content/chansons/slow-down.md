@@ -94,7 +94,7 @@ url = "/songs/repete-2026-11-02/slow-down.mp3"
 date = "2026-11-02"
 
 [[enregistrements]]
-titre = "Enregistrement répétition"
+titre = "Répète du 13 octobre 2026"
 url = "/songs/SLOWDOWN.mp3"
 date = "2026-10-13"
 +++

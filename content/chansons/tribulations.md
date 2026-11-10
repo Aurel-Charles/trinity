@@ -131,6 +131,12 @@ role = "Nappes + stabs"
 notes = "- Organ style"
 
 [[enregistrements]]
+titre = "Répète du 9 novembre 2026"
+url = "/songs/repete-2026-11-09/tribulations.mp3"
+date = "2026-11-09"
+type = "repete"
+
+[[enregistrements]]
 titre = "Répète du 2 novembre 2026"
 url = "/songs/repete-2026-11-02/tribulations.mp3"
 date = "2026-11-02"

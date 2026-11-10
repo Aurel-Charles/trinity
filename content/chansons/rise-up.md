@@ -80,6 +80,12 @@ role = "Accords + fills"
 notes = "- Bubble tight"
 
 [[enregistrements]]
+titre = "Répète du 9 novembre 2026"
+url = "/songs/repete-2026-11-09/rise-up.mp3"
+date = "2026-11-09"
+type = "repete"
+
+[[enregistrements]]
 titre = "Répète du 2 novembre 2026"
 url = "/songs/repete-2026-11-02/rise-up.mp3"
 date = "2026-11-02"

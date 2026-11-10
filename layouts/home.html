@@ -47,7 +47,7 @@
 {{ $pistes := slice }}
 {{ range $chansons }}{{ $p := . }}{{ range .Params.enregistrements }}{{ if and (eq (string .date) $derniere) (ne .type "maquette") }}
   {{ $sec := 0 }}{{ with index (where (site.Data.audio.fichiers | default slice) "url" .url) 0 }}{{ $sec = int .secondes }}{{ end }}
-  {{ $pistes = $pistes | append (dict "titre" $p.Title "lien" $p.RelPermalink "url" .url "duree" (cond (gt $sec 0) (printf "%d:%02d" (div $sec 60) (mod $sec 60)) "")) }}
+  {{ $pistes = $pistes | append (dict "titre" (cond (isset . "prise") (printf "%s · prise %v" $p.Title .prise) $p.Title) "lien" $p.RelPermalink "url" .url "duree" (cond (gt $sec 0) (printf "%d:%02d" (div $sec 60) (mod $sec 60)) "")) }}
 {{ end }}{{ end }}{{ end }}
 
 {{/* Maquettes : tous les enregistrements de type « maquette », du plus récent au plus ancien */}}

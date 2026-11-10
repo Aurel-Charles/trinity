@@ -118,6 +118,12 @@ role = "Mélodique"
 notes = "- Bubble + fills"
 
 [[enregistrements]]
+titre = "Répète du 9 novembre 2026"
+url = "/songs/repete-2026-11-09/good-feelings.mp3"
+date = "2026-11-09"
+type = "repete"
+
+[[enregistrements]]
 titre = "Répète du 2 novembre 2026"
 url = "/songs/repete-2026-11-02/good-feelings.mp3"
 date = "2026-11-02"

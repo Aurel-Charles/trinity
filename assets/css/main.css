@@ -890,10 +890,12 @@ body.menu-open .site-header nav { position: relative; z-index: 2; }
 .mm-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .mm-link { flex: 1; display: flex; align-items: center; min-height: 3.75rem; font-size: 1rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--t-text); }
 .mm-link.active { color: var(--t-accent); }
-.mm-toggle { width: 2.75rem; height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--t-line-3); background: transparent; color: var(--t-text); cursor: pointer; }
-.mm-toggle svg { transition: transform 0.2s; }
-.mm-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
-.mm-toggle[aria-expanded="true"] { border-color: var(--t-accent); color: var(--t-accent); }
+.mm-toggle { width: 2.75rem; height: 2.75rem; margin-right: -0.625rem; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 0.5rem; background: transparent; color: var(--t-text); cursor: pointer; }
+.mm-toggle:hover, .mm-toggle[aria-expanded="true"] { color: var(--t-accent); }
+.mm-toggle:focus-visible { outline: 2px solid var(--t-accent); outline-offset: -2px; }
+/* « + » qui devient « − » quand le sous-menu est ouvert */
+.mm-plus-v { transform-origin: 12px 12px; transition: transform 0.2s; }
+.mm-toggle[aria-expanded="true"] .mm-plus-v { transform: scaleY(0); }
 .mm-sub { margin: -0.25rem 0 0.875rem 0.25rem; padding-left: 1rem; border-left: 2px solid var(--t-accent); }
 .mm-sublink { display: flex; align-items: center; min-height: 2.75rem; font-size: 0.9375rem; color: var(--t-soft); }
 .mm-sublink.active, .mm-sublink:hover, .mm-link:hover { color: var(--t-accent); }

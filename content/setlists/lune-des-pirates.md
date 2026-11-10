@@ -40,7 +40,7 @@ notes = 'Dub'
 
 [[chansons]]
 slug = 'another-pray'
-notes = ''
+notes = 'Solo guitare/intro - Solo Melodica'
 
 [[chansons]]
 slug = 'wait-and-see'

@@ -5,6 +5,7 @@ date = 2026-11-09
 draft = false
 artiste = "Original"
 statut = "en_cours"
+tempo = 75
 duree = "5:19"
 tags = ["original", "nouvelle compo"]
 

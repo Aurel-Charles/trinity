@@ -428,8 +428,17 @@ function restoreOrder() {
   const saved = localStorage.getItem(`setlist-${setlistId}`);
   if (!saved) return;
   try {
-    const order = JSON.parse(saved);
+    const saved_ = JSON.parse(saved);
     const items = Array.from(setlist.querySelectorAll('.setlist-item'));
+    const original = items.map(i => i.dataset.slug);
+    // Ordre mémorisé, sans les morceaux retirés de la setlist depuis
+    const order = saved_.filter(slug => original.includes(slug));
+    // Morceaux ajoutés depuis : à leur place d'origine (juste avant le morceau qui les suivait)
+    original.forEach((slug, idx) => {
+      if (order.includes(slug)) return;
+      const suivant = original.slice(idx + 1).find(s => order.includes(s));
+      if (suivant) order.splice(order.indexOf(suivant), 0, slug); else order.push(slug);
+    });
     order.forEach((slug) => {
       const item = items.find(i => i.dataset.slug === slug);
       if (item) setlist.appendChild(item);

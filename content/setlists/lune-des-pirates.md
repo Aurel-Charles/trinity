@@ -43,6 +43,10 @@ slug = 'another-pray'
 notes = 'Solo guitare/intro - Solo Melodica'
 
 [[chansons]]
+slug = 'around-the-world'
+notes = 'Nouvelle compo'
+
+[[chansons]]
 slug = 'wait-and-see'
 notes = 'Final - Dub'
 +++
